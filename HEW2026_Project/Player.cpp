@@ -61,7 +61,7 @@ Player::float2 PlayerMoveGrid(Player::float2 pos)
 		if (isPress)
 		{
 			nPressCount++;
-			if (nPressCount > 1)
+			if (nPressCount > 5)
 			{
 				nPressCount = 0;
 			}

@@ -32,6 +32,11 @@ private:
         f2 size;
         float posY;
     };
+    struct Block
+    {
+        Object blo;
+        float height;
+    };
 
     enum DownloadState
     {
@@ -48,7 +53,13 @@ private:
         Block_Pos_Y,
         Block_Size_X,
         Block_Size_Y,
-        Block_Drop_Speed
+        Block_Drop_Speed,
+        Block_Respawn_Height,
+        Hamburger_Tag1,
+        Hamburger_Tag2,
+        Hamburger_Tag3,
+        Hamburger_Tag4,
+        Hamburger_Tag5
     };
 
     Player player;

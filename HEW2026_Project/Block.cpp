@@ -13,7 +13,7 @@ Block::Block()
 	, m_bColor(Block_Color::None)
 {
 	m_pos.x = csv.GetBlockState().pos.x;
-	m_pos.y = 5.0f;
+	m_pos.y = 10.0f;
 	m_pos.z = csv.GetBlockState().pos.y;
 }
 
