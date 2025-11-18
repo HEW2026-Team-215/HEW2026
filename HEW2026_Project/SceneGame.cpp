@@ -109,12 +109,13 @@ void SceneGame::Update()
 			m_pBlock[i]->Update();
 		}
 	}
-	if (IsKeyPress('F'))
+	if (IsKeyTrigger('F'))
 	{
 		for (int i = 0; i < MAX_BLOCK; i++)
 		{
 			m_pBlock[i] = nullptr;
 		}
+			m_pScore->AddScore(10);
 		m_pBlock[0] = new Block();
 	}
 	if (m_pTimer)

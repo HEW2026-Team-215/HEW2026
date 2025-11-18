@@ -8,7 +8,7 @@ CScore::CScore()
 	:m_pScoreTex(nullptr)
 	,m_pGaugeTex(nullptr)
 	,m_rate(0.1f)
-	,m_targetScore(90)
+	,m_targetScore(100)
 	,m_currentScore(0)
 {
 	m_pScoreTex = new Texture();
@@ -26,12 +26,7 @@ CScore::~CScore()
 }
 
 void CScore::Update()
-{
-	if (IsKeyTrigger('P'))
-	{
-		AddScore(10);
-	}
-}
+{}
 
 void CScore::Draw()
 {
@@ -116,9 +111,8 @@ void CScore::Draw()
 
 void CScore::AddScore(int amount)
 {
-	if (m_currentScore == m_targetScore)
+	if (m_currentScore >= m_targetScore)
 		MessageBox(NULL, "おめでとう！", "目標達成", MB_OK);
-	else
 		m_currentScore += amount;
 }
 
