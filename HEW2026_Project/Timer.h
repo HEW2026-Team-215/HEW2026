@@ -18,7 +18,7 @@ private:
 	LARGE_INTEGER m_cpuFrequency;
 	LARGE_INTEGER m_lastTime;
 	double m_totalTime = 0.0;	//合計経過時間(秒)
-	const double START_TIME_SECONDS = 3.0 * 60.0;	//3分
+	const double START_TIME_SECONDS = 0.5 * 60.0;	//制限時間
 
 	//テクスチャと描画設定
 	Texture* m_pTimerTex;		//テクスチャ
