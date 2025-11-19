@@ -26,6 +26,19 @@ public:
 	~NextItem();
 	void Next();
 	void Draw();
+
+public:
+	enum Color
+	{
+		BUN_TOP,	//
+		BUN_BOTTOM,	//
+		LETTUCE,	//
+		EGG,		//
+		BACON,		//
+		CHEESE,		//
+		PATTY,		//
+	};
+
 private:
 	void AddLootTable();
 private:
