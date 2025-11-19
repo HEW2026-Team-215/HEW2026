@@ -22,6 +22,8 @@ private:
 	Camera* m_pCamera;
 	Player* m_pPlayer;
 	Block* m_pBlock[MAX_BLOCK];
+	int m_menu[5];
+	CsvData &csv;
 	UIObject* m_pExampleUI;
 };
 

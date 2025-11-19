@@ -1,5 +1,8 @@
 #pragma once
 
+#define MAX_HAMBRUGER       (10)
+#define MAX_HAMBRUGER_TYPE  (5)
+
 class CsvData {
 private:
     CsvData() = default;
@@ -37,6 +40,10 @@ private:
         Object blo;
         float height;
     };
+    struct Hamburger
+    {
+        int type[MAX_HAMBRUGER_TYPE];
+    };
 
     enum DownloadState
     {
@@ -64,7 +71,8 @@ private:
 
     Player player;
     Field field;
-    Object block;
+    Block block;
+    Hamburger hamb[MAX_HAMBRUGER];
 
     int width;
     int height;
@@ -81,7 +89,8 @@ public:
 
     Player GetPlayerState() { return player; }
     Field GetFieldState() { return field; }
-    Object GetBlockState() { return block; }
+    Block GetBlockState() { return block; }
+    Hamburger* GetHambuger() { return hamb; }
 
     static CsvData& get_instance()
     {

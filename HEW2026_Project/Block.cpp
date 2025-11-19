@@ -1,5 +1,7 @@
 #include "Block.h"
 #include"Geometory.h"
+#include"ShaderList.h"
+#include"Sprite.h"
 
 Block::Block()
 	: m_move{}
@@ -11,16 +13,103 @@ Block::Block()
 	, m_nStep(0)
 	, m_CollisionSize{}
 	, m_bColor(Block_Color::None)
+	, m_pModel(nullptr)
+	, m_dxpos{}
+	, wvp{}
 {
-	m_pos.x = csv.GetBlockState().pos.x;
-	m_pos.y = 10.0f;
-	m_pos.z = csv.GetBlockState().pos.y;
+	m_pos.x = csv.GetBlockState().blo.pos.x;
+	m_pos.y = csv.GetBlockState().height;
+	m_pos.z = csv.GetBlockState().blo.pos.y;
+
+	int count=0;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";	count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";		count++;
+	m_pModel = new Model();
+	switch (m_bColor)
+	{
+	case Block::Buns_up:
+		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Buns_Button:
+		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Bacon:
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Cheese:
+		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Fried_egg:
+		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Patty:
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Lettuce:
+		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Tomato:
+		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::None:
+		m_pModel = nullptr;
+		break;
+	default:
+		break;
+	}
+	DirectX::XMMATRIX view, proj;
+	m_dxpos = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
+	m_dxpos *= DirectX::XMMatrixScaling(
+		csv.GetPlayerState().size.x,
+		csv.GetBlockState().height,
+		csv.GetPlayerState().size.y);
+
+	view = DirectX::XMMatrixLookAtLH(
+		DirectX::XMVectorSet(5.0f, 5.0f, 0.0f, 0.0f),
+		DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+		DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+	);
+	proj = DirectX::XMMatrixPerspectiveFovLH
+	(
+		(1.0f / 6.0f) * 3.1415f * 2.0f,	// FovAngleY
+		16.0f / 9,	// AspectRatio
+		0.001f,	// NearZ
+		10.0f	// FarZ
+	);
+	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
+	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
+	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
+	m_pModel = nullptr;
 }
 
 Block::~Block()
 {
-	delete m_pCamera;
-	m_pCamera = nullptr;
+	if(m_pCamera)
+	{
+		//delete m_pCamera;
+		m_pCamera = nullptr;
+	}
 }
 
 void Block::Update()
@@ -30,14 +119,14 @@ void Block::Update()
 	case Block::Block_Idle:
 		break;
 	case Block::Block_Drop:
-		m_pos.y -= csv.GetBlockState().posY;
+		m_pos.y -= csv.GetBlockState().blo.posY;
 
 		// 最新のプレイヤー位置で当たり判定する
-		if (m_playerPos.x > m_pos.x - (csv.GetBlockState().size.x / 2.0f) &&
-			m_playerPos.x < m_pos.x + (csv.GetBlockState().size.x / 2.0f))
+		if (m_playerPos.x > m_pos.x - (csv.GetBlockState().blo.size.x / 2.0f) &&
+			m_playerPos.x < m_pos.x + (csv.GetBlockState().blo.size.x / 2.0f))
 		{
-			if (m_playerPos.z > m_pos.z - (csv.GetBlockState().size.y / 2.0f) &&
-				m_playerPos.z < m_pos.z + (csv.GetBlockState().size.y / 2.0f))
+			if (m_playerPos.z > m_pos.z - (csv.GetBlockState().blo.size.y / 2.0f) &&
+				m_playerPos.z < m_pos.z + (csv.GetBlockState().blo.size.y / 2.0f))
 			{
 				float playerTopY = csv.GetPlayerState().size.y + (m_nStep * m_fStepSizeY);
 				if (playerTopY > m_pos.y)
@@ -59,6 +148,8 @@ void Block::Update()
 	default:
 		break;
 	}
+
+	m_dxpos = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
 }
 
 void Block::Draw()
@@ -69,14 +160,53 @@ void Block::Draw()
 	DirectX::XMFLOAT4X4 fMat;
 
 	T = DirectX::XMMatrixTranslation(m_pos.x,m_pos.y,m_pos.z);
-	S = DirectX::XMMatrixScaling(csv.GetBlockState().size.x, m_fStepSizeY, csv.GetBlockState().size.y);
+	S = DirectX::XMMatrixScaling(csv.GetBlockState().blo.size.x, m_fStepSizeY, csv.GetBlockState().blo.size.y);
 	mat = S * T;
 	mat = DirectX::XMMatrixTranspose(mat);
 
 	DirectX::XMStoreFloat4x4(&fMat,mat);
 
 	Geometory::SetWorld(fMat); // ボックスに変換行列を設定
-	Geometory::DrawCylinder();// 影の大きさを計算
+	if(m_pModel == nullptr)
+		Geometory::DrawCylinder();// 影の大きさを計算
+	if(m_pModel != nullptr)
+	{
+		//　計算用のデータから読み取り用のデータに変換
+		DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
+
+		// モデルに変換行列を設定
+		wvp[1] = m_pCamera->GetViewMatrix();
+		wvp[2] = m_pCamera->GetProjectionMatrix();
+
+		//　シェーダーへ変換行列を設定
+		ShaderList::SetWVP(wvp);	//　引数にはXMFLOAT4X4型の、要素数３の配列のアドレスを渡すこと
+
+
+		Geometory::SetView(m_pCamera->GetViewMatrix(true));
+		Geometory::SetProjection(m_pCamera->GetProjectionMatrix(true));
+		// Spriteへの設定
+		Sprite::SetView(m_pCamera->GetViewMatrix(true));
+		Sprite::SetProjection(m_pCamera->GetProjectionMatrix(true));
+
+		//　モデルに使用する頂点シェーダー、ピクセルシェーダーを設定
+		m_pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
+		m_pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
+
+		//　複数のメッシュで構成されている場合、ある部分は金属的な表現、ある部分は非金属的な表現と
+		// 分ける場合がある。前回の表示は同じマテリアルで一括表示していたため、メッシュごとにマテリアルを
+		// 切り替える。
+		for (int i = 0; i < m_pModel->GetMeshNum(); ++i)
+		{
+			// モデルのメッシュを取得
+			Model::Mesh mesh = *m_pModel->GetMesh(i);
+			// メッシュに割り当てられているマテリアルを取得
+			Model::Material	material = *m_pModel->GetMaterial(mesh.materialID);
+			// シェーダーへマテリアルを設定
+			ShaderList::SetMaterial(material);
+			// モデルの描画
+			m_pModel->Draw(i);
+		}
+	}
 }
 
 void Block::OnCollision(Collision::Result collision)
@@ -169,10 +299,97 @@ Block::Block(Block_Color set)
 	, m_nStep(0)
 	, m_CollisionSize{}
 	, m_bColor(set)
+	, m_pModel(nullptr)
+	, m_dxpos{}
+	, wvp{}
 {
-	m_pos.x = csv.GetBlockState().pos.x;
-	m_pos.y = 5.0f;
-	m_pos.z = csv.GetBlockState().pos.y;
+	m_pos.x = csv.GetBlockState().blo.pos.x;
+	m_pos.y = csv.GetBlockState().height;
+	m_pos.z = csv.GetBlockState().blo.pos.y;
+
+	int count = 0;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";	count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Bacon.fbx";		count++;
+	// まだないのでPattyでも出そうかな
+	//fileName[count] = "Assets/Model/Prototype/MD_Bacon.fbx";		count++;
+
+	m_pModel = new Model();
+	switch (m_bColor)
+	{
+	case Block::Buns_up:
+		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Buns_Button:
+		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Bacon:
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Cheese:
+		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Fried_egg:
+		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Patty:
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Lettuce:
+		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Tomato:
+		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::None:
+		m_pModel = nullptr;
+		break;
+	default:
+		break;
+	}
+	DirectX::XMMATRIX view, proj;
+	m_dxpos = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
+	m_dxpos *= DirectX::XMMatrixScaling(
+		csv.GetPlayerState().size.x,
+		csv.GetBlockState().height,
+		csv.GetPlayerState().size.y);
+
+	view = DirectX::XMMatrixLookAtLH(
+		DirectX::XMVectorSet(5.0f, 5.0f, 0.0f, 0.0f),
+		DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+		DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+	);
+	proj = DirectX::XMMatrixPerspectiveFovLH
+	(
+		(1.0f / 6.0f) * 3.1415f * 2.0f,	// FovAngleY
+		16.0f / 9,	// AspectRatio
+		0.001f,	// NearZ
+		10.0f	// FarZ
+	);
+	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
+	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
+	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
 }
 
 Block::Block(Block_Color set, float setX, float setY)
@@ -185,8 +402,91 @@ Block::Block(Block_Color set, float setX, float setY)
 	, m_nStep(0)
 	, m_CollisionSize{}
 	, m_bColor(set)
+	, m_pModel(nullptr)
+	, m_dxpos{}
+	, wvp{}
 {
-	m_pos.x = setX;
-	m_pos.y = 5.0f;
-	m_pos.z = setY;
+	m_pos.x = csv.GetBlockState().blo.pos.x;
+	m_pos.y = csv.GetBlockState().height;
+	m_pos.z = csv.GetBlockState().blo.pos.y;
+
+	int count = 0;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";	count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";		count++;
+	m_pModel = new Model();
+	switch (m_bColor)
+	{
+	case Block::Buns_up:
+		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Buns_Button:
+		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Bacon:
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Cheese:
+		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Fried_egg:
+		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Patty:
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Lettuce:
+		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::Tomato:
+		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+		break;
+	case Block::None:
+		m_pModel = nullptr;
+		break;
+	default:
+		break;
+	}
+	DirectX::XMMATRIX view, proj;
+	m_dxpos = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
+	m_dxpos *= DirectX::XMMatrixScaling(
+		csv.GetPlayerState().size.x,
+		csv.GetBlockState().height,
+		csv.GetPlayerState().size.y);
+
+	view = DirectX::XMMatrixLookAtLH(
+		DirectX::XMVectorSet(5.0f, 5.0f, 0.0f, 0.0f),
+		DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+		DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+	);
+	proj = DirectX::XMMatrixPerspectiveFovLH
+	(
+		(1.0f / 6.0f) * 3.1415f * 2.0f,	// FovAngleY
+		16.0f / 9,	// AspectRatio
+		0.001f,	// NearZ
+		10.0f	// FarZ
+	);
+	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
+	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
+	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
 }
