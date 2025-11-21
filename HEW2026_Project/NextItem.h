@@ -14,10 +14,14 @@ protected:
 	int m_nId;
 };
 
-class Item : public Dummy
+class Item
 {
 public:
-	Item(int n) : Dummy(n) {};
+	Item(Block::Block_Color blockcolor): m_Color(blockcolor) {};
+	~Item() {};
+	Block::Block_Color GetColor() { return m_Color; }
+private:
+	Block::Block_Color m_Color;
 };
 
 class NextItem
@@ -43,7 +47,7 @@ public:
 private:
 	void AddLootTable();
 private:
-	std::vector<Item> m_Queue;
+	std::vector<Item*> m_Queue;
 	UIObject* m_NextItem;
 	UIObject* m_NextFrame;
 	UIObject* m_QueueItem[5];

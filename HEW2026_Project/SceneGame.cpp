@@ -108,7 +108,7 @@ void SceneGame::Update()
 				if (m_pBlock[j] != nullptr)
 					continue;
 
-				m_pBlock[j] = new Block();
+				m_pBlock[j] = new Block(m_pNextItem->Next());
 				m_pBlock[j]->SetStep(m_pBlock[i]->GetStep() + 1);
 				break;
 			}
@@ -116,7 +116,7 @@ void SceneGame::Update()
 		}
 		if (m_pBlock[i]->GetState() == Block::BlockState::Block_Idle)
 		{
-			m_pBlock[i] = new Block();
+			m_pBlock[i] = new Block(m_pNextItem->Next());
 		}
 		if (m_pBlock[i]->GetState() == Block::BlockState::Block_Drop ||
 			m_pBlock[i]->GetState() == Block::BlockState::Block_Catched)
@@ -131,7 +131,7 @@ void SceneGame::Update()
 			m_pBlock[i] = nullptr;
 		}
 		m_pScore->AddScore(10);
-		m_pBlock[0] = new Block();
+		m_pBlock[0] = new Block(m_pNextItem->Next());
 	}
 	if (m_pTimer)
 	{
