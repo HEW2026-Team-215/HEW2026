@@ -10,8 +10,8 @@
 #include"Model.h"
 #include<string>
 
-#define MAX_SHOKUZAI_LIST (7)
-#define MAX_INGREDIENTS_LIST (7)
+#define MAX_SHOKUZAI_LIST (8)
+#define MAX_INGREDIENTS_LIST (8)
 
 class Block :
     public GameObject
@@ -39,11 +39,11 @@ public:
 	{
 		Buns_up,
 		Buns_Button,
-		Bacon,
-		Cheese,
-		Fried_egg,
 		Patty,
 		Lettuce,
+		Fried_egg,
+		Bacon,
+		Cheese,
 		Tomato,
 		None,
 	};
