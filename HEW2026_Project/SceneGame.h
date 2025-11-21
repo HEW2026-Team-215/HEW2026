@@ -2,7 +2,11 @@
 #define __SCENE_GAME_H__
 
 #include "Scene.h"
-#include "Model.h"
+#include"Model.h"
+#include"Camera.h"
+#include"Player.h"
+#include "Block.h"
+#include"Defines.h"
 
 class SceneGame : public Scene
 {
@@ -11,9 +15,21 @@ public:
 	~SceneGame();
 	void Update() final;
 	void Draw() final;
+	float RandomFloat(float min, float max)
+	{
+		return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (max - min);
+	}
 
 private:
 	Model* m_pModel;
+	Camera* m_pCamera;
+	Player* m_pPlayer;
+	Block* m_pBlock[MAX_BLOCK];
+	int m_menu[5];
+	CsvData &csv;
+
+	float min;
+	float max;
 };
 
 #endif // __SCENE_GAME_H__
