@@ -407,9 +407,9 @@ Block::Block(Block_Color set, float setX, float setY)
 	, m_dxpos{}
 	, wvp{}
 {
-	m_pos.x = csv.GetBlockState().setX;
+	m_pos.x = setX;
 	m_pos.y = csv.GetBlockState().height;
-	m_pos.z = csv.GetBlockState().setY;
+	m_pos.z = setY;
 
 	int count = 0;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";		count++;

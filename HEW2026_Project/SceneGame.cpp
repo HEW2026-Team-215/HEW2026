@@ -143,7 +143,7 @@ void SceneGame::Update()
 		int randIndex = rand() % Block::None; // or correct enum size
 		Block::Block_Color randColor = static_cast<Block::Block_Color>(randIndex);
 		m_pBlock[0] = new Block(m_pNextItem->Next(), x, z);
-		m_pBlack[0]->GetCamera(m_pCamera);
+		m_pBlock[0]->GetCamera(m_pCamera);
 		m_pScore->AddScore(10);
 	}
 	if (m_pTimer)
