@@ -32,6 +32,7 @@ public:
 	static void DrawBox();
 	static void DrawCylinder();
 	static void DrawSphere();
+	static void DrawPlane();
 
 private:
 	static void MakeVS();
@@ -43,6 +44,7 @@ private:
 	static void MakeBox();
 	static void MakeCylinder();
 	static void MakeSphere();
+	static void MakePlain();
 
 private:
 	static const int MAX_LINE_NUM = 1000;
@@ -51,6 +53,7 @@ private:
 	static MeshBuffer* m_pBox;
 	static MeshBuffer* m_pCylinder;
 	static MeshBuffer* m_pSphere;
+	static MeshBuffer* m_pPlane;
 	static MeshBuffer* m_pLines;
 	static Shader* m_pVS;
 	static Shader* m_pPS;

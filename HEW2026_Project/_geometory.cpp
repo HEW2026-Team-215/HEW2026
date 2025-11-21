@@ -1,132 +1,232 @@
-#include "Geometory.h"
+﻿#include "Geometory.h"
+#include<cmath>
+#include<vector>
+#include"Sprite.h"
+using namespace std;
 
-/**
- * @brief Box���쐬
- *
- */
+const int VERTEX_CYLINDER = 10;
+
 void Geometory::MakeBox()
 {
-	//----- ���_�̍쐬 -----//
+	//--- 頂点の作成
+
 	Vertex vtx[] = {
-			// -Z
-			{{-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f}},	 // 0
-			{{0.5f, 0.5f, -0.5f}, {1.0f, 0.0f}},	 // 1
-			{{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}}, // 2
-			{{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}},	 // 3
-			// +Z
-			{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f}},		// 4
-			{{-0.5f, 0.5f, 0.5f}, {1.0f, 0.0f}},	// 5
-			{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f}},	// 6
-			{{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f}}, // 7
-			// -X
-			{{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f}},	 // 8
-			{{-0.5f, 0.5f, -0.5f}, {1.0f, 0.0f}},	 // 9
-			{{-0.5f, -0.5f, 0.5f}, {0.0f, 1.0f}},	 // 10
-			{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}}, // 11
-			// +X
-			{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f}},	// 12
-			{{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f}},		// 13
-			{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}}, // 14
-			{{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f}},	// 15
-			// -Y
-			{{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},	 // 16
-			{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},	 // 17
-			{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}},	 // 18
-			{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}}, // 19
-			// +Y
-			{{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f}},	// 20
-			{{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f}},		// 21
-			{{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}}, // 22
-			{{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},	// 23
+	// -Z面
+	{{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}}, // 0:左上
+	{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f}}, // 1:右上
+	{{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}}, // 2:左下
+	{{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}}, // 3:右下
+
+	// +Z面（奥）
+	{{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}}, // 4:左上
+	{{-0.5f,  0.5f,  0.5f}, {1.0f, 0.0f}}, // 5:右上
+	{{ 0.5f, -0.5f,  0.5f}, {0.0f, 1.0f}}, // 6:左下
+	{{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f}}, // 7:右下
+
+	// +X面（右）
+	{{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}}, // 8:左上
+	{{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f}}, // 9:右上
+	{{ 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}}, // 10:左下
+	{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f}}, // 11:右下
+
+	// -X面（左）
+	{{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}}, // 12:左上
+	{{-0.5f,  0.5f, -0.5f}, {1.0f, 0.0f}}, // 13:右上
+	{{-0.5f, -0.5f,  0.5f}, {0.0f, 1.0f}}, // 14:左下
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}}, // 15:右下
+
+	// +Y面（上）
+	{{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}}, // 16:左上
+	{{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f}}, // 17:右上
+	{{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}}, // 18:左下
+	{{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f}}, // 19:右下
+
+	// -Y面（下）
+	{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}}, // 20:左上
+	{{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}}, // 21:右上
+	{{-0.5f, -0.5f,  0.5f}, {0.0f, 1.0f}}, // 22:左下
+	{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f}}, // 23:右下
 	};
-	//----- �C���f�b�N�X�̍쐬 -----//
-	int idx[] = {
-			// -Z
-			0,
-			1,
-			2,
-			1,
-			3,
-			2,
-			// +Z
-			4,
-			5,
-			6,
-			5,
-			7,
-			6,
-			// -X
-			8,
-			9,
-			10,
-			9,
-			11,
-			10,
-			// +X
-			12,
-			13,
-			14,
-			13,
-			15,
-			14,
-			// -Y
-			16,
-			17,
-			18,
-			17,
-			19,
-			18,
-			// +Y
-			20,
-			21,
-			22,
-			21,
-			23,
-			22,
+	//--- インデックスの作成
+	int idx[] =
+	{
+		0, 1, 2,   1, 3, 2,   // -Z面
+		4, 5, 6,   5, 7, 6,   // +Z面
+		8, 9, 10,  9, 11, 10,  // +X面
+		12, 13, 14, 13, 15, 14, // -X面
+		16, 17, 18, 17, 19, 18, // +Y面
+		20, 21, 22, 21, 23, 22  // -Y面
 	};
-	//----- �o�b�t�@�̍쐬 -----//
+	// カラー設定
+
+	// バッファの作成
 	MeshBuffer::Description desc = {};
 	desc.pVtx = vtx;
-	desc.vtxCount = 4 * 6;
-	desc.vtxSize = sizeof(Vertex);
+	desc.vtxCount = 24;
+	desc.vtxSize = 20;
 	desc.pIdx = idx;
-	desc.idxCount = 6 * 6;
-	desc.idxSize = sizeof(int);
+	desc.idxCount = 36;
+	desc.idxSize = 4;
 	desc.topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	m_pBox = new MeshBuffer();
 	m_pBox->Create(desc);
 }
 
-/**
- * @brief Cylinder�̍쐬
- *
- */
 void Geometory::MakeCylinder()
 {
-	//----- ���_�̍쐬 -----//
-	Vertex vtx[] = {
-			// �V�ʁA���
-			{{0.f, 0.f, 0.f}, {0.f, 0.f}},
-			// ����
+	//--- 円柱の頂点とインデックスの作成
+	const int circleVtx = 16; // 円周の分割数
+	const float radius = 0.5f;
+	const float height = 1.0f;
 
-	};
-	//----- �C���f�b�N�X�̍쐬 -----//
-	// �V�ʁA���
+	std::vector<Vertex> vtxVec;
+	std::vector<int> idxVec;
 
-	// ����
+	// 頂点インデックス:
+	// 0: 上面中央
+	// 1～circleVtx: 上面ྃ䍋缘
+	// circleVtx+1～circleVtx*2+1: 下面中央と下面缘
+	// circleVtx*2+2～circleVtx*3+1: 側面上辺
+	// circleVtx*3+2～circleVtx*4+1: 側面下辺
 
-	//----- �o�b�t�@�̍쐬 -----//
+	// 上面中央
+	vtxVec.push_back({ {0.0f, height / 2.0f, 0.0f}, {0.5f, 0.5f} });
+	// 上面外周
+	for (int i = 0; i < circleVtx; ++i)
+	{
+		float angle = 2.0f * 3.14159f * i / circleVtx;
+		float x = radius * cosf(angle);
+		float z = radius * sinf(angle);
+		// UV: 上面は中央から外側へ同心円状に
+		float u = 0.5f + 0.5f * cosf(angle);
+		float v = 0.5f + 0.5f * sinf(angle);
+		vtxVec.push_back({ {x, height / 2.0f, z}, {u, v} });
+	}
+
+	// 上面のインデックス（扇型）
+	for (int i = 1; i < circleVtx; ++i)
+	{
+		idxVec.push_back(0);
+		idxVec.push_back(i + 1);
+		idxVec.push_back(i);
+	}
+	idxVec.push_back(0);
+	idxVec.push_back(1);
+	idxVec.push_back(circleVtx);
+
+	// 下面中央
+	int bottomCenterIdx = vtxVec.size();
+	vtxVec.push_back({ {0.0f, -height / 2.0f, 0.0f}, {0.5f, 0.5f} });
+	// 下面外周
+	for (int i = 0; i < circleVtx; ++i)
+	{
+		float angle = 2.0f * 3.14159f * i / circleVtx;
+		float x = radius * cosf(angle);
+		float z = radius * sinf(angle);
+		// UV: 下面も中央から外側へ同心円状に
+		float u = 0.5f + 0.5f * cosf(angle);
+		float v = 0.5f + 0.5f * sinf(angle);
+		vtxVec.push_back({ {x, -height / 2.0f, z}, {u, v} });
+	}
+
+	// 下面のインデックス（扇型）
+	int bottomStart = bottomCenterIdx + 1;
+	for (int i = bottomStart; i < bottomStart + circleVtx - 1; ++i)
+	{
+		idxVec.push_back(bottomCenterIdx);
+		idxVec.push_back(i + 1);
+		idxVec.push_back(i);
+	}
+	idxVec.push_back(bottomCenterIdx);
+	idxVec.push_back(bottomStart);
+	idxVec.push_back(bottomStart + circleVtx - 1);
+
+	// 側面の上の頂点
+	int sideTopStart = vtxVec.size();
+	for (int i = 0; i < circleVtx; ++i)
+	{
+		float angle = 2.0f * 3.14159f * i / circleVtx;
+		float x = radius * cosf(angle);
+		float z = radius * sinf(angle);
+		// UV: U方向は円周方向(0～1)、V方向は高さ1.0
+		vtxVec.push_back({ {x, height / 2.0f, z}, {i / (float)circleVtx, 1.0f} });
+	}
+
+	// 側面の下の頂点
+	int sideBottomStart = vtxVec.size();
+	for (int i = 0; i < circleVtx; ++i)
+	{
+		float angle = 2.0f * 3.14159f * i / circleVtx;
+		float x = radius * cosf(angle);
+		float z = radius * sinf(angle);
+		// UV: U方向は円周方向(0～1)、V方向は高さ0.0
+		vtxVec.push_back({ {x, -height / 2.0f, z}, {i / (float)circleVtx, 0.0f} });
+	}
+
+	// 側面のインデックス
+	for (int i = 0; i < circleVtx; ++i)
+	{
+		int next = (i + 1) % circleVtx;
+		// 四角形を2つの三角形に分割
+		// 上側の三角形
+		idxVec.push_back(sideTopStart + i);
+		idxVec.push_back(sideTopStart + next);
+		idxVec.push_back(sideBottomStart + i);
+		// 下側の三角形
+		idxVec.push_back(sideTopStart + next);
+		idxVec.push_back(sideBottomStart + next);
+		idxVec.push_back(sideBottomStart + i);
+	}
+
+	//--- バッファの作成
+	MeshBuffer::Description desc = {};
+	desc.pVtx = vtxVec.data();
+	desc.vtxCount = vtxVec.size();
+	desc.vtxSize = sizeof(Vertex);
+	desc.pIdx = idxVec.data();
+	desc.idxCount = idxVec.size();
+	desc.idxSize = sizeof(int);
+	desc.topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_pCylinder = new MeshBuffer();
+	m_pCylinder->Create(desc);
 }
 
-/**
- * @brief Sphere�̍쐬
- *
- */
 void Geometory::MakeSphere()
 {
-	//----- ���_�̍쐬 -----//
+	//--- 頂点の作成
 
-	//----- �C���f�b�N�X�̍쐬 -----//
+	//--- インデックスの作成
 
-	//----- �o�b�t�@�̍쐬 -----//
+	// バッファの作成
+}
+
+void Geometory::MakePlain()
+{
+	const float width = 10.0f;
+	const float height = 6.0f;
+	//--- 頂点の作成
+	Vertex vtx[4] =
+	{
+	{ -width,0.0f,height,0.0f,0.0f,},
+	{ -width,0.0f,height,1.0f,0.0f,},
+	{ -width,0.0f,height,0.0f,1.0f, },
+	{ -width,0.0f,height,1.0f,1.0f,}
+	};
+	//--- インデックスの作成
+	int idx[] =
+	{
+		0, 1, 2,1, 3, 2
+	};
+
+	// バッファの作成
+	MeshBuffer::Description desc = {};
+	desc.pVtx = vtx;
+	desc.vtxCount = 4;
+	desc.vtxSize = 20;
+	desc.pIdx = idx;
+	desc.idxCount = 6;
+	desc.idxSize = 4;
+	desc.topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_pPlane = new MeshBuffer();
+	m_pPlane->Create(desc);
 }

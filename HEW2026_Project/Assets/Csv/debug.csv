@@ -1,0 +1,15 @@
+﻿int,width,10
+int,height,6
+int,column,10
+int,row,6
+float,posx,0
+float,posy,0
+float,sizex,2
+float,sizey,2
+float,speed,1
+float,b_posx,0
+float,b_posy,0
+float,b_sizex,2
+float,b_sizey,2
+flaot,speed,0.05
+float,b_height,10
