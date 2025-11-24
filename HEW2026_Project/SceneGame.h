@@ -28,7 +28,10 @@ private:
 	Model* m_pModel;
 	Camera* m_pCamera;
 	Player* m_pPlayer;
-	Block* m_pBlock[MAX_BLOCK];
+
+	std::list<Block*> m_pBlock;         // dynamic block list
+	
+
 	int m_menu[5];
 	CsvData &csv;
 	CScore *m_pScore;

@@ -26,20 +26,23 @@ SceneGame::SceneGame()
 	m_pPlayer = new Player();
 	m_pOrderManager = new OrderManager();
 
+	// Initialize first blocks
 	float x = RandomFloat(-5.0f, 5.0f);
 	float z = RandomFloat(-5.0f, 5.0f);
-	int randIndex = rand() % Block::None; // or correct enum size
-	Block::Block_Color randColor = static_cast<Block::Block_Color>(randIndex);
 
-	m_pBlock[0] = new Block(Block::Block_Color::Buns_Button);
-	m_pBlock[0]->GetCamera(m_pCamera);
-	m_pBlock[0]->SetState(Block::BlockState::Block_Catched);
+	// First Buns_Button block
+	Block* firstBlock = new Block(Block::Block_Color::Buns_Button);
+	firstBlock->GetCamera(m_pCamera);
+	firstBlock->SetState(Block::BlockState::Block_Catched);
+	m_pBlock.push_back(firstBlock);
 
-	m_pBlock[1] = new Block(m_pNextItem->Next(), x, z);
-	m_pBlock[1]->GetCamera(m_pCamera);
+	// Second random block
+	Block* secondBlock = new Block(m_pNextItem->Next(), x, z);
+	secondBlock->GetCamera(m_pCamera);
+	m_pBlock.push_back(secondBlock);
 
 	m_pPlayer->SetCamera(m_pCamera);
-	m_pBlock[0]->SetCollision({m_pPlayer->GetPos().x, m_pPlayer->GetPos().z});
+	firstBlock->SetCollision({ m_pPlayer->GetPos().x, m_pPlayer->GetPos().z });
 
 	csv.Init();
 
@@ -71,11 +74,11 @@ SceneGame::~SceneGame()
 		delete m_pPlayer;
 		m_pPlayer = nullptr;
 	}
-	for (int i = 0; i < MAX_BLOCK; i++)
+	for (auto block : m_pBlock)
 	{
-		delete m_pBlock[i];
-		m_pBlock[i] = nullptr;
+		delete block;
 	}
+	m_pBlock.clear();
 
 	if (m_pTimer)
 	{
@@ -93,71 +96,105 @@ void SceneGame::Update()
 	m_pPlayer->Update();
 	// Update の先頭でプレイヤー位置を各ブロックに渡す
 	DirectX::XMFLOAT3 playerPos = m_pPlayer->GetPos();
-	for (int i = 0; i < MAX_BLOCK; ++i)
+	for (auto block : m_pBlock)
 	{
-		if (m_pBlock[i] != nullptr)
+		if (block)
 		{
-			m_pBlock[i]->SetPlayerPos(playerPos);
-			m_pBlock[i]->GetCamera(m_pCamera);
+			block->SetPlayerPos(playerPos);
+			block->GetCamera(m_pCamera);
 		}
 	}
-	for (int i = 0; i < MAX_BLOCK; i++)
+	for (auto it = m_pBlock.begin(); it != m_pBlock.end(); ++it)
 	{
-		if (m_pBlock[i] == nullptr)
-			continue;
-		if (m_pBlock[i]->GetState() == Block::BlockState::Block_Catch)
-		{
-			for (int j = 0; j < MAX_BLOCK; j++)
-			{
+		Block* block = *it;
+		if (!block) continue;
 
-				if (m_pBlock[j] != nullptr)
-					continue;
-
-				float x = RandomFloat(-5.0f, 5.0f);
-				float z = RandomFloat(-5.0f, 5.0f);
-				int randIndex = rand() % Block::None; // or correct enum size
-				Block::Block_Color randColor = static_cast<Block::Block_Color>(randIndex);
-				m_pBlock[j] = new Block(m_pNextItem->Next(), x, z);
-				m_pBlock[j]->GetCamera(m_pCamera);
-				m_pBlock[j]->SetStep(m_pBlock[i]->GetStep() + 1);
-				break;
-			}
-			m_pBlock[i]->SetState(Block::BlockState::Block_Catched);
-		}
-		if (m_pBlock[i]->GetState() == Block::BlockState::Block_Idle)
+		switch (block->GetState())
 		{
+		case Block::BlockState::Block_Catch:
+		{
+			// Spawn a new block after catch
 			float x = RandomFloat(-5.0f, 5.0f);
 			float z = RandomFloat(-5.0f, 5.0f);
-			int randIndex = rand() % Block::None; // or correct enum size
-			Block::Block_Color randColor = static_cast<Block::Block_Color>(randIndex);
-			m_pBlock[i] = new Block(m_pNextItem->Next(), x, z);
-			m_pBlock[i]->GetCamera(m_pCamera);
+			Block* newBlock = new Block(m_pNextItem->Next(), x, z);
+			newBlock->GetCamera(m_pCamera);
+			newBlock->SetStep(block->GetStep() + 1);
+			m_pBlock.push_back(newBlock);
+
+			block->SetState(Block::BlockState::Block_Catched);
+			break;
 		}
-		if (m_pBlock[i]->GetState() == Block::BlockState::Block_Drop ||
-				m_pBlock[i]->GetState() == Block::BlockState::Block_Catched)
+
+		case Block::BlockState::Block_Idle:
 		{
-			m_pBlock[i]->Update();
+			// Replace idle block with a new one
+			float x = RandomFloat(-5.0f, 5.0f);
+			float z = RandomFloat(-5.0f, 5.0f);
+			Block* newBlock = new Block(m_pNextItem->Next(), x, z);
+			newBlock->GetCamera(m_pCamera);
+			*it = newBlock; // replace the idle block
+			break;
+		}
+
+		case Block::BlockState::Block_Drop:
+		case Block::BlockState::Block_Catched:
+			block->Update();
+			break;
+
+		default:
+			break;
 		}
 	}
 	if (IsKeyTrigger('F'))
 	{
-		for (int i = 0; i < MAX_BLOCK; i++)
+		std::list<Block*> submittedBurger;
+		
+		for (auto it = m_pBlock.begin(); it != m_pBlock.end(); )
 		{
-			m_pBlock[i] = nullptr;
+			Block* block = *it;
+			if (!block) { ++it; continue; }
+			
+			if (block->GetState() == Block::Block_Catched)  // ONLY caught blocks
+			{
+				submittedBurger.push_back(block);
+				it = m_pBlock.erase(it); // remove from list
+			}
+			else
+			{
+				++it; // keep all other blocks (idle, drop, etc.)
+			}
 		}
 
-		m_pBlock[0] = new Block(Block::Block_Color::Buns_Button);
-		m_pBlock[0]->GetCamera(m_pCamera);
-		m_pBlock[0]->SetState(Block::BlockState::Block_Catched);
+		m_pOrderManager->Check(submittedBurger);
+		//// Add score for submitted blocks
+		//for (auto block : submittedBurger)
+		//{
+		//		m_pScore->AddScore(5);
+		//}
 
-		float x = RandomFloat(-5.0f, 5.0f);
-		float z = RandomFloat(-5.0f, 5.0f);
-		int randIndex = rand() % Block::None; // or correct enum size
-		Block::Block_Color randColor = static_cast<Block::Block_Color>(randIndex);
-		m_pBlock[1] = new Block(m_pNextItem->Next(), x, z);
-		m_pBlock[1]->GetCamera(m_pCamera);
-		m_pScore->AddScore(10);
+		// Delete submitted blocks
+		for (auto block : submittedBurger)
+			delete block;
+		submittedBurger.clear();
+
+		//reset stack position
+		int step = 0;
+		for (auto block : m_pBlock)
+		{
+			if (block)
+			{
+				block->SetStep(step);
+				++step;
+			}
+		}
+		// Add new Buns_Button block at front
+		Block* bunBlock = new Block(Block::Block_Color::Buns_Button);
+		bunBlock->GetCamera(m_pCamera);
+		bunBlock->SetState(Block::BlockState::Block_Catched);
+		m_pBlock.push_front(bunBlock);
+
 	}
+
 	if (m_pTimer)
 	{
 		m_pTimer->Update();
@@ -286,12 +323,13 @@ void SceneGame::Draw()
 			//  必要ならここでサウンド再生やスコア処理、障害物側の反応などを追加
 		}
 	}
-	for (int i = 0; i < MAX_BLOCK; i++)
+
+	for (auto block : m_pBlock)
 	{
-		if (m_pBlock[i] != nullptr)
+		if (block)
 		{
-			m_pBlock[i]->SetPlayerPos(m_pPlayer->GetPos());
-			m_pBlock[i]->Draw();
+			block->SetPlayerPos(m_pPlayer->GetPos());
+			block->Draw();
 		}
 	}
 
