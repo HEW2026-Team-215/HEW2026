@@ -521,3 +521,8 @@ Block::Block(Block_Color set, float setX, float setY)
 	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
 	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
 }
+
+	Block::Block_Color Block::GetColor()
+	{
+			return m_bColor;
+}

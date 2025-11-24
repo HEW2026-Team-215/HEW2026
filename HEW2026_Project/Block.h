@@ -68,6 +68,7 @@ public:
 
 	int GetStep();
 
+	Block_Color GetColor();
 private:
 	Camera* m_pCamera;	//　カメラ情報
 	DirectX::XMFLOAT3	m_move;		// 移動量
