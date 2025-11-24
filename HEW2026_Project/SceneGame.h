@@ -10,6 +10,7 @@
 #include "Score.h"
 #include "Timer.h"
 #include "NextItem.h"
+#include "OrderManager.h"
 
 class SceneGame : public Scene
 {
@@ -35,6 +36,8 @@ private:
 	NextItem* m_pNextItem;
 	float min;
 	float max;
+	OrderManager* m_pOrderManager;
+
 };
 
 #endif // __SCENE_GAME_H__

@@ -103,9 +103,19 @@ void UIObject::SetPosition(float X, float Y)
 	m_fPosition = {X, Y};
 }
 
+void UIObject::SetPosition(DirectX::XMFLOAT2 pos)
+{
+		m_fPosition = pos;
+}
+
 void UIObject::SetSize(float W, float H)
 {
 	m_fSize = {W, H};
+}
+
+void UIObject::SetSize(DirectX::XMFLOAT2 size)
+{
+	m_fSize = size;
 }
 
 void UIObject::SetRotation(float X, float Y, float Z)

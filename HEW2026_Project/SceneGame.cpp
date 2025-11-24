@@ -24,6 +24,7 @@ SceneGame::SceneGame()
 	m_pNextItem = new NextItem();
 	m_pCamera = new CameraDebug();
 	m_pPlayer = new Player();
+	m_pOrderManager = new OrderManager();
 
 	float x = RandomFloat(-5.0f, 5.0f);
 	float z = RandomFloat(-5.0f, 5.0f);
@@ -82,6 +83,7 @@ SceneGame::~SceneGame()
 		m_pTimer = nullptr;
 	}
 	SAFE_DELETE(m_pNextItem);
+	SAFE_DELETE(m_pOrderManager);
 }
 
 void SceneGame::Update()
@@ -165,10 +167,14 @@ void SceneGame::Update()
 	{
 		m_pScore->Update();
 	}
+	if (m_pOrderManager)
+			m_pOrderManager->Update();
 }
 
 void SceneGame::Draw()
 {
+		if (m_pOrderManager)
+				m_pOrderManager->Draw();
 	//--- １つ目の地面
 	DirectX::XMMATRIX T;			// 位置情報を作成
 	DirectX::XMMATRIX R;			// 回転情報を作成
@@ -241,7 +247,7 @@ void SceneGame::Draw()
 		// DirectX::XMVECTOR A = DirectX::XMVectorSet(0.0f, 10.0f, -10.0f, 0.0);
 		// DirectX::XMVECTOR P = DirectX::XMVectorSet(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y, m_pPlayer->GetPos().z, 0.0f);
 		// A = DirectX::XMVectorAdd(A, P);
-		// m_pCamera->SetPos({A.m128_f32[0], A.m128_f32[1], A.m128_f32[2]});
+		 //m_pCamera->SetPos({A.m128_f32[0], A.m128_f32[1], A.m128_f32[2]});
 		Collision::Info collisionA = m_pPlayer->GetCollision(); // プレイヤーの当たり判定
 
 		// 地面、または障害物の当たり判定
@@ -301,6 +307,7 @@ void SceneGame::Draw()
 		Geometory::SetWorld(fMat); // ボックスに変換行列を設定
 		Geometory::DrawBox();
 	}
+
 
 	if (m_pScore)
 	{

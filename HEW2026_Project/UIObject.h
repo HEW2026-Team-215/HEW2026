@@ -27,7 +27,9 @@ public:
 	void Draw();
 
 	void SetPosition(float X, float Y);
+	void SetPosition(DirectX::XMFLOAT2 pos);
 	void SetSize(float W, float H);
+	void SetSize(DirectX::XMFLOAT2 size);
 	void SetRotation(float X, float Y, float Z);
 	void SetTexture(std::string RelativeTexturePathFromTextureFolder);
 	void SetUVPosition(float X, float Y);
