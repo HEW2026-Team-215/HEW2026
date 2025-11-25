@@ -202,6 +202,10 @@ void Block::Draw()
 			Model::Mesh mesh = *m_pModel->GetMesh(i);
 			// メッシュに割り当てられているマテリアルを取得
 			Model::Material	material = *m_pModel->GetMaterial(mesh.materialID);
+			// マテリアルを編集する場合、SetMaterial関数へ設定する前に変更 
+			material.ambient.x = 1.0f; // xは赤(r)を示す
+			material.ambient.y = 1.0f; // yは緑(g)を示す
+			material.ambient.z = 1.0f; // zは青(b)を示す
 			// シェーダーへマテリアルを設定
 			ShaderList::SetMaterial(material);
 			// モデルの描画
@@ -210,31 +214,31 @@ void Block::Draw()
 		//=====================影=============================
 
 		{
-				DirectX::XMMATRIX T_shadow;
-				DirectX::XMMATRIX S_shadow;
+			DirectX::XMMATRIX T_shadow;
+			DirectX::XMMATRIX S_shadow;
 
-				float shadowHeight = 0.05f; // avoid z-fighting
-				T_shadow = DirectX::XMMatrixTranslation(m_pos.x, 0.0f + shadowHeight, m_pos.z);
+			float shadowHeight = 0.05f; // avoid z-fighting
+			T_shadow = DirectX::XMMatrixTranslation(m_pos.x, 0.0f + shadowHeight, m_pos.z);
 
-				float shadowScaleX = csv.GetBlockState().blo.size.x * 1.2f;
-				float shadowScaleZ = csv.GetBlockState().blo.size.y * 1.2f;
+			float shadowScaleX = csv.GetBlockState().blo.size.x * 1.2f;
+			float shadowScaleZ = csv.GetBlockState().blo.size.y * 1.2f;
 
-				S_shadow = DirectX::XMMatrixScaling(shadowScaleX, 0.01f, shadowScaleZ);
+			S_shadow = DirectX::XMMatrixScaling(shadowScaleX, 0.01f, shadowScaleZ);
 
-				DirectX::XMMATRIX shadowMat = S_shadow * T_shadow;
-				shadowMat = DirectX::XMMatrixTranspose(shadowMat);
+			DirectX::XMMATRIX shadowMat = S_shadow * T_shadow;
+			shadowMat = DirectX::XMMatrixTranspose(shadowMat);
 
-				DirectX::XMFLOAT4X4 fShadow;
-				DirectX::XMStoreFloat4x4(&fShadow, shadowMat);
+			DirectX::XMFLOAT4X4 fShadow;
+			DirectX::XMStoreFloat4x4(&fShadow, shadowMat);
 
-				// shadow color
-				Model::Material shadowMaterial = {};
-				shadowMaterial.diffuse = DirectX::XMFLOAT4(0, 0, 0, 0.5f);
+			// shadow color
+			Model::Material shadowMaterial = {};
+			shadowMaterial.diffuse = DirectX::XMFLOAT4(0, 0, 0, 0.5f);
 
-				ShaderList::SetMaterial(shadowMaterial);
-				Geometory::SetWorld(fShadow);
+			ShaderList::SetMaterial(shadowMaterial);
+			Geometory::SetWorld(fShadow);
 
-				Geometory::DrawCylinder();
+			Geometory::DrawCylinder();
 		}
 	}
 }

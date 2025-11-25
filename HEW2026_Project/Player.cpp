@@ -277,6 +277,10 @@ void Player::Draw()
 		Model::Mesh mesh = *m_pModel->GetMesh(i);
 		// メッシュに割り当てられているマテリアルを取得
 		Model::Material	material = *m_pModel->GetMaterial(mesh.materialID);
+		// マテリアルを編集する場合、SetMaterial関数へ設定する前に変更 
+		material.ambient.x = 0.8f; // xは赤(r)を示す
+		material.ambient.y = 0.8f; // yは緑(g)を示す
+		material.ambient.z = 0.8f; // zは青(b)を示す
 		// シェーダーへマテリアルを設定
 		ShaderList::SetMaterial(material);
 		// モデルの描画

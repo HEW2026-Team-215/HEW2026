@@ -358,7 +358,7 @@ void SceneGame::Draw()
 		}
 	}
 
-	if (true)
+	if (false)
 	{
 		//--- １つ目の地面
 		T = DirectX::XMMatrixTranslation(0.0f, -.2f, 0.0f);						 // 天面がグリッドよりも下に来るように移動
@@ -386,10 +386,10 @@ void SceneGame::Draw()
 	{
 		m_pNextItem->Draw();
 	}
-	// new!
-	if (m_pField)
+	// New!
+	if (m_pField && false)
 	{
-		//m_pField->Draw();
+		m_pField->Draw();
 	}
 }
 

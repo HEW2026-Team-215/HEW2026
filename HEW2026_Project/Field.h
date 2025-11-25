@@ -45,12 +45,12 @@ private:
 	};
 	struct Field_Model_Type
 	{
-		Model* Green_Top;
-		Model* Green_Corner;
-		Model* Green_Side;
-		Model* White_Top;
-		Model* White_Corner;
-		Model* White_Side;
+		Model* Green_Top;		// —Î ‰‚È‚µ
+		Model* Green_Corner;	// —Î ’[‰
+		Model* Green_Side;		// —Î ‰¡‰
+		Model* White_Top;		// ”’ ‰‚È‚µ
+		Model* White_Corner;	// ”’ ’[‰
+		Model* White_Side;		// ”’ ‰¡‰
 	};
 public:
 	enum Field_Model_No
@@ -60,13 +60,14 @@ public:
 	};
 private :
 	Field_State m_field_s;
-	Model* m_pModel;
+	Model* m_pModel; // ‚ ‚Á‚Ä‚È‚¢‚æ‚¤‚È‚à‚Ì
 	Field_Model_Type m_f_m_n;
 public:
 	static Field_Model& get_instance();
 	Field_State GetFieldState();
 	Model* GetFieldModel();
 	Model* GetFieldModel(Field_Model_No get);
+	Model* GetFieldModel(int get);
 };
 
 class Field
