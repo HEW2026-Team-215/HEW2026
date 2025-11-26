@@ -387,7 +387,7 @@ void SceneGame::Draw()
 		m_pNextItem->Draw();
 	}
 	// New!
-	if (m_pField && false)
+	if (m_pField && true)
 	{
 		m_pField->Draw();
 	}

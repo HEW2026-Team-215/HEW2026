@@ -87,4 +87,11 @@ private:
 	DirectX::XMFLOAT4X4 wvp[3];
 	DirectX::XMMATRIX m_dxpos;
 	Camera* m_pCamera;
+public:
+	Model* m_pModel_G_Top;
+	Model* m_pModel_G_Corner;
+	Model* m_pModel_G_Side;
+	Model* m_pModel_W_Top;
+	Model* m_pModel_W_Corner;
+	Model* m_pModel_W_Side;
 };

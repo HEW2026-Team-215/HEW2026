@@ -38,18 +38,11 @@ Field::Field()
 	for(int i = 0;i < 6;i++)
 	{
 		m_pModel[i] = new Model();
-		if (!m_pModel[i]->Load(fileName[i].c_str(), 0.5f, Model::ZFlip))  // 倍率と反転は省略可
+		if (!m_pModel[i]->Load(fileName[i].c_str(), 0.57f, Model::ZFlip))  // 倍率と反転は省略可
 		{
 			MessageBox(NULL, modelName[i].c_str(), "Error", MB_OK); // エラーメッセージの表示
 		}
 	}
-
-	// フィールドの大きさに合わせて拡大縮小
-	m_dxpos = DirectX::XMMatrixScaling(
-		csv.GetFieldState().width / 10.0f,
-		1.0f,
-		csv.GetFieldState().height / 10.0f
-	);
 }
 
 Field::~Field()
@@ -63,10 +56,14 @@ void Field::Update()
 
 void Field::Draw()
 {
-	int max = 6;
-	for(int i = 0;i < max;i++)
+	int max = 10;
+	int maxZ = 6;
+	int set = 0;
+	for(int k = 0; k < maxZ;k++)
+	for(int j = 0;j < max;j++)
 	{
-		m_dxpos = DirectX::XMMatrixTranslation(i * 2.0f - 6.0f, -0.20f, 0.0f);
+		m_dxpos = DirectX::XMMatrixTranslation(
+			j * 2.0f - 9.0f, -0.20f, k * 2.0f - 05.0f);
 		//　計算用のデータから読み取り用のデータに変換
 		DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
 
@@ -83,19 +80,22 @@ void Field::Draw()
 		Sprite::SetView(m_pCamera->GetViewMatrix(true));
 		Sprite::SetProjection(m_pCamera->GetProjectionMatrix(true));
 
+		// 描画するモデルを設定
+		set = ((j + (k % 2)) % 2) * 3;
+
 		//　モデルに使用する頂点シェーダー、ピクセルシェーダーを設定
-		m_pModel[i]->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		m_pModel[i]->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
+		m_pModel[set]->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
+		m_pModel[set]->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
 
 		//　複数のメッシュで構成されている場合、ある部分は金属的な表現、ある部分は非金属的な表現と
 		// 分ける場合がある。前回の表示は同じマテリアルで一括表示していたため、メッシュごとにマテリアルを
 		// 切り替える。
-		for (int i = 0; i < m_pModel[i]->GetMeshNum(); ++i)
+		for (int i = 0; i < m_pModel[set]->GetMeshNum(); ++i)
 		{
 			// モデルのメッシュを取得
-			Model::Mesh mesh = *m_pModel[i]->GetMesh(i);
+			Model::Mesh mesh = *m_pModel[set]->GetMesh(i);
 			// メッシュに割り当てられているマテリアルを取得
-			Model::Material	material = *m_pModel[i]->GetMaterial(mesh.materialID);
+			Model::Material	material = *m_pModel[set]->GetMaterial(mesh.materialID);
 			// マテリアルを編集する場合、SetMaterial関数へ設定する前に変更 
 			material.ambient.x = 1.0f; // xは赤(r)を示す
 			material.ambient.y = 1.0f; // yは緑(g)を示す
@@ -103,7 +103,7 @@ void Field::Draw()
 			// シェーダーへマテリアルを設定
 			ShaderList::SetMaterial(material);
 			// モデルの描画
-			m_pModel[i]->Draw(i);
+			m_pModel[set]->Draw(i);
 		}
 	}
 }
