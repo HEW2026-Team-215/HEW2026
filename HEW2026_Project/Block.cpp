@@ -16,6 +16,7 @@ Block::Block()
 	, m_pModel(nullptr)
 	, m_dxpos{}
 	, wvp{}
+	, m_absoluteY(0.0f)
 {
 	m_pos.x = csv.GetBlockState().blo.pos.x;
 	m_pos.y = csv.GetBlockState().height;
@@ -121,7 +122,7 @@ void Block::Update()
 		break;
 	case Block::Block_Drop:
 		m_pos.y -= csv.GetBlockState().blo.posY;
-
+		m_absoluteY = csv.GetBlockState().height + (m_pos.y);
 		// 最新のプレイヤー位置で当たり判定する
 		if (m_playerPos.x > m_pos.x - (csv.GetBlockState().blo.size.x / 2.0f) &&
 			m_playerPos.x < m_pos.x + (csv.GetBlockState().blo.size.x / 2.0f))
@@ -138,6 +139,12 @@ void Block::Update()
 		}
 		else if (m_pos.y <= 0.0f)
 			m_state = BlockState::Block_Idle;
+
+		// 消えるといいな～
+		if (m_absoluteY < csv.GetBlockState().height)
+		{
+			m_state = BlockState::Block_Idle;
+		}
 		break;
 	case Block::Block_Catch:
 	case BlockState::Block_Catched:

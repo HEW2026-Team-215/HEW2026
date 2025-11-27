@@ -59,13 +59,88 @@ void Field::Draw()
 	int max = 10;
 	int maxZ = 6;
 	int set = 0;
+	float sabun = 0.25f; // 微調整用の変数
 	for(int k = 0; k < maxZ;k++)
 	for(int j = 0;j < max;j++)
 	{
-		m_dxpos = DirectX::XMMatrixTranslation(
-			j * 2.0f - 9.0f, -0.20f, k * 2.0f - 05.0f);
+		m_dxpos = DirectX::XMMatrixRotationY(
+			DirectX::XMConvertToRadians(0));
+
+		// 描画するモデルを設定
+		set = ((j + (k % 2)) % 2) * 3;
+
+		if (j == 0 && k == 0)
+		{
+			set = 1; // Green_Corner
+			m_dxpos = DirectX::XMMatrixRotationY(
+				DirectX::XMConvertToRadians(-90));
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f - sabun, -0.20f, k * 2.0f - 05.0f - sabun);
+		}
+		else if (j == max - 1 && k == 0)
+		{
+			m_dxpos = DirectX::XMMatrixRotationY(
+				DirectX::XMConvertToRadians(-180));
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f + sabun, -0.20f, k * 2.0f - 05.0f - sabun);
+			set = 4; // White_Corner
+		}
+		else if (j == 0 && k == maxZ - 1)
+		{
+			set = 4; // White_Corner
+			m_dxpos = DirectX::XMMatrixRotationY(
+				DirectX::XMConvertToRadians(0));
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f - sabun, -0.20f, k * 2.0f - 05.0f + sabun);
+		}
+		else if (j == max - 1 && k == maxZ - 1)
+		{
+			set = 1; // Green_Corner
+			m_dxpos = DirectX::XMMatrixRotationY(
+				DirectX::XMConvertToRadians(90));
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f + sabun, -0.20f, k * 2.0f - 05.0f + sabun);
+		}
+		else if (k == 0)
+		{
+			set += 2;// Side
+			m_dxpos = DirectX::XMMatrixRotationY(
+				DirectX::XMConvertToRadians(-90));
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f, -0.20f, k * 2.0f - 05.0f - sabun);
+		}
+		else if (j == 0)
+		{
+			set += 2;// Side
+			m_dxpos = DirectX::XMMatrixRotationY(
+				DirectX::XMConvertToRadians(-0));
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f - sabun, -0.20f, k * 2.0f - 05.0f);
+		}
+		else if (k == maxZ - 1)
+		{
+			set += 2;// Side
+			m_dxpos = DirectX::XMMatrixRotationY(
+				DirectX::XMConvertToRadians(90));
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f, -0.20f, k * 2.0f - 05.0f + sabun);
+		}
+		else if(j == max - 1)
+		{
+			set += 2;// Side
+			m_dxpos = DirectX::XMMatrixRotationY(
+				DirectX::XMConvertToRadians(180));
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f + sabun, -0.20f, k * 2.0f - 05.0f);
+		}
+		else
+		{
+			m_dxpos *= DirectX::XMMatrixTranslation(
+				j * 2.0f - 9.0f, -0.20f, k * 2.0f - 05.0f);
+		}
 		//　計算用のデータから読み取り用のデータに変換
 		DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
+
 
 		// モデルに変換行列を設定
 		wvp[1] = m_pCamera->GetViewMatrix();
@@ -80,8 +155,6 @@ void Field::Draw()
 		Sprite::SetView(m_pCamera->GetViewMatrix(true));
 		Sprite::SetProjection(m_pCamera->GetProjectionMatrix(true));
 
-		// 描画するモデルを設定
-		set = ((j + (k % 2)) % 2) * 3;
 
 		//　モデルに使用する頂点シェーダー、ピクセルシェーダーを設定
 		m_pModel[set]->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
