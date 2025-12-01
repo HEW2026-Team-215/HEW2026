@@ -244,21 +244,21 @@ void SceneGame::Draw()
 	mat = S * R * T;
 	world = mat;
 	world = T;
-	view = DirectX::XMMatrixLookAtLH(
-			DirectX::XMVectorSet(5.0f, 5.0f, 0.0f, 0.0f),
-			DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
-			DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	proj = DirectX::XMMatrixPerspectiveFovLH(
-			(1.0f / 6.0f) * 3.1415f * 2.0f, // FovAngleY
-			16.0f / 9,											// AspectRatio
-			0.001f,													// NearZ
-			10.0f														// FarZ
-	);
+//	view = DirectX::XMMatrixLookAtLH(
+//			DirectX::XMVectorSet(5.0f, 5.0f, 0.0f, 0.0f),
+//			DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+//			DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+//	proj = DirectX::XMMatrixPerspectiveFovLH(
+//			(1.0f / 6.0f) * 3.1415f * 2.0f, // FovAngleY
+//			16.0f / 9,											// AspectRatio
+//			0.001f,													// NearZ
+//			10.0f														// FarZ
+//	);
 
 	// 　計算用のデータから読み取り用のデータに変換
 	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(world));
-	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
-	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
+//	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
+//	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
 
 	// モデルに変換行列を設定
 	wvp[1] = m_pCamera->GetViewMatrix();
@@ -381,4 +381,4 @@ void SceneGame::Draw()
 float RandomFloat(float min, float max)
 {
 	return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (max - min);
-}
+}////

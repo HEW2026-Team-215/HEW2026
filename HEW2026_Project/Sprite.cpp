@@ -10,6 +10,7 @@ void Sprite::Init()
 struct VS_IN {
 	float3 pos : POSITION0;
 	float2 uv : TEXCOORD0;
+	float4 color : COLOR0; 
 };
 struct VS_OUT {
 	float4 pos : SV_POSITION;
@@ -39,7 +40,7 @@ VS_OUT main(VS_IN vin) {
 	vout.uv = vin.uv;
 	vout.uv *= uvScale;
 	vout.uv += uvPos;
-	vout.color = color;
+	vout.color = vin.color;
 	return vout;
 })EOT";
 	const char* PS = R"EOT(
@@ -58,11 +59,12 @@ float4 main(PS_IN pin) : SV_TARGET {
 	{
 		float pos[3];
 		float uv[2];
+		float color[4];
 	} vtx[] = {
-		{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f}},
-		{{ 0.5f, 0.5f, 0.0f}, {1.0f, 0.0f}},
-		{{-0.5f,-0.5f, 0.0f}, {0.0f, 1.0f}},
-		{{ 0.5f,-0.5f, 0.0f}, {1.0f, 1.0f}},
+		{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}},
+		{{ 0.5f, 0.5f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}},
+		{{-0.5f,-0.5f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}},
+		{{ 0.5f,-0.5f, 0.0f}, {1.0f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}},
 	};
 
 	// メッシュ
