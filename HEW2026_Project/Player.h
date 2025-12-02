@@ -62,11 +62,17 @@ private:
 	Texture* m_pShadowTex;	// 影の見た目
 	DirectX::XMFLOAT3	m_shadowPos;	// 影の位置
 
-	// New!
+	// New!	
 	CsvData& csv;
 	Model* m_pModel;
 	DirectX::XMMATRIX m_dxpos;
 	DirectX::XMFLOAT4X4 wvp[3];
+
+private:
+	float m_idleTimer = 0.0f;     // Tracks time for idle motion
+    float m_idleAmplitude = 0.05f; // How much the player bobs up and down
+    float m_idleSpeed = 6.0f;      // Speed of bobbing
+    DirectX::XMFLOAT3 m_startPos;  // Store initial position
 };
 
 #endif//_PLAYER_H

@@ -28,6 +28,7 @@ Player::Player()
 	, m_shadowPos{ 0.0f,0.0f,0.0f }
 	, csv(CsvData::get_instance())
 	, m_pModel(nullptr)
+	,m_startPos(m_pos.x,m_pos.y,m_pos.z)
 {
 	m_collision.type = Collision::eBox;
 	m_collision.box = {
@@ -198,6 +199,20 @@ void Player::Update()
 	UpdateControl();
 	UpdateMove();	// 摩擦の処理
 	UpdateWall();
+
+	// Idle animation: only when the player is stopped
+	if (!IsKeyPress('D')|| !IsKeyPress('A')||!IsKeyPress('w')||!IsKeyPress('S'))
+	{
+		m_idleTimer += MSEC(1.0f); // or deltaTime if you have it
+		m_pos.y = m_startPos.y + sinf(m_idleTimer * m_idleSpeed) * m_idleAmplitude;
+
+	}
+	else
+	{
+		// Reset idle when moving
+		m_idleTimer = 0.0f;
+		m_startPos = m_pos; // update base position for next idle
+	}
 }
 
 void Player::Draw()
@@ -223,29 +238,13 @@ void Player::Draw()
 	DirectX::XMFLOAT4X4 fMat; // 行列の格納先
 	DirectX::XMStoreFloat4x4(&fMat, mat);
 
-	//---------- ここから影の描画 ----------//
-
-	float rate = (m_pos.y - m_shadowPos.y) / METER(4.0f);	// 距離が近ければ0,遠ければ1
-	float scale = (1.0f - rate);								// rateを0なら1、1なら0になるよう反転
-	m_shadowPos.x = m_pos.x;
-	m_shadowPos.z = m_pos.z;
-	Sprite::SetSize(DirectX::XMFLOAT2{ scale,0.0f});
-	// 影を表示するための行列計算
-	DirectX::XMMATRIX Sprite_S = DirectX::XMMatrixScaling(scale, scale, scale);	// scaleを元に拡縮
-	DirectX::XMMATRIX Sprite_Rx = DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(-90.0f)); 	// スプライトを横に倒す
-	DirectX::XMMATRIX Sprite_T = DirectX::XMMatrixTranslation(		// Zファイティング回避で少し浮かす
-		m_pos.x, 0.0f, m_pos.z);
-	DirectX::XMMATRIX Sprite_mat = Sprite_S * Sprite_Rx * Sprite_T;	// それぞれの数値をマージ
-	Sprite_mat = DirectX::XMMatrixTranspose(mat);// 行列変換を行う
-	DirectX::XMFLOAT4X4 Sprite_fMat; // 描画専用変数を定義
-	DirectX::XMStoreFloat4x4(&Sprite_fMat, Sprite_mat);//mWorldを転置してmatに格納
-
+	
 	// 場所を指定
-	m_dxpos = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(
+	m_dxpos = DirectX::XMMatrixScaling(1.0f,m_pos.y+1.0f,1.0f)*DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(
 			(IsKeyPress('D') * -90.0f) + (IsKeyPress('A') * 90.0f) + 
 			(IsKeyPress('W') * 180.0f) + (IsKeyPress('S') * 0.0f)
 		))
-		* DirectX::XMMatrixTranslation(m_pos.x, 0.5f, m_pos.z);
+		* DirectX::XMMatrixTranslation(m_pos.x, (m_pos.y/2)+0.5f, m_pos.z);
 
 	//　計算用のデータから読み取り用のデータに変換
 	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
@@ -277,6 +276,10 @@ void Player::Draw()
 		Model::Mesh mesh = *m_pModel->GetMesh(i);
 		// メッシュに割り当てられているマテリアルを取得
 		Model::Material	material = *m_pModel->GetMaterial(mesh.materialID);
+
+		material.ambient.x = 0.8f;
+		material.ambient.y = 0.8f;
+		material.ambient.z = 0.8f;
 		// シェーダーへマテリアルを設定
 		ShaderList::SetMaterial(material);
 		// モデルの描画
@@ -483,6 +486,5 @@ void Player::OnCollision(Collision::Result collision)
 
 void Player::SetShadow(DirectX::XMFLOAT3 pos)
 {
-
 	m_shadowPos = pos;
 }

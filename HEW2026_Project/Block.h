@@ -68,6 +68,7 @@ public:
 
 	int GetStep();
 
+	void DrawShadow();
 	Block_Color GetColor();
 private:
 	Camera* m_pCamera;	//　カメラ情報
@@ -80,9 +81,11 @@ private:
 	float m_fStepSizeY;
 	Block_Color m_bColor;
 	std::string fileName[MAX_SHOKUZAI_LIST];
+	std::string shadowFileName[MAX_SHOKUZAI_LIST];
 
 	// New！
 	Model* m_pModel;
+	Texture* m_pShadowTex;
 	DirectX::XMMATRIX m_dxpos;
 	DirectX::XMFLOAT4X4 wvp[3];
 public:

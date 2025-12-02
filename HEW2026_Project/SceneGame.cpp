@@ -74,9 +74,10 @@ SceneGame::~SceneGame()
 		delete m_pPlayer;
 		m_pPlayer = nullptr;
 	}
-	for (auto block : m_pBlock)
+	for (auto it = m_pBlock.begin(); it != m_pBlock.end();)
 	{
-		delete block;
+		it = m_pBlock.erase(it);
+		//it = nullptr;
 	}
 	m_pBlock.clear();
 
@@ -225,6 +226,8 @@ void SceneGame::Update()
 
 void SceneGame::Draw()
 {
+
+	
 		if (m_pOrderManager)
 				m_pOrderManager->Draw();
 	//--- １つ目の地面
@@ -277,6 +280,21 @@ void SceneGame::Draw()
 	m_pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
 	m_pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
 
+	
+	if (true)
+	{
+		//--- １つ目の地面
+		T = DirectX::XMMatrixTranslation(0.0f, -0.0f, 0.0f);						 // 天面がグリッドよりも下に来るように移動
+		S = DirectX::XMMatrixScaling(10.0f * 2.0f, 0.2f, 6.0f * 2.0f); // 地面となるように、前後左右に広く、上下に狭くする
+		mat = S * T;
+		mat = DirectX::XMMatrixTranspose(mat);
+		DirectX::XMFLOAT4X4 fMat; // 行列の格納先
+		DirectX::XMStoreFloat4x4(&fMat, mat);
+		Geometory::SetWorld(fMat); // ボックスに変換行列を設定
+		Geometory::DrawBox();
+	}
+
+
 	// 　複数のメッシュで構成されている場合、ある部分は金属的な表現、ある部分は非金属的な表現と
 	//  分ける場合がある。前回の表示は同じマテリアルで一括表示していたため、メッシュごとにマテリアルを
 	//  切り替える。
@@ -292,6 +310,25 @@ void SceneGame::Draw()
 			// モデルの描画
 			m_pModel->Draw(i);
 		}
+
+
+	for (auto block : m_pBlock)
+	{
+		if (block)
+		{
+			block->SetPlayerPos(m_pPlayer->GetPos());
+			block->DrawShadow();
+		}
+	}
+
+	for (auto block : m_pBlock)
+	{
+		if (block)
+		{
+			block->SetPlayerPos(m_pPlayer->GetPos());
+			block->Draw();
+		}
+	}
 
 	if (m_pPlayer)
 	{
@@ -337,30 +374,8 @@ void SceneGame::Draw()
 			// Geometory::DrawBox();
 			//  必要ならここでサウンド再生やスコア処理、障害物側の反応などを追加
 		}
+		
 	}
-
-	for (auto block : m_pBlock)
-	{
-		if (block)
-		{
-			block->SetPlayerPos(m_pPlayer->GetPos());
-			block->Draw();
-		}
-	}
-
-	if (true)
-	{
-		//--- １つ目の地面
-		T = DirectX::XMMatrixTranslation(0.0f, -.2f, 0.0f);						 // 天面がグリッドよりも下に来るように移動
-		S = DirectX::XMMatrixScaling(10.0f * 2.0f, 0.2f, 6.0f * 2.0f); // 地面となるように、前後左右に広く、上下に狭くする
-		mat = S * T;
-		mat = DirectX::XMMatrixTranspose(mat);
-		DirectX::XMFLOAT4X4 fMat; // 行列の格納先
-		DirectX::XMStoreFloat4x4(&fMat, mat);
-		Geometory::SetWorld(fMat); // ボックスに変換行列を設定
-		Geometory::DrawBox();
-	}
-
 
 	if (m_pScore)
 	{
@@ -382,3 +397,4 @@ float RandomFloat(float min, float max)
 {
 	return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (max - min);
 }
+
