@@ -79,7 +79,11 @@ float4 main(PS_IN pin) : SV_TARGET {
 	// パラメーター
 	m_data.param[0] = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 	m_data.param[1] = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	m_data.param[2] = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_data.color[0] = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_data.color[1] = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_data.color[2] = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_data.color[3] = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	//m_data.param[2] = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	DirectX::XMStoreFloat4x4(&m_data.matrix[0], DirectX::XMMatrixIdentity());
 	DirectX::XMStoreFloat4x4(&m_data.matrix[1], DirectX::XMMatrixIdentity());
 	DirectX::XMStoreFloat4x4(&m_data.matrix[2], DirectX::XMMatrixIdentity());
@@ -95,8 +99,30 @@ float4 main(PS_IN pin) : SV_TARGET {
 void Sprite::Uninit()
 {
 }
+void Sprite::UpdateVertexColors()
+{
+	struct Vertex
+	{
+		float pos[3];
+		float uv[2];
+		float color[4]; 
+	} vtx[] = {
+		{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f}, {m_data.color[0].x, m_data.color[0].y, m_data.color[0].z, m_data.color[0].w}},
+		{{ 0.5f, 0.5f, 0.0f}, {1.0f, 0.0f}, {m_data.color[1].x, m_data.color[1].y, m_data.color[1].z, m_data.color[1].w}},
+		{{-0.5f,-0.5f, 0.0f}, {0.0f, 1.0f}, {m_data.color[2].x, m_data.color[2].y, m_data.color[2].z, m_data.color[2].w}},
+		{{ 0.5f,-0.5f, 0.0f}, {1.0f, 1.0f}, {m_data.color[3].x, m_data.color[3].y, m_data.color[3].z, m_data.color[3].w}},
+	};
+	MeshBuffer::Description desc = {};
+	desc.pVtx = vtx;
+	desc.vtxSize = sizeof(Vertex);
+	desc.vtxCount = _countof(vtx);
+	desc.topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+	m_data.mesh = std::make_shared<MeshBuffer>();
+	m_data.mesh->Create(desc);
+}
 void Sprite::Draw()
 {
+	UpdateVertexColors();
 	m_data.vs->WriteBuffer(0, m_data.matrix);
 	m_data.vs->WriteBuffer(1, m_data.param);
 	m_data.vs->Bind();
@@ -129,6 +155,13 @@ void Sprite::SetUVScale(DirectX::XMFLOAT2 scale)
 void Sprite::SetColor(DirectX::XMFLOAT4 color, int index)
 {
 	m_data.color[index] = color;
+}
+void Sprite::SetColor(DirectX::XMFLOAT4 color)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		m_data.color[i] = color;
+	}
 }
 void Sprite::SetTexture(Texture* tex)
 {

@@ -18,6 +18,8 @@ public:
 	static void SetSize(DirectX::XMFLOAT2 size);
 	static void SetUVPos(DirectX::XMFLOAT2 pos);
 	static void SetUVScale(DirectX::XMFLOAT2 scale);
+
+	static void SetColor(DirectX::XMFLOAT4 color);
 	static void SetColor(DirectX::XMFLOAT4 color, int index);
 	static void SetTexture(Texture* tex);
 
@@ -29,6 +31,7 @@ public:
 	static void SetPixelShader(Shader* ps);
 
 private:
+	static void UpdateVertexColors(void);
 	struct Data
 	{
 		std::shared_ptr<MeshBuffer> mesh;
