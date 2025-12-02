@@ -266,7 +266,7 @@ void Block::OnCollision(Collision::Result collision)
 	}
 }
 
-void Block::GetCamera(Camera *camera)
+void Block::SetCamera(Camera *camera)
 {
 	m_pCamera = camera;
 }

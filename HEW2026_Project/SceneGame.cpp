@@ -32,13 +32,13 @@ SceneGame::SceneGame()
 
 	// First Buns_Button block
 	Block* firstBlock = new Block(Block::Block_Color::Buns_Button);
-	firstBlock->GetCamera(m_pCamera);
+	firstBlock->SetCamera(m_pCamera);
 	firstBlock->SetState(Block::BlockState::Block_Catched);
 	m_pBlock.push_back(firstBlock);
 
 	// Second random block
 	Block* secondBlock = new Block(m_pNextItem->Next(), x, z);
-	secondBlock->GetCamera(m_pCamera);
+	secondBlock->SetCamera(m_pCamera);
 	m_pBlock.push_back(secondBlock);
 
 	m_pPlayer->SetCamera(m_pCamera);
@@ -102,7 +102,7 @@ void SceneGame::Update()
 		if (block)
 		{
 			block->SetPlayerPos(playerPos);
-			block->GetCamera(m_pCamera);
+			block->SetCamera(m_pCamera);
 		}
 	}
 	for (auto it = m_pBlock.begin(); it != m_pBlock.end(); ++it)
@@ -118,7 +118,7 @@ void SceneGame::Update()
 			float x = RandomFloat(-5.0f, 5.0f);
 			float z = RandomFloat(-5.0f, 5.0f);
 			Block* newBlock = new Block(m_pNextItem->Next(), x, z);
-			newBlock->GetCamera(m_pCamera);
+			newBlock->SetCamera(m_pCamera);
 			newBlock->SetStep(block->GetStep() + 1);
 			m_pBlock.push_back(newBlock);
 
@@ -132,7 +132,7 @@ void SceneGame::Update()
 			float x = RandomFloat(-5.0f, 5.0f);
 			float z = RandomFloat(-5.0f, 5.0f);
 			Block* newBlock = new Block(m_pNextItem->Next(), x, z);
-			newBlock->GetCamera(m_pCamera);
+			newBlock->SetCamera(m_pCamera);
 			*it = newBlock; // replace the idle block
 			break;
 		}
@@ -191,7 +191,7 @@ void SceneGame::Update()
 		}
 		// Add new Buns_Button block at front
 		Block* bunBlock = new Block(Block::Block_Color::Buns_Button);
-		bunBlock->GetCamera(m_pCamera);
+		bunBlock->SetCamera(m_pCamera);
 		bunBlock->SetState(Block::BlockState::Block_Catched);
 		m_pBlock.push_front(bunBlock);
 
