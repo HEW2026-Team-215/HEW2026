@@ -14,7 +14,7 @@ private:
 	float m_radXZ;		// カメラの横回転
 	float m_radY;		// カメラの縦回転
 	float m_radius;	// カメラと注視点の距離
-
+	float m_radius_Z;
 };
 
 #endif//_CAMERADEBUG_H

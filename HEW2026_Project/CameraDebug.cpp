@@ -14,6 +14,7 @@ CameraDebug::CameraDebug()
 	:m_radXZ(0.0f)
 	, m_radY(0.5f * DEBUG_DISTANCE)
 	, m_radius(10.0f * DEBUG_DISTANCE)
+	, m_radius_Z(-10.0f * DEBUG_DISTANCE)
 {
 	m_radius = 115.f;
 }
@@ -52,6 +53,14 @@ void CameraDebug::Update()
 		m_radius -= (IsKeyPress(VK_SHIFT) * IIKANJINOTEISU2);
 		m_radY -= IIKANJINOTEISU + (IsKeyPress(VK_CONTROL) * IIKANJINOTEISU * 10.0f);
 	}
+	if (IsKeyPress(VK_LEFT))
+	{
+		m_radius_Z += (IsKeyPress(VK_SHIFT) * IIKANJINOTEISU2);
+	}
+	if (IsKeyPress(VK_RIGHT))
+	{
+		m_radius_Z -= (IsKeyPress(VK_SHIFT) * IIKANJINOTEISU2);
+	}
 
 	// カメラ位置の計算
 	m_pos.x = m_radius * cosf(m_radXZ);
@@ -60,7 +69,7 @@ void CameraDebug::Update()
 
 	m_pos.x = 0.0f;
 	m_pos.y = m_radius;
-	m_pos.z = -m_radius;
+	m_pos.z = m_radius_Z;
 	//m_look.x = count;
 }
 
