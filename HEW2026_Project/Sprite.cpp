@@ -88,7 +88,7 @@ float4 main(PS_IN pin) : SV_TARGET {
 	m_defVS = std::make_shared<VertexShader>();
 	m_defVS->Compile(VS);
 	m_data.vs = m_defVS.get();
-	m_defPS = std::make_shared <PixelShader>();
+	m_defPS = std::make_shared<PixelShader>();
 	m_defPS->Compile(PS);
 	m_data.ps = m_defPS.get();
 }
@@ -126,9 +126,9 @@ void Sprite::SetUVScale(DirectX::XMFLOAT2 scale)
 	m_data.param[1].z = scale.x;
 	m_data.param[1].w = scale.y;
 }
-void Sprite::SetColor(DirectX::XMFLOAT4 color)
+void Sprite::SetColor(DirectX::XMFLOAT4 color, int index)
 {
-	m_data.param[2] = color;
+	m_data.color[index] = color;
 }
 void Sprite::SetTexture(Texture* tex)
 {
