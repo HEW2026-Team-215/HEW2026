@@ -7,7 +7,7 @@
  *********************************************************************/
 
 #include "CameraDebug.h"
-
+#include "Transfer.h"
 
 CameraDebug::CameraDebug()
 	:m_radXZ(0.0f)
@@ -66,11 +66,14 @@ void CameraDebug::Update()
 	m_pos.y = m_radius * sinf(m_radY);
 	m_pos.z = m_radius * sinf(m_radXZ);
 
-	CAMERA_INS
+	TRAN_INS
 
-	m_pos.x = 0.0f;
-	m_pos.y = c_pos.m_posY;
-	m_pos.z = c_pos.m_posZ;
+	m_pos.x = tran.camera.eyePos.x;
+	m_pos.y = tran.camera.eyePos.y;
+	m_pos.z = tran.camera.eyePos.z;
+	m_look.x = tran.camera.lookPos.x;
+	m_look.y = tran.camera.lookPos.y;
+	m_look.z = tran.camera.lookPos.z;
 	//m_look.x = count;
 }
 

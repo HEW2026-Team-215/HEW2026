@@ -22,12 +22,13 @@ Player::Player()
 	, m_shotStep(SHOT_WAIT)
 	, m_power(0.0f)
 	, m_move()
-	, m_f2pos{ 0.0f,0.0f }
+	, m_f2Velocity{ 0.0f,0.0f }
 	, m_idx{}
 	, m_angle(0.0f)
 	, m_shadowPos{ 0.0f,0.0f,0.0f }
 	, csv(CsvData::get_instance())
 	, m_pModel(nullptr)
+	, tran(Transfer::GetInstance())
 {
 	m_collision.type = Collision::eBox;
 	m_collision.box = {

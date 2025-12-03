@@ -209,6 +209,7 @@
     <ClInclude Include="ShaderList.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Transfer.h" />
     <ClInclude Include="UIObject.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

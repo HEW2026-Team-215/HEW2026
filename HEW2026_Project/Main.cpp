@@ -14,6 +14,8 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
+// 情報を伝えるためのヘッダーファイル
+#include "Transfer.h"
 
 
 #include <fstream>   // ファイル操作用
@@ -99,6 +101,11 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	CAMERA_INS
 	c_pos.m_posY = 10.0f * DEBUG_DISTANCE;
 	c_pos.m_posZ = -10.0f * DEBUG_DISTANCE;
+	Transfer& tran = Transfer::GetInstance();
+	tran.Init();
+	tran.camera.eyePos.x = 0.0f;
+	tran.camera.eyePos.y = 10.0f * DEBUG_DISTANCE;
+	tran.camera.eyePos.z = -10.0f * DEBUG_DISTANCE;
 
 	return hr;
 }
@@ -133,18 +140,39 @@ void Draw()
 	static bool show_second_window = true;
 
 	CAMERA_INS
+	TRAN_INS
 
 	if (show_main_window)
 	{
-		ImGui::Begin("Camera Setting", &show_main_window);
-		static float value_y = c_pos.m_posY;
-		static float value_z = c_pos.m_posZ;
+		ImGui::Begin("Setting", &show_main_window);
+		// カメラの位置情報の表示と変更に伴った更新
 
-		ImGui::SliderFloat("value_y", &value_y, 0.01f, 500.0f);
-		ImGui::SliderFloat("value_x", &value_z, 0.01f, 500.0f);
+		if (ImGui::Button("Init"))
+			tran.Init();
 
-		c_pos.m_posY = value_y;
-		c_pos.m_posZ = value_z;
+		ImGui::Text("Player");
+
+		float p_pos[2] = { tran.player.pos.x ,tran.player.pos.y };
+		ImGui::SliderFloat2("Pos",p_pos,-12.0f,12.0f);
+		tran.player.pos.x = p_pos[0];
+		tran.player.pos.y = p_pos[1];
+		ImGui::Text("Camera EyePosition");
+		float value_x = tran.camera.eyePos.x;
+		float value_y = tran.camera.eyePos.y;
+		float value_z = tran.camera.eyePos.z;
+
+		ImGui::SliderFloat("Camera_Pos_X", &value_x, -500.0f, 500.0f);
+		ImGui::SliderFloat("Camera_Pos_Y", &value_y, -500.0f, 500.0f);
+		ImGui::SliderFloat("Camera_Pos_Z", &value_z, -500.0f, 500.0f);
+		if (value_x == 0.0f && value_y == 0.0f && value_z == 0.0f)
+		{
+			value_x = 0.01f;
+			value_y = 0.01f;
+			value_z = 0.01f;
+		}
+		tran.camera.eyePos.x = value_x;
+		tran.camera.eyePos.y = value_y;
+		tran.camera.eyePos.z = value_z;
 
 		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 		ImGui::End();
