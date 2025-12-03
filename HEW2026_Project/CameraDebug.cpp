@@ -7,7 +7,6 @@
  *********************************************************************/
 
 #include "CameraDebug.h"
-#include"Defines.h"
 
 
 CameraDebug::CameraDebug()
@@ -67,9 +66,11 @@ void CameraDebug::Update()
 	m_pos.y = m_radius * sinf(m_radY);
 	m_pos.z = m_radius * sinf(m_radXZ);
 
+	CAMERA_INS
+
 	m_pos.x = 0.0f;
-	m_pos.y = m_radius * 1.1f;
-	m_pos.z = m_radius_Z;
+	m_pos.y = c_pos.m_posY;
+	m_pos.z = c_pos.m_posZ;
 	//m_look.x = count;
 }
 
@@ -77,3 +78,4 @@ void CameraDebug::SetPos(const DirectX::XMFLOAT3& pos)
 {
 	m_pos = pos;
 }
+

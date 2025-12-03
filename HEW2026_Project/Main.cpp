@@ -7,7 +7,14 @@
 #include "SceneGame.h"
 #include "Defines.h"
 #include "ShaderList.h"
-#include"CsvData.h"
+#include "CsvData.h"
+#include "CameraDebug.h"
+
+//ImGuiの必要ファイルをインクルード
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
 
 #include <fstream>   // ファイル操作用
 #include <sstream>   // 文字列ストリーム用
@@ -88,6 +95,10 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 
 	CsvData& csv = CsvData::get_instance();
 	csv.Init();
+	
+	CAMERA_INS
+	c_pos.m_posY = 10.0f * DEBUG_DISTANCE;
+	c_pos.m_posZ = -10.0f * DEBUG_DISTANCE;
 
 	return hr;
 }
@@ -113,6 +124,33 @@ void Draw()
 {
 	BeginDrawDirectX();
 
+
+	// ───────────────────────
+	// ImGui 複数ウィンドウ
+	// ───────────────────────
+#ifdef _DEBUG
+	static bool show_main_window = true;
+	static bool show_second_window = true;
+
+	CAMERA_INS
+
+	if (show_main_window)
+	{
+		ImGui::Begin("Camera Setting", &show_main_window);
+		static float value_y = c_pos.m_posY;
+		static float value_z = c_pos.m_posZ;
+
+		ImGui::SliderFloat("value_y", &value_y, 0.01f, 500.0f);
+		ImGui::SliderFloat("value_x", &value_z, 0.01f, 500.0f);
+
+		c_pos.m_posY = value_y;
+		c_pos.m_posZ = value_z;
+
+		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+		ImGui::End();
+	}
+
+#endif
 	// 軸線の表示
 #ifdef _DEBUG
 	// グリッド

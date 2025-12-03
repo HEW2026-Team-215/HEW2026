@@ -55,9 +55,11 @@ static const float fFPS = static_cast<float>(FPS);
 #define PLAYER_HEIGHT	(2.0f)
 
 
-#define DEBUG_DISTANCE (5.0f)
+#define DEBUG_DISTANCE (11.0f)
 
-
+// インスタンスを確保するマクロ
+// c_pos という名前でアクセス
+#define CAMERA_INS Cam_Pos& c_pos = Cam_Pos::GetInstance();
 
 #define HALF(in) (in / 2.0f)
 #define FIELD_WIDTH (2.0f)
