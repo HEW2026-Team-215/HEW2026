@@ -22,6 +22,7 @@ protected:
 
 	//テクスチャと描画設定
 	Texture* m_pTimerTex;		//テクスチャ
+	Texture* m_pTimerFrameTex;		//テクスチャ
 
 	//ヘルパー関数
 	std::string TimeToString(double timeInSeconds);
