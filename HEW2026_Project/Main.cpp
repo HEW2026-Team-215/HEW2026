@@ -9,6 +9,7 @@
 #include "ShaderList.h"
 #include "CsvData.h"
 #include "CameraDebug.h"
+#include "Sound.h"
 
 //ImGuiの必要ファイルをインクルード
 #include "imgui.h"
@@ -95,17 +96,25 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	// シーン
 	g_pScene = new SceneGame();
 
+
+	// csvのデータを取得
 	CsvData& csv = CsvData::get_instance();
 	csv.Init();
 	
+	// カメラのインスタンス取得
 	CAMERA_INS
 	c_pos.m_posY = 10.0f * DEBUG_DISTANCE;
 	c_pos.m_posZ = -10.0f * DEBUG_DISTANCE;
+	// 値を入れるためのインスタンスを取得
 	Transfer& tran = Transfer::GetInstance();
 	tran.Init();
 	tran.camera.eyePos.x = 0.0f;
 	tran.camera.eyePos.y = 10.0f * DEBUG_DISTANCE;
 	tran.camera.eyePos.z = -10.0f * DEBUG_DISTANCE;
+
+	// サウンドマネージャを取得
+	SoundManager& sound = SoundManager::GetInstance();
+	sound.Init();
 
 	return hr;
 }
@@ -118,6 +127,9 @@ void Uninit()
 	UninitInput();
 	Sprite::Uninit();
 	Geometory::Uninit();
+
+	SE_INS;
+	sound.Uninit();
 	UninitDirectX();
 }
 
@@ -138,11 +150,18 @@ void Draw()
 #ifdef _DEBUG
 	static bool show_main_window = true;
 	static bool show_second_window = true;
+	static bool show_player_window = true;
+	static bool show_camera_window = true;
+	static bool show_stage_window = true;
 
 	CAMERA_INS
-	TRAN_INS
+		TRAN_INS
+		SoundManager& sound = SoundManager::GetInstance();
 
-	if (show_main_window)
+	if (IsKeyPress('U') && IsKeyPress('I') && IsKeyPress('O') && IsKeyPress('P'))
+		show_main_window = true;
+
+	if (true)
 	{
 		ImGui::Begin("Setting", &show_main_window);
 		// カメラの位置情報の表示と変更に伴った更新
@@ -150,33 +169,90 @@ void Draw()
 		if (ImGui::Button("Init"))
 			tran.Init();
 
-		ImGui::Text("Player");
+		ImGui::Checkbox("Player Setting",&show_player_window);
+		ImGui::Checkbox("Camera Setting", &show_camera_window);
 
-		float p_pos[2] = { tran.player.pos.x ,tran.player.pos.y };
-		ImGui::SliderFloat2("Pos",p_pos,-12.0f,12.0f);
-		tran.player.pos.x = p_pos[0];
-		tran.player.pos.y = p_pos[1];
-		ImGui::Text("Camera EyePosition");
-		float value_x = tran.camera.eyePos.x;
-		float value_y = tran.camera.eyePos.y;
-		float value_z = tran.camera.eyePos.z;
-
-		ImGui::SliderFloat("Camera_Pos_X", &value_x, -500.0f, 500.0f);
-		ImGui::SliderFloat("Camera_Pos_Y", &value_y, -500.0f, 500.0f);
-		ImGui::SliderFloat("Camera_Pos_Z", &value_z, -500.0f, 500.0f);
-		if (value_x == 0.0f && value_y == 0.0f && value_z == 0.0f)
-		{
-			value_x = 0.01f;
-			value_y = 0.01f;
-			value_z = 0.01f;
-		}
-		tran.camera.eyePos.x = value_x;
-		tran.camera.eyePos.y = value_y;
-		tran.camera.eyePos.z = value_z;
+		// -----------Sound Debug-----------//
+		if (ImGui::Button("UpMoney"))
+			sound.PlaySE(0);
+		if (ImGui::Button("ride"))
+			sound.PlaySE(1);
+		if (ImGui::Button("show order"))
+			sound.PlaySE(2);
+		if (ImGui::Button("order success"))
+			sound.PlaySE(3);
+		if (ImGui::Button("walk"))
+			sound.PlaySE(4);
+		if (ImGui::Button("drop"))
+			sound.PlaySE(5);
 
 		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
+	// -----------プレイヤー-----------
+	if (show_player_window)
+	{
+		ImGui::Begin("Player Setting", &show_player_window);
+		//-----------プレイヤー-----------//
+		// プレイヤーの位置情報
+		float p_pos[2] = { tran.player.pos.x ,tran.player.pos.y };
+
+		ImGui::SliderFloat2("Pos", p_pos, -12.0f, 12.0f);
+
+		tran.player.pos.x = p_pos[0];
+		tran.player.pos.y = p_pos[1];
+
+		// プレイヤーの最大速度
+		float p_speed[2];
+		p_speed[0] = tran.player.maxSpeed.x;
+		p_speed[1] = tran.player.maxSpeed.y;
+		// プレイヤーの加速度
+		float p_velocity = tran.player.velocity;
+		ImGui::SliderFloat("Player Speed Up", &p_velocity, 0.0f, 0.50f);
+		tran.player.velocity = p_velocity;
+
+		// プレイヤーの減速度
+		float p_speedDown = tran.player.speedDown;
+
+		ImGui::SliderFloat("Player Speed Down", &p_speedDown, 0.25f, 1.0);
+
+		tran.player.speedDown = p_speedDown;
+
+		ImGui::SliderFloat2("Player Max Speed", p_speed, 0.0f, 10.0f);
+		tran.player.maxSpeed.x = p_speed[0];
+		tran.player.maxSpeed.y = p_speed[1];
+
+		ImGui::End();
+	}
+
+	// -----------カメラ-----------
+	if (show_camera_window)
+	{
+		ImGui::Begin("Camera Setting",&show_camera_window);
+		ImGui::Text("Camera EyePosition");
+		// カメラの位置情報
+		float camera_pos[3] = { tran.camera.eyePos.x,tran.camera.eyePos.y,tran.camera.eyePos.z };
+
+		ImGui::SliderFloat3("Camera Pos", camera_pos, -1000.0f, 1000.0f);
+
+		if (camera_pos[0] == 0.0f && camera_pos[2] == 0.0f && camera_pos[1] == 0.0f)
+		{
+			camera_pos[0] = 0.01f;
+			camera_pos[1] = 0.01f;
+			camera_pos[2] = 0.01f;
+		}
+		// 注視点
+		tran.camera.eyePos.x = camera_pos[0];
+		tran.camera.eyePos.y = camera_pos[1];
+		tran.camera.eyePos.z = camera_pos[2];
+		float camera_lookPos[3] = {tran.camera.lookPos.x,tran.camera.lookPos.y,tran.camera.lookPos.z};
+		ImGui::SliderFloat3("Camera Look",camera_lookPos,-500.0f,500.0f);
+		tran.camera.lookPos.x = camera_lookPos[0];
+		tran.camera.lookPos.y = camera_lookPos[1];
+		tran.camera.lookPos.z = camera_lookPos[2];
+		ImGui::End();
+	}
+
 
 #endif
 	// 軸線の表示
@@ -246,7 +322,6 @@ void Draw()
 	Geometory::SetView(mat[0]);
 	Geometory::SetProjection(mat[1]);
 #endif
-
 	g_pScene->RootDraw();
 	EndDrawDirectX();
 }

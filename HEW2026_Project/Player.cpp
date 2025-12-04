@@ -127,7 +127,7 @@ Player::float2 PlayerMoveGrid(Player::float2 pos)
 Player::float2 PlayerMoveSmooth(Player::float2 pos)
 {
 	CsvData& csv = CsvData::get_instance();
-
+	TRAN_INS
 
 	static bool isPress;
 	static int nPressCount;
@@ -151,19 +151,19 @@ Player::float2 PlayerMoveSmooth(Player::float2 pos)
 	}
 	if (IsKeyPress('A'))
 	{
-		pos.x -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		pos.x -= tran.player.velocity;
 	}
 	if (IsKeyPress('D'))
 	{
-		pos.x += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		pos.x += tran.player.velocity;
 	}
 	if (IsKeyPress('W'))
 	{
-		pos.y += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		pos.y += tran.player.velocity;
 	}
 	if (IsKeyPress('S'))
 	{
-		pos.y -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		pos.y -= tran.player.velocity;
 	}
 	return pos;
 }
@@ -335,33 +335,37 @@ void Player::UpdateControl()
 {
 	if (IsKeyPress('A'))
 	{
-		m_move.x -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_move.x -= tran.player.velocity;
 	}
 	if (IsKeyPress('D'))
 	{
-		m_move.x += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_move.x += tran.player.velocity;
 	}
 	if (IsKeyPress('W'))
 	{
-		m_move.z += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_move.z += tran.player.velocity;
 	}
 	if (IsKeyPress('S'))
 	{
-		m_move.z -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_move.z -= tran.player.velocity;
 	}
 }
 
 void Player::UpdateMove()
 {
+	// Transferのインスタンスを取得
+	TRAN_INS
+
+
 	// 移動処理
 	m_pos.x += m_move.x;
 	m_pos.y += m_move.y;
 	m_pos.z += m_move.z;
 
 	// 減速処理(空気抵抗
-	m_move.x *= 0.95f;
-	m_move.y *= 0.95f;
-	m_move.z *= 0.95f;
+	m_move.x *= tran.player.speedDown;
+	m_move.y *= tran.player.speedDown;
+	m_move.z *= tran.player.speedDown;
 
 	// 重力
 	m_move.y -= MSEC(GRAVITY);
