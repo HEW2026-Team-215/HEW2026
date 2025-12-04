@@ -9,6 +9,7 @@
 #include<DirectXMath.h>
 #include"Sprite.h"
 #include"Model.h"
+#include"Animation.h"
 
 class Player : public GameObject {
 public:
@@ -52,7 +53,7 @@ private:
 private:
 	Camera* m_pCamera;	//　カメラ情報
 	DirectX::XMFLOAT3	m_move;		// 移動量
-	bool		m_isStop;	// ボールの停止判定
+	bool	m_isStop;	// ボールの停止判定
 	int		m_shotStep; // 
 	float	m_power;		// speedにvLenを格納
 	float2 m_f2pos;
@@ -71,8 +72,10 @@ private:
 private:
 	float m_idleTimer = 0.0f;     // Tracks time for idle motion
     float m_idleAmplitude = 0.05f; // How much the player bobs up and down
-    float m_idleSpeed = 6.0f;      // Speed of bobbing
+    float m_idleSpeed = 10.0f;      // Speed of bobbing
     DirectX::XMFLOAT3 m_startPos;  // Store initial position
+
+	Animation m_animation;//idle animation
 };
 
 #endif//_PLAYER_H

@@ -200,19 +200,7 @@ void Player::Update()
 	UpdateMove();	// 摩擦の処理
 	UpdateWall();
 
-	// Idle animation: only when the player is stopped
-	if (!IsKeyPress('D')|| !IsKeyPress('A')||!IsKeyPress('w')||!IsKeyPress('S'))
-	{
-		m_idleTimer += MSEC(1.0f); // or deltaTime if you have it
-		m_pos.y = m_startPos.y + sinf(m_idleTimer * m_idleSpeed) * m_idleAmplitude;
-
-	}
-	else
-	{
-		// Reset idle when moving
-		m_idleTimer = 0.0f;
-		m_startPos = m_pos; // update base position for next idle
-	}
+	
 }
 
 void Player::Draw()
@@ -338,6 +326,7 @@ void Player::UpdateControl()
 	if (IsKeyPress('A'))
 	{
 		m_move.x -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_animation.SetState(Animation::AnimState::Move);
 	}
 	if (IsKeyPress('D'))
 	{
