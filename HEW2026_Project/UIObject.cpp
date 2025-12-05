@@ -113,6 +113,8 @@ void UIObject::Draw()
 	SetDepthTest(true);
 }
 
+//=====| Setter |=====//
+
 void UIObject::SetPosition(float X, float Y)
 {
 	m_fPosition = {X, Y};
@@ -156,6 +158,26 @@ void UIObject::SetColor(float R, float G, float B, float A)
 	}
 }
 
+/**
+* \brief 始点、終点、角度を指定してグラデーションを描画.
+* 
+* \param fromR 始点R値(0.0f ~ 1.0f)
+* \param fromG 始点G値(0.0f ~ 1.0f)
+* \param fromB 始点B値(0.0f ~ 1.0f)
+* \param fromA 始点A値(0.0f ~ 1.0f)
+* \param toR 終点R値(0.0f ~ 1.0f)
+* \param toG 終点G値(0.0f ~ 1.0f)
+* \param toB 終点B値(0.0f ~ 1.0f)
+* \param toA 終点A値(0.0f ~ 1.0f)
+* \param degree 角度(0 ~ 360: 0 = 上から下)
+*/
+void UIObject::GenerateGradient(float fromR, float fromG, float fromB, float fromA, float toR, float toG, float toB, float toA, int degree)
+{
+	GenerateGradient({ fromR, fromG, fromB, fromA }, { toR, toG, toB, toA }, degree);
+}
+
+//=====| Getter |=====//
+
 DirectX::XMFLOAT2 UIObject::GetPosition(void)
 {
 	return m_fPosition;
@@ -185,6 +207,9 @@ DirectX::XMFLOAT4 UIObject::GetColor(int index)
 {
 		return m_fColor[index];
 }
+
+//=====| Setter as XMFLOATx |=====//
+
 
 /**
 * \brief 始点、終点、角度を指定してグラデーションを描画.
@@ -234,3 +259,4 @@ void UIObject::GenerateGradient(DirectX::XMFLOAT4 colorFrom, DirectX::XMFLOAT4 c
 		m_fColor[i] = col;
 	}
 }
+

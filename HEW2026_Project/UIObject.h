@@ -26,6 +26,8 @@ public:
 	virtual void Update() {};
 	void Draw();
 
+	//===== Setter =====//
+
 	void SetPosition(float X, float Y);
 	void SetPosition(DirectX::XMFLOAT2 pos);
 	void SetSize(float W, float H);
@@ -35,7 +37,9 @@ public:
 	void SetUVPosition(float X, float Y);
 	void SetUVScale(float X, float Y);
 	void SetColor(float R, float G, float B, float A);
-	void GenerateGradient(DirectX::XMFLOAT4 colorFrom, DirectX::XMFLOAT4 colorTo, int degree);
+	void GenerateGradient(float fromR, float fromG, float fromB, float fromA, float toR, float toG, float toB, float toA, int degree);
+
+	//===== Getter =====//
 
 	DirectX::XMFLOAT2 GetPosition(void);
 	DirectX::XMFLOAT2 GetSize(void);
@@ -44,6 +48,9 @@ public:
 	DirectX::XMFLOAT2 GetUVScale(void);
 	DirectX::XMFLOAT4 GetColor(int index);
 
+	//===== Setter as XMFLOATx =====//
+
+	void GenerateGradient(DirectX::XMFLOAT4 colorFrom, DirectX::XMFLOAT4 colorTo, int degree);
 private:
 	Texture* m_pTexture;
 	DirectX::XMFLOAT2 m_fPosition;
