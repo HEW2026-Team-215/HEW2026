@@ -163,43 +163,7 @@ void Draw()
 	if (IsKeyPress('U') && IsKeyPress('I') && IsKeyPress('O') && IsKeyPress('P'))
 		show_main_window = true;
 
-	if (show_main_window)
-	{
-		ImGui::Begin("Setting", &show_main_window);
-		// カメラの位置情報の表示と変更に伴った更新
 
-		if (ImGui::Button("Init"))
-			tran.Init();
-
-		if (ImGui::Button("Save"))
-			tran.SaveTransferToCsv("Assets/Csv/Information.csv");
-		if (ImGui::Button("Load"))
-			tran.LoadTransferFromCsv("Assets/Csv/Information.csv");
-
-		ImGui::Checkbox("Player Setting",&show_player_window);
-		ImGui::Checkbox("Camera Setting", &show_camera_window);
-		ImGui::Checkbox("Stage Setting", &show_stage_window);
-		ImGui::Checkbox("Item Setting", &show_item_window);
-		ImGui::Checkbox("Order Setting", &show_order_window);
-		ImGui::Checkbox("UI Setting", &show_ui_window);
-
-		// -----------Sound Debug-----------//
-		if (ImGui::Button("UpMoney"))
-			sound.PlaySE(0);
-		if (ImGui::Button("ride"))
-			sound.PlaySE(1);
-		if (ImGui::Button("show order"))
-			sound.PlaySE(2);
-		if (ImGui::Button("order success"))
-			sound.PlaySE(3);
-		if (ImGui::Button("walk"))
-			sound.PlaySE(4);
-		if (ImGui::Button("drop"))
-			sound.PlaySE(5);
-
-		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-		ImGui::End();
-	}
 	// -----------プレイヤー-----------
 	if (show_player_window)
 	{
@@ -343,6 +307,43 @@ void Draw()
 		ImGui::End();
 	}
 
+	if (show_main_window)
+	{
+		ImGui::Begin("Setting", &show_main_window);
+		// カメラの位置情報の表示と変更に伴った更新
+
+		if (ImGui::Button("Init"))
+			tran.Init();
+
+		if (ImGui::Button("Save"))
+			tran.SaveTransferToCsv("Assets/Csv/Information.csv");
+		if (ImGui::Button("Load"))
+			tran.LoadTransferFromCsv("Assets/Csv/Information.csv");
+
+		ImGui::Checkbox("Player Setting",&show_player_window);
+		ImGui::Checkbox("Camera Setting", &show_camera_window);
+		ImGui::Checkbox("Stage Setting", &show_stage_window);
+		ImGui::Checkbox("Item Setting", &show_item_window);
+		ImGui::Checkbox("Order Setting", &show_order_window);
+		ImGui::Checkbox("UI Setting", &show_ui_window);
+
+		// -----------Sound Debug-----------//
+		if (ImGui::Button("UpMoney"))
+			sound.PlaySE(0);
+		if (ImGui::Button("ride"))
+			sound.PlaySE(1);
+		if (ImGui::Button("show order"))
+			sound.PlaySE(2);
+		if (ImGui::Button("order success"))
+			sound.PlaySE(3);
+		if (ImGui::Button("walk"))
+			sound.PlaySE(4);
+		if (ImGui::Button("drop"))
+			sound.PlaySE(5);
+
+		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+		ImGui::End();
+	}
 
 #endif
 	// 軸線の表示
