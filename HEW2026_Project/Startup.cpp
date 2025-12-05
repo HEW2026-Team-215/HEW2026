@@ -1,27 +1,31 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include "Defines.h"
 #include "Main.h"
 #include <stdio.h>
 #include <crtdbg.h>
+#include"imgui_impl_win32.h"
+#include"DirectX.h"
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
+HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-// timeGetTimeü‚è‚Ìg—p
+// timeGetTimeå‘¨ã‚Šã®ä½¿ç”¨
 #pragma comment(lib, "winmm.lib")
 
-//--- ƒvƒƒgƒ^ƒCƒvéŒ¾
+//--- ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 
-// ƒGƒ“ƒgƒŠƒ|ƒCƒ“ƒg
+// ã‚¨ãƒ³ãƒˆãƒªãƒã‚¤ãƒ³ãƒˆ
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	//--- •Ï”éŒ¾
+	//--- å¤‰æ•°å®£è¨€
 	WNDCLASSEX wcex;
 	HWND hWnd;
 	MSG message;
 
-	// ƒEƒBƒ“ƒhƒNƒ‰ƒXî•ñ‚Ìİ’è
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¯ãƒ©ã‚¹æƒ…å ±ã®è¨­å®š
 	ZeroMemory(&wcex, sizeof(wcex));
 	wcex.hInstance = hInstance;
 	wcex.lpszClassName = "Class Name";
@@ -33,14 +37,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 
-	// ƒEƒBƒ“ƒhƒEƒNƒ‰ƒXî•ñ‚Ì“o˜^
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹æƒ…å ±ã®ç™»éŒ²
 	if (!RegisterClassEx(&wcex))
 	{
 		MessageBox(NULL, "Failed to RegisterClassEx", "Error", MB_OK);
 		return 0;
 	}
 
-	// ƒEƒBƒ“ƒhƒE‚Ìì¬
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆ
 	RECT rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 	DWORD style = WS_CAPTION | WS_SYSMENU;
 	DWORD exStyle = WS_EX_OVERLAPPEDWINDOW;
@@ -54,11 +58,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		NULL, hInstance, NULL
 	);
 
-	// ƒEƒBƒ“ƒhƒE‚Ì•\¦
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤º
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
-	// ‰Šú‰»ˆ—
+	// åˆæœŸåŒ–å‡¦ç†
 	if (FAILED(Init(hWnd, SCREEN_WIDTH, SCREEN_HEIGHT)))
 	{
 		Uninit();
@@ -66,12 +70,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	//--- FPS§Œä
+	//--- FPSåˆ¶å¾¡
 	timeBeginPeriod(1);
 	DWORD countStartTime = timeGetTime();
 	DWORD preExecTime = countStartTime;
 
-	//--- ƒEƒBƒ“ƒhƒE‚ÌŠÇ—
+	//--- ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç®¡ç†
 	while (1)
 	{
 		if (PeekMessage(&message, NULL, 0, 0, PM_NOREMOVE))
@@ -100,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 
-	// I—¹
+	// çµ‚äº†æ™‚
 	timeEndPeriod(1);
 	Uninit();
 	UnregisterClass(wcex.lpszClassName, hInstance);
@@ -108,11 +112,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return 0;
 }
 
-// ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
+
 	switch (message)
 	{
+	case WM_SIZE:
+		// æœ€å°åŒ–ä¸­ã¯ä½•ã‚‚ã—ãªã„
+		if (wParam != SIZE_MINIMIZED)
+		{
+			UINT width = LOWORD(lParam);
+			UINT height = HIWORD(lParam);
+			OnResizeDirectX(width, height);
+		}
+		return 0;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

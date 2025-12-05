@@ -1,4 +1,4 @@
-#ifndef __SHADER_LIST_H__
+Ôªø#ifndef __SHADER_LIST_H__
 #define __SHADER_LIST_H__
 
 #include "Shader.h"
@@ -7,20 +7,23 @@
 
 class ShaderList
 {
-	// íËã`
+	// ÂÆöÁæ©
 public:
 	enum VSKind
 	{
 		VS_WORLD, // SetWVP
-		VS_ANIME, // SetWVP,SetBones
+		VS_ANIME, // SetWVP, SetBones
 		VS_KIND_MAX
 	};
 	enum PSKind
 	{
-		PS_LAMBERT, //SetMaterial, SetLight
-		PS_SPECULAR, //SetMaterial, SetLight, SetCameraPos
-		PS_TOON, // SetMaterial, SetLight
-		PS_FOG, // SetMaterial, SetLight,SetFog
+		PS_UNLIT,			// SetMaterial
+		PS_LAMBERT,			// SetMaterial, SetLight
+		PS_SPECULAR,		// SetMaterial, SetLight, SetCameraPos
+		PS_CUSTOM_LAMBERT,	// SetMaterial, SetLight
+		PS_CUSTOM_SPECULAR,	// SetMaterial, SetLight, SetCameraPos
+		PS_TOON,			// SetMaterial, SetLight
+		PS_FOG,				// SetMaterial, SetLight, SetFog
 		PS_KIND_MAX
 	};
 
@@ -32,30 +35,33 @@ public:
 	static void Init();
 	static void Uninit();
 
-	// ÉVÉFÅ[É_Å[ê›íË
-	static VertexShader* GetVS(VSKind vs);
-	static PixelShader* GetPS(PSKind ps);
+	// „Ç∑„Çß„Éº„ÉÄ„ÉºË®≠ÂÆö
+	static VertexShader *GetVS(VSKind vs);
+	static PixelShader *GetPS(PSKind ps);
 
-	// íËêîÉoÉbÉtÉ@Ç÷ÇÃê›íË
-	static void SetWVP(DirectX::XMFLOAT4X4* wvp);
-	static void SetBones(DirectX::XMFLOAT4X4* bones200);
-	static void SetMaterial(const Model::Material& material);
+	// ÂÆöÊï∞„Éê„ÉÉ„Éï„Ç°„Å∏„ÅÆË®≠ÂÆö
+	static void SetWVP(DirectX::XMFLOAT4X4 *wvp);
+	static void SetBones(DirectX::XMFLOAT4X4 *bones200);
+	static void SetMaterial(const Model::Material &material);
 	static void SetLight(DirectX::XMFLOAT4 color, DirectX::XMFLOAT3 dir);
 	static void SetCameraPos(const DirectX::XMFLOAT3 pos);
 	static void SetFog(DirectX::XMFLOAT4 color, float start, float range);
-	
+
 private:
 	static void MakeWorldVS();
 	static void MakeAnimeVS();
+	static void MakeUnlitPS();
 	static void MakeLambertPS();
 	static void MakeSpecularPS();
+	static void MakeCustomLambertPS();
+	static void MakeCustomSpecularPS();
 	static void MakeToonPS();
 	static void MakeFogPS();
 
 private:
-	static VertexShader* m_pVS[VS_KIND_MAX];
-	static PixelShader* m_pPS[PS_KIND_MAX];
-	
+	static VertexShader *m_pVS[VS_KIND_MAX];
+	static PixelShader *m_pPS[PS_KIND_MAX];
+
 };
 
 #endif // __SHADER_LIST_H__

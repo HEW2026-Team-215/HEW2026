@@ -1,18 +1,22 @@
-#include "Player.h"
+ï»¿#include "Player.h"
 #include"Defines.h"
 #include"Main.h"
 #include"Sprite.h"
 #include "ShaderList.h"
 
 #include"CsvData.h"
+#include"Sound.h"
 
-Player::Index PosToIndex(Player::float2 f2pos);// ƒCƒ“ƒfƒbƒNƒXÀ•W‚©‚çƒtƒB[ƒ‹ƒhã‚Ì‚´‚Ğ‚å‚¤‚É•ÏŠ·
-Player::float2 IndexToPos(Player::Index idx);// ƒtƒB[ƒ‹ƒhã‚ÌÀ•W‚©‚ç ƒCƒ“ƒfƒbƒNƒXÀ•W‚É•ÏŠ·
+#define PRE(in) IsKeyPress(in)
+
+
+Player::Index PosToIndex(Player::float2 f2pos);// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹åº§æ¨™ã‹ã‚‰ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ä¸Šã®ã–ã²ã‚‡ã†ã«å¤‰æ›
+Player::float2 IndexToPos(Player::Index idx);// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ä¸Šã®åº§æ¨™ã‹ã‚‰ ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹åº§æ¨™ã«å¤‰æ›
 
 enum eGolfBallShotStep {
-	SHOT_WAIT,		// ‹…‚ğ‘Å‚Â‚Ì‚ğ‘Ò‚Â
-	SHOT_KEEP,		// ƒL[“ü—ÍŠJn
-	SHOT_RELEASE,	// ƒL[“ü—Í‚ğ‚â‚ß‚½i‹…‚ğ‘Å‚Â
+	SHOT_WAIT,		// çƒã‚’æ‰“ã¤ã®ã‚’å¾…ã¤
+	SHOT_KEEP,		// ã‚­ãƒ¼å…¥åŠ›é–‹å§‹
+	SHOT_RELEASE,	// ã‚­ãƒ¼å…¥åŠ›ã‚’ã‚„ã‚ãŸï¼ˆçƒã‚’æ‰“ã¤
 };
 
 
@@ -22,12 +26,13 @@ Player::Player()
 	, m_shotStep(SHOT_WAIT)
 	, m_power(0.0f)
 	, m_move()
-	, m_f2pos{ 0.0f,0.0f }
+	, m_f2Velocity{ 0.0f,0.0f }
 	, m_idx{}
 	, m_angle(0.0f)
 	, m_shadowPos{ 0.0f,0.0f,0.0f }
 	, csv(CsvData::get_instance())
 	, m_pModel(nullptr)
+	, tran(Transfer::GetInstance())
 {
 	m_collision.type = Collision::eBox;
 	m_collision.box = {
@@ -40,8 +45,8 @@ Player::Player()
 	}
 
 	m_pModel = new Model();
-	if (!m_pModel->Load("Assets/Model/Prototype/MD_Player.fbx", 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-		MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+	if (!m_pModel->Load("Assets/Model/Prototype/MD_Player.fbx", 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+		MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 	}
 
 	DirectX::XMMATRIX view, proj;
@@ -81,7 +86,7 @@ Player::~Player()
 	}
 }
 
-// ƒvƒŒƒCƒ„[‚Ì“®‚«‚ğXV‚·‚é‚½‚ß‚ÌŠÖ”
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‹•ãã‚’æ›´æ–°ã™ã‚‹ãŸã‚ã®é–¢æ•°
 Player::float2 PlayerMoveGrid(Player::float2 pos)
 {
 	static bool isPress;
@@ -126,7 +131,7 @@ Player::float2 PlayerMoveGrid(Player::float2 pos)
 Player::float2 PlayerMoveSmooth(Player::float2 pos)
 {
 	CsvData& csv = CsvData::get_instance();
-
+	TRAN_INS
 
 	static bool isPress;
 	static int nPressCount;
@@ -150,34 +155,36 @@ Player::float2 PlayerMoveSmooth(Player::float2 pos)
 	}
 	if (IsKeyPress('A'))
 	{
-		pos.x -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		pos.x -= tran.player.velocity;
 	}
 	if (IsKeyPress('D'))
 	{
-		pos.x += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		pos.x += tran.player.velocity;
 	}
 	if (IsKeyPress('W'))
 	{
-		pos.y += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		pos.y += tran.player.velocity;
 	}
 	if (IsKeyPress('S'))
 	{
-		pos.y -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		pos.y -= tran.player.velocity;
 	}
 	return pos;
 }
 
 void Player::Update()
 {
-	// ƒJƒƒ‰‚ªİ’è‚³‚ê‚Ä‚È‚¢ê‡‚Íˆ—‚µ‚È‚¢
+	// ã‚«ãƒ¡ãƒ©ãŒè¨­å®šã•ã‚Œã¦ãªã„å ´åˆã¯å‡¦ç†ã—ãªã„
 	if (!m_pCamera) { return; }
 
-	m_collision.box.center = m_pos;	// XVˆ—Œã‚É“–‚½‚è”»’è‚ÌˆÊ’u‚ğXV
+	m_collision.box.center = m_pos;	// æ›´æ–°å‡¦ç†å¾Œã«å½“ãŸã‚Šåˆ¤å®šã®ä½ç½®ã‚’æ›´æ–°
 
-
+	TRAN_INS;
+	m_pos.x = tran.player.pos.x;
+	m_pos.z = tran.player.pos.y;
 
 #ifdef _DEBUG
-	// ‰ñ“]ˆ—
+	// å›è»¢å‡¦ç†
 	if (IsKeyPress('Q'))
 	{
 		m_angle -= csv.GetSpeed();
@@ -194,92 +201,98 @@ void Player::Update()
 	{
 		m_move.y += csv.GetSpeed();
 	}
+
 #endif
 	UpdateControl();
-	UpdateMove();	// –€C‚Ìˆ—
+	UpdateMove();	// æ‘©æ“¦ã®å‡¦ç†
 	UpdateWall();
+
+#ifdef _DEBUG
+	tran.player.pos.x = m_pos.x;
+	tran.player.pos.y = m_pos.z;
+#endif
 }
 
 void Player::Draw()
 {
 	Texture* g_pMyTexture = new Texture();
-	HRESULT hr = g_pMyTexture->Create("Assets/Texture/white.png"); // © “Ç‚İ‚İ‚½‚¢‰æ‘œ
+	HRESULT hr = g_pMyTexture->Create("Assets/Texture/white.png"); // â† èª­ã¿è¾¼ã¿ãŸã„ç”»åƒ
 	if (FAILED(hr))
 	{
-		// ƒGƒ‰[ˆ—
+		// ã‚¨ãƒ©ãƒ¼å‡¦ç†
 	}
 	DirectX::XMFLOAT4 color = { 1.0f,0.0f,0.0f,1.0f };
 	Sprite::SetColor(color);
-	DirectX::XMMATRIX T; // “V–Ê‚ªƒOƒŠƒbƒh‚æ‚è‚à‰º‚É—ˆ‚é‚æ‚¤‚ÉˆÚ“®
-	DirectX::XMMATRIX S; // ’n–Ê‚Æ‚È‚é‚æ‚¤‚ÉA‘OŒã¶‰E‚ÉL‚­Aã‰º‚É‹·‚­‚·‚é
+	DirectX::XMMATRIX T; // å¤©é¢ãŒã‚°ãƒªãƒƒãƒ‰ã‚ˆã‚Šã‚‚ä¸‹ã«æ¥ã‚‹ã‚ˆã†ã«ç§»å‹•
+	DirectX::XMMATRIX S; // åœ°é¢ã¨ãªã‚‹ã‚ˆã†ã«ã€å‰å¾Œå·¦å³ã«åºƒãã€ä¸Šä¸‹ã«ç‹­ãã™ã‚‹
 	DirectX::XMMATRIX mat;
 
 
-	T = DirectX::XMMatrixTranslation(m_pos.x, .25f, m_pos.z); // “V–Ê‚ªƒOƒŠƒbƒh‚æ‚è‚à‰º‚É—ˆ‚é‚æ‚¤‚ÉˆÚ“®
+	T = DirectX::XMMatrixTranslation(m_pos.x, .25f, m_pos.z); // å¤©é¢ãŒã‚°ãƒªãƒƒãƒ‰ã‚ˆã‚Šã‚‚ä¸‹ã«æ¥ã‚‹ã‚ˆã†ã«ç§»å‹•
 	DirectX::XMMATRIX Ry = DirectX::XMMatrixRotationY(m_angle);
-	S = DirectX::XMMatrixScaling(FIELD_WIDTH, 0.5f, FIELD_WIDTH); // ’n–Ê‚Æ‚È‚é‚æ‚¤‚ÉA‘OŒã¶‰E‚ÉL‚­Aã‰º‚É‹·‚­‚·‚é
+	S = DirectX::XMMatrixScaling(FIELD_WIDTH, 0.5f, FIELD_WIDTH); // åœ°é¢ã¨ãªã‚‹ã‚ˆã†ã«ã€å‰å¾Œå·¦å³ã«åºƒãã€ä¸Šä¸‹ã«ç‹­ãã™ã‚‹
 	mat = S * Ry * T;
 	mat = DirectX::XMMatrixTranspose(mat);
-	DirectX::XMFLOAT4X4 fMat; // s—ñ‚ÌŠi”[æ
+	DirectX::XMFLOAT4X4 fMat; // è¡Œåˆ—ã®æ ¼ç´å…ˆ
 	DirectX::XMStoreFloat4x4(&fMat, mat);
 
-	//---------- ‚±‚±‚©‚ç‰e‚Ì•`‰æ ----------//
+	//---------- ã“ã“ã‹ã‚‰å½±ã®æç”» ----------//
 
-	float rate = (m_pos.y - m_shadowPos.y) / METER(4.0f);	// ‹——£‚ª‹ß‚¯‚ê‚Î0,‰“‚¯‚ê‚Î1
-	float scale = (1.0f - rate);								// rate‚ğ0‚È‚ç1A1‚È‚ç0‚É‚È‚é‚æ‚¤”½“]
+	float rate = (m_pos.y - m_shadowPos.y) / METER(4.0f);	// è·é›¢ãŒè¿‘ã‘ã‚Œã°0,é ã‘ã‚Œã°1
+	float scale = (1.0f - rate);								// rateã‚’0ãªã‚‰1ã€1ãªã‚‰0ã«ãªã‚‹ã‚ˆã†åè»¢
 	m_shadowPos.x = m_pos.x;
 	m_shadowPos.z = m_pos.z;
 	Sprite::SetSize(DirectX::XMFLOAT2{ scale,0.0f});
-	// ‰e‚ğ•\¦‚·‚é‚½‚ß‚Ìs—ñŒvZ
-	DirectX::XMMATRIX Sprite_S = DirectX::XMMatrixScaling(scale, scale, scale);	// scale‚ğŒ³‚ÉŠgk
-	DirectX::XMMATRIX Sprite_Rx = DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(-90.0f)); 	// ƒXƒvƒ‰ƒCƒg‚ğ‰¡‚É“|‚·
-	DirectX::XMMATRIX Sprite_T = DirectX::XMMatrixTranslation(		// Zƒtƒ@ƒCƒeƒBƒ“ƒO‰ñ”ğ‚Å­‚µ•‚‚©‚·
+	// å½±ã‚’è¡¨ç¤ºã™ã‚‹ãŸã‚ã®è¡Œåˆ—è¨ˆç®—
+	DirectX::XMMATRIX Sprite_S = DirectX::XMMatrixScaling(scale, scale, scale);	// scaleã‚’å…ƒã«æ‹¡ç¸®
+	DirectX::XMMATRIX Sprite_Rx = DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(-90.0f)); 	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚’æ¨ªã«å€’ã™
+	DirectX::XMMATRIX Sprite_T = DirectX::XMMatrixTranslation(		// Zãƒ•ã‚¡ã‚¤ãƒ†ã‚£ãƒ³ã‚°å›é¿ã§å°‘ã—æµ®ã‹ã™
 		m_pos.x, 0.0f, m_pos.z);
-	DirectX::XMMATRIX Sprite_mat = Sprite_S * Sprite_Rx * Sprite_T;	// ‚»‚ê‚¼‚ê‚Ì”’l‚ğƒ}[ƒW
-	Sprite_mat = DirectX::XMMatrixTranspose(mat);// s—ñ•ÏŠ·‚ğs‚¤
-	DirectX::XMFLOAT4X4 Sprite_fMat; // •`‰æê—p•Ï”‚ğ’è‹`
-	DirectX::XMStoreFloat4x4(&Sprite_fMat, Sprite_mat);//mWorld‚ğ“]’u‚µ‚Ämat‚ÉŠi”[
+	DirectX::XMMATRIX Sprite_mat = Sprite_S * Sprite_Rx * Sprite_T;	// ãã‚Œãã‚Œã®æ•°å€¤ã‚’ãƒãƒ¼ã‚¸
+	Sprite_mat = DirectX::XMMatrixTranspose(mat);// è¡Œåˆ—å¤‰æ›ã‚’è¡Œã†
+	DirectX::XMFLOAT4X4 Sprite_fMat; // æç”»å°‚ç”¨å¤‰æ•°ã‚’å®šç¾©
+	DirectX::XMStoreFloat4x4(&Sprite_fMat, Sprite_mat);//mWorldã‚’è»¢ç½®ã—ã¦matã«æ ¼ç´
 
-	// êŠ‚ğw’è
+	// å ´æ‰€ã‚’æŒ‡å®š
 	m_dxpos = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(
 			(IsKeyPress('D') * -90.0f) + (IsKeyPress('A') * 90.0f) + 
 			(IsKeyPress('W') * 180.0f) + (IsKeyPress('S') * 0.0f)
 		))
 		* DirectX::XMMatrixTranslation(m_pos.x, 0.5f, m_pos.z);
 
-	//@ŒvZ—p‚Ìƒf[ƒ^‚©‚ç“Ç‚İæ‚è—p‚Ìƒf[ƒ^‚É•ÏŠ·
+	//ã€€è¨ˆç®—ç”¨ã®ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰èª­ã¿å–ã‚Šç”¨ã®ãƒ‡ãƒ¼ã‚¿ã«å¤‰æ›
 	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
 
-	// ƒ‚ƒfƒ‹‚É•ÏŠ·s—ñ‚ğİ’è
+	// ãƒ¢ãƒ‡ãƒ«ã«å¤‰æ›è¡Œåˆ—ã‚’è¨­å®š
 	wvp[1] = m_pCamera->GetViewMatrix();
 	wvp[2] = m_pCamera->GetProjectionMatrix();
 
-	//@ƒVƒF[ƒ_[‚Ö•ÏŠ·s—ñ‚ğİ’è
-	ShaderList::SetWVP(wvp);	//@ˆø”‚É‚ÍXMFLOAT4X4Œ^‚ÌA—v‘f”‚R‚Ì”z—ñ‚ÌƒAƒhƒŒƒX‚ğ“n‚·‚±‚Æ
+	//ã€€ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã¸å¤‰æ›è¡Œåˆ—ã‚’è¨­å®š
+	ShaderList::SetWVP(wvp);	//ã€€å¼•æ•°ã«ã¯XMFLOAT4X4å‹ã®ã€è¦ç´ æ•°ï¼“ã®é…åˆ—ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’æ¸¡ã™ã“ã¨
 
 
 	Geometory::SetView(m_pCamera->GetViewMatrix(true));
 	Geometory::SetProjection(m_pCamera->GetProjectionMatrix(true));
-	// Sprite‚Ö‚Ìİ’è
+	// Spriteã¸ã®è¨­å®š
 	Sprite::SetView(m_pCamera->GetViewMatrix(true));
 	Sprite::SetProjection(m_pCamera->GetProjectionMatrix(true));
 
-	//@ƒ‚ƒfƒ‹‚Ég—p‚·‚é’¸“_ƒVƒF[ƒ_[AƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚ğİ’è
+	//ã€€ãƒ¢ãƒ‡ãƒ«ã«ä½¿ç”¨ã™ã‚‹é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã€ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®š
 	m_pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
 	m_pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
 
-	//@•¡”‚ÌƒƒbƒVƒ…‚Å\¬‚³‚ê‚Ä‚¢‚éê‡A‚ ‚é•”•ª‚Í‹à‘®“I‚È•\Œ»A‚ ‚é•”•ª‚Í”ñ‹à‘®“I‚È•\Œ»‚Æ
-	// •ª‚¯‚éê‡‚ª‚ ‚éB‘O‰ñ‚Ì•\¦‚Í“¯‚¶ƒ}ƒeƒŠƒAƒ‹‚ÅˆêŠ‡•\¦‚µ‚Ä‚¢‚½‚½‚ßAƒƒbƒVƒ…‚²‚Æ‚Éƒ}ƒeƒŠƒAƒ‹‚ğ
-	// Ø‚è‘Ö‚¦‚éB
+	//ã€€è¤‡æ•°ã®ãƒ¡ãƒƒã‚·ãƒ¥ã§æ§‹æˆã•ã‚Œã¦ã„ã‚‹å ´åˆã€ã‚ã‚‹éƒ¨åˆ†ã¯é‡‘å±çš„ãªè¡¨ç¾ã€ã‚ã‚‹éƒ¨åˆ†ã¯éé‡‘å±çš„ãªè¡¨ç¾ã¨
+	// åˆ†ã‘ã‚‹å ´åˆãŒã‚ã‚‹ã€‚å‰å›ã®è¡¨ç¤ºã¯åŒã˜ãƒãƒ†ãƒªã‚¢ãƒ«ã§ä¸€æ‹¬è¡¨ç¤ºã—ã¦ã„ãŸãŸã‚ã€ãƒ¡ãƒƒã‚·ãƒ¥ã”ã¨ã«ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’
+	// åˆ‡ã‚Šæ›¿ãˆã‚‹ã€‚
 	for (int i = 0; i < m_pModel->GetMeshNum(); ++i) 
 	{
-		// ƒ‚ƒfƒ‹‚ÌƒƒbƒVƒ…‚ğæ“¾
+		// ãƒ¢ãƒ‡ãƒ«ã®ãƒ¡ãƒƒã‚·ãƒ¥ã‚’å–å¾—
 		Model::Mesh mesh = *m_pModel->GetMesh(i);
-		// ƒƒbƒVƒ…‚ÉŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚éƒ}ƒeƒŠƒAƒ‹‚ğæ“¾
+		// ãƒ¡ãƒƒã‚·ãƒ¥ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å–å¾—
 		Model::Material	material = *m_pModel->GetMaterial(mesh.materialID);
-		// ƒVƒF[ƒ_[‚Öƒ}ƒeƒŠƒAƒ‹‚ğİ’è
+		// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã¸ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’è¨­å®š
 		ShaderList::SetMaterial(material);
-		// ƒ‚ƒfƒ‹‚Ì•`‰æ
+		// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 		m_pModel->Draw(i);
 	}
 }
@@ -293,7 +306,7 @@ void Player::SetCamera(Camera *camera)
 void Player::UpdateShot()
 {
 	switch (m_shotStep) {
-		// ‹…‚Ì‘Å‚¿‚Í‚¶‚ß
+		// çƒã®æ‰“ã¡ã¯ã˜ã‚
 	case SHOT_WAIT:
 		if (IsKeyTrigger('Z')) {
 			m_power = 0.0f;
@@ -302,29 +315,29 @@ void Player::UpdateShot()
 		break;
 
 
-		// ƒL[“ü—ÍŒp‘±’†
+		// ã‚­ãƒ¼å…¥åŠ›ç¶™ç¶šä¸­
 	case SHOT_KEEP:
-		m_power += 0.1f;	 // ‹…‚ğ‘Å‚¿o‚·—Í‚ğ—­‚ß‚é
+		m_power += 0.1f;	 // çƒã‚’æ‰“ã¡å‡ºã™åŠ›ã‚’æºœã‚ã‚‹
 		if (IsKeyRelease('Z')) {
 			m_shotStep = SHOT_RELEASE;
 		}
 		break;
 
-		// ‹…‚ğ‘Å‚Â
+		// çƒã‚’æ‰“ã¤
 	case SHOT_RELEASE:
 	{
-		// ‘Å‚¿o‚·ŒvZ
-		DirectX::XMFLOAT3 camPos = m_pCamera->GetPos();						//ƒJƒƒ‰‚ÌˆÊ’u‚ğæ“¾
-		DirectX::XMVECTOR vCamPos = DirectX::XMLoadFloat3(&camPos);			//ƒJƒƒ‰‚ÌˆÊ’u‚ğŒvZ—p‚ÌŒ^‚É•ÏŠ·
-		DirectX::XMVECTOR vPos = DirectX::XMLoadFloat3(&m_pos);				//©•ª‚ÌˆÊ’u‚ğŒvZ—p‚ÌŒ^‚É•ÏŠ·
-		DirectX::XMVECTOR vec = DirectX::XMVectorSubtract(vPos, vCamPos);	//ƒJƒƒ‰‚©‚ç©•ª‚ÌˆÊ’u‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğŒvZ
-		vec = DirectX::XMVector3Normalize(vec);		//ƒxƒNƒgƒ‹‚Ì³‹K‰»
-		vec = DirectX::XMVectorScale(vec, m_power);		//³‹K‰»‚µ‚½ƒxƒNƒgƒ‹‚ğA—­‚ß‚½—Í‚É‰‚¶‚ÄL‚Î‚·
-		DirectX::XMStoreFloat3(&m_move, vec);//ˆÚ“®‚Ìƒf[ƒ^m_move‚ÉŒvZ‚µ‚½vec‚ğİ’è‚·‚éiŒvZ—p‚ÌŒ^‚©‚ç•Û‘¶—p‚ÌŒ^‚É•ÏŠ·;
+		// æ‰“ã¡å‡ºã™è¨ˆç®—
+		DirectX::XMFLOAT3 camPos = m_pCamera->GetPos();						//ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‚’å–å¾—
+		DirectX::XMVECTOR vCamPos = DirectX::XMLoadFloat3(&camPos);			//ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‚’è¨ˆç®—ç”¨ã®å‹ã«å¤‰æ›
+		DirectX::XMVECTOR vPos = DirectX::XMLoadFloat3(&m_pos);				//è‡ªåˆ†ã®ä½ç½®ã‚’è¨ˆç®—ç”¨ã®å‹ã«å¤‰æ›
+		DirectX::XMVECTOR vec = DirectX::XMVectorSubtract(vPos, vCamPos);	//ã‚«ãƒ¡ãƒ©ã‹ã‚‰è‡ªåˆ†ã®ä½ç½®ã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
+		vec = DirectX::XMVector3Normalize(vec);		//ãƒ™ã‚¯ãƒˆãƒ«ã®æ­£è¦åŒ–
+		vec = DirectX::XMVectorScale(vec, m_power);		//æ­£è¦åŒ–ã—ãŸãƒ™ã‚¯ãƒˆãƒ«ã‚’ã€æºœã‚ãŸåŠ›ã«å¿œã˜ã¦ä¼¸ã°ã™
+		DirectX::XMStoreFloat3(&m_move, vec);//ç§»å‹•ã®ãƒ‡ãƒ¼ã‚¿m_moveã«è¨ˆç®—ã—ãŸvecã‚’è¨­å®šã™ã‚‹ï¼ˆè¨ˆç®—ç”¨ã®å‹ã‹ã‚‰ä¿å­˜ç”¨ã®å‹ã«å¤‰æ›;
 		
-		// ‘Å‚¿o‚µŒã‚Ìî•ñ‚ğİ’è
-		m_isStop = false;			// ˆÚ“®‚µ‚Ä‚¢‚éI
-		m_shotStep = SHOT_WAIT;		// ‚Ü‚½Ä‚Ñ‘Å‚Â
+		// æ‰“ã¡å‡ºã—å¾Œã®æƒ…å ±ã‚’è¨­å®š
+		m_isStop = false;			// ç§»å‹•ã—ã¦ã„ã‚‹ï¼
+		m_shotStep = SHOT_WAIT;		// ã¾ãŸå†ã³æ‰“ã¤
 		break;
 	}
 	}
@@ -334,62 +347,81 @@ void Player::UpdateControl()
 {
 	if (IsKeyPress('A'))
 	{
-		m_move.x -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_move.x -= tran.player.velocity;
 	}
 	if (IsKeyPress('D'))
 	{
-		m_move.x += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_move.x += tran.player.velocity;
 	}
 	if (IsKeyPress('W'))
 	{
-		m_move.z += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_move.z += tran.player.velocity;
 	}
 	if (IsKeyPress('S'))
 	{
-		m_move.z -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_move.z -= tran.player.velocity;
 	}
+
+	// Pressãªã®ã§é€£ç¶šå…¥åŠ›æ™‚ã«ç‰¹å®šãƒ•ãƒ¬ãƒ¼ãƒ æ¯(20)ã«ã®ã¿åå¿œã™ã‚‹å‡¦ç†
+	static int pressCount;
+	if ((PRE('W') || PRE('A') || PRE('S') || PRE('D')) && pressCount <= 0)
+	{
+		pressCount = 20;
+		SE_INS_So.PlaySE(4);
+	}
+	if (pressCount > 0)
+	{
+		pressCount--;
+	}
+
 }
 
 void Player::UpdateMove()
 {
-	// ˆÚ“®ˆ—
+	// Transferã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—
+	TRAN_INS
+
+
+	// ç§»å‹•å‡¦ç†
 	m_pos.x += m_move.x;
 	m_pos.y += m_move.y;
 	m_pos.z += m_move.z;
 
-	// Œ¸‘¬ˆ—(‹ó‹C’ïR
-	m_move.x *= 0.95f;
-	m_move.y *= 0.95f;
-	m_move.z *= 0.95f;
+	// æ¸›é€Ÿå‡¦ç†(ç©ºæ°—æŠµæŠ—
+	m_move.x *= tran.player.speedDown;
+	m_move.y *= tran.player.speedDown;
+	m_move.z *= tran.player.speedDown;
 
-	// d—Í
+	//ã“ã®ä½œå“ã®å ´åˆã¯ã“ã‚Œã‚ˆã‚Šä¸‹ã®å‡¦ç†ã¯ä¸è¦ãªã®ã§ã‚¹ã‚­ãƒƒãƒ—
+	return;
+	// é‡åŠ›
 	m_move.y -= MSEC(GRAVITY);
 
-	// ’n–ÊÚG”»’è
+	// åœ°é¢æ¥è§¦åˆ¤å®š
 	if (m_pos.y < 0.0f) {
-		// ÚG‚ÌŒ¸‘¬ˆ—
+		// æ¥è§¦æ™‚ã®æ¸›é€Ÿå‡¦ç†
 		m_move.x *= 0.95f;
 		m_move.y *= 0.5f;
 		m_move.z *= 0.95f;
 
-		// ƒoƒEƒ“ƒhˆ—
-		m_move.y = -m_move.y; // Y‚ÌˆÚ“®•ûŒü‚ğ”½“]
-		if (m_move.y < CMETER(5.0f)) {	// ƒoƒEƒ“ƒh‚ª¬‚³‚¢‚©”»’è
+		// ãƒã‚¦ãƒ³ãƒ‰å‡¦ç†
+		m_move.y = -m_move.y; // Yã®ç§»å‹•æ–¹å‘ã‚’åè»¢
+		if (m_move.y < CMETER(5.0f)) {	// ãƒã‚¦ãƒ³ãƒ‰ãŒå°ã•ã„ã‹åˆ¤å®š
 			m_move.y = 0.0f;
 			m_pos.y = 0.0f;
 		}
 		else {
-			// ’n–Ê‚É‚ß‚è‚ñ‚Å‚¢‚é‚Ì‚ÅAƒoƒEƒ“ƒh‚µ‚½ê‡‚ÌˆÊ’u‚É•ÏX
+			// åœ°é¢ã«ã‚ã‚Šè¾¼ã‚“ã§ã„ã‚‹ã®ã§ã€ãƒã‚¦ãƒ³ãƒ‰ã—ãŸå ´åˆã®ä½ç½®ã«å¤‰æ›´
 			m_pos.y = -m_pos.y;
 		}
 	}
-	// ’â~”»’è
+	// åœæ­¢åˆ¤å®š
 	float speed;
-	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);//ˆÚ“®î•ñ‚ğŒvZ—p‚ÌŒ^‚É•ÏŠ·
-	DirectX::XMVECTOR vLen = DirectX::XMVector3Length(vMove);//vMove‚©‚çˆÚ“®—Ê‚ğŒvZ
-	DirectX::XMStoreFloat(&speed, vLen);		// speed‚ÉvLen‚ğŠi”[
+	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);//ç§»å‹•æƒ…å ±ã‚’è¨ˆç®—ç”¨ã®å‹ã«å¤‰æ›
+	DirectX::XMVECTOR vLen = DirectX::XMVector3Length(vMove);//vMoveã‹ã‚‰ç§»å‹•é‡ã‚’è¨ˆç®—
+	DirectX::XMStoreFloat(&speed, vLen);		// speedã«vLenã‚’æ ¼ç´
 	if (speed < CMSEC(30.0f)) 
-	{	// 1•bŠÔ‚É30cm‚®‚ç‚¢i‚ŞƒXƒs[ƒh‚Å‚ ‚ê‚Î’â~
+	{	// 1ç§’é–“ã«30cmãã‚‰ã„é€²ã‚€ã‚¹ãƒ”ãƒ¼ãƒ‰ã§ã‚ã‚Œã°åœæ­¢
 		m_isStop = true;
 		m_shotStep = SHOT_WAIT;
 	}
@@ -397,24 +429,24 @@ void Player::UpdateMove()
 
 void Player::UpdateWall()
 {
-	if (m_pos.x > MAX_FIELD_WIDTH(csv) - HALF(PLAYER_WIDTH))
+	if (m_pos.x > MAX_FIELD_WIDTH - HALF(PLAYER_WIDTH))
 	{
-		m_pos.x = MAX_FIELD_WIDTH(csv) - HALF(PLAYER_WIDTH);
+		m_pos.x = MAX_FIELD_WIDTH - HALF(PLAYER_WIDTH);
 		m_move.x = 0.0f;
 	}
-	if (m_pos.x < -MAX_FIELD_WIDTH(csv) + HALF(PLAYER_WIDTH))		
+	if (m_pos.x < -MAX_FIELD_WIDTH + HALF(PLAYER_WIDTH))		
 	{
-		m_pos.x = -MAX_FIELD_WIDTH(csv) + HALF(PLAYER_WIDTH);
+		m_pos.x = -MAX_FIELD_WIDTH + HALF(PLAYER_WIDTH);
 		m_move.x = 0.0f;
 	}
-	if (m_pos.z > MAX_FIELD_HEIGHT(csv) - HALF(PLAYER_WIDTH))		
+	if (m_pos.z > MAX_FIELD_HEIGHT - HALF(PLAYER_WIDTH))		
 	{
-		m_pos.z = MAX_FIELD_HEIGHT(csv) - HALF(PLAYER_WIDTH);
+		m_pos.z = MAX_FIELD_HEIGHT - HALF(PLAYER_WIDTH);
 		m_move.z = 0.0f;
 	}
-	if (m_pos.z < -MAX_FIELD_HEIGHT(csv) + HALF(PLAYER_WIDTH))	
+	if (m_pos.z < -MAX_FIELD_HEIGHT + HALF(PLAYER_WIDTH))	
 	{
-		m_pos.z = -MAX_FIELD_HEIGHT(csv) + HALF(PLAYER_WIDTH);
+		m_pos.z = -MAX_FIELD_HEIGHT + HALF(PLAYER_WIDTH);
 		m_move.z = 0.0f;
 	}
 
@@ -438,22 +470,22 @@ Player::Index PosToIndex(Player::float2 pos)
 
 void Player::OnCollision(Collision::Result collision)
 {
-	// ŒvZ‚É•K—v‚Èî•ñ‚ğ–‘O‚ÉŒvZ
+	// è¨ˆç®—ã«å¿…è¦ãªæƒ…å ±ã‚’äº‹å‰ã«è¨ˆç®—
 	DirectX::XMVECTOR vHitPos = DirectX::XMLoadFloat3(&collision.point);
 	DirectX::XMVECTOR vNormal = DirectX::XMLoadFloat3(&collision.normal);
 	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);
 	vNormal = DirectX::XMVector3Normalize(vNormal);
 
-	// ”½Ë‚ÌŒvZ
+	// åå°„ã®è¨ˆç®—
 	DirectX::XMVECTOR vDot = DirectX::XMVector3Dot(vNormal, vMove);
 	vDot = DirectX::XMVectorScale(vDot, 2.0f);
 	vDot = DirectX::XMVectorMultiply(vNormal, DirectX::XMVectorAbs(vDot));
 	vMove = DirectX::XMVectorAdd(vMove, vDot);
 	DirectX::XMStoreFloat3(&m_move, vMove);
 
-	// ”½ËŒã‚Ì•â³
+	// åå°„å¾Œã®è£œæ­£
 	if (collision.other.type == Collision::eBox) {
-		// ƒ{ƒbƒNƒX‚ÉÕ“Ë‚µ‚½ê‡AÕ“ËˆÊ’u‚Ì•â³
+		// ãƒœãƒƒã‚¯ã‚¹ã«è¡çªã—ãŸå ´åˆã€è¡çªä½ç½®ã®è£œæ­£
 		Collision::Box other = collision.other.box;
 		if (collision.normal.x != 0.0f)
 			m_pos.x =
@@ -464,17 +496,17 @@ void Player::OnCollision(Collision::Result collision)
 		else
 			m_pos.z =
 			other.center.z + collision.normal.z * (other.size.z + collision.other.box.size.z) * 0.5f;
-		// ”½ËŒã‚ÌˆÚ“®‘¬“x‚Ì•â³
+		// åå°„å¾Œã®ç§»å‹•é€Ÿåº¦ã®è£œæ­£
 		m_move.x *= 0.8f;
 		m_move.y *= 0.6f;
 		m_move.z *= 0.8f;
 	}
 	else {
-		// Î–Ê‚ÉÕ“Ë‚µ‚½ê‡‚ÌˆÊ’u‚Ì•â³
+		// æ–œé¢ã«è¡çªã—ãŸå ´åˆã®ä½ç½®ã®è£œæ­£
 		m_pos.x = collision.point.x + collision.normal.x * collision.other.box.size.x * 0.5f;
 		m_pos.y = collision.point.y + collision.normal.y * collision.other.box.size.y * 0.5f;
 		m_pos.z = collision.point.z + collision.normal.z * collision.other.box.size.z * 0.5f;
-		// ”½ËŒã‚ÌˆÚ“®‘¬“x‚Ì•â³
+		// åå°„å¾Œã®ç§»å‹•é€Ÿåº¦ã®è£œæ­£
 		m_move.x *= 0.2f;
 		m_move.y *= 0.5f;
 		m_move.z *= 0.2f;

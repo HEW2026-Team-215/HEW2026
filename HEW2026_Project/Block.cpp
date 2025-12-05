@@ -1,7 +1,9 @@
-#include "Block.h"
+ï»¿#include "Block.h"
 #include"Geometory.h"
 #include"ShaderList.h"
 #include"Sprite.h"
+#include "Sound.h"
+#include"Transfer.h"
 
 Block::Block()
 	: m_move{}
@@ -24,52 +26,53 @@ Block::Block()
 	int count=0;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";	count++;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";			count++;
 	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";		count++;
 	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Bacon.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";		count++;
 	m_pModel = new Model();
 	switch (m_bColor)
 	{
 	case Block::Buns_up:
-		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Top", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Buns_Button:
-		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Buttom", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Bacon:
-		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Bacon", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Cheese:
-		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Cheese", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Fried_egg:
-		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Egg", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Patty:
-		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Patty", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Lettuce:
-		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Lettuce", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Tomato:
-		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[7].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Tomato", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::None:
@@ -114,14 +117,17 @@ Block::~Block()
 
 void Block::Update()
 {
+	TRAN_INS;
 	switch (m_state)
 	{
 	case Block::Block_Idle:
 		break;
 	case Block::Block_Drop:
-		m_pos.y -= csv.GetBlockState().blo.posY;
 
-		// ÅV‚ÌƒvƒŒƒCƒ„[ˆÊ’u‚Å“–‚½‚è”»’è‚·‚é
+		m_pos.y -= tran.item.downSpeed;
+		//m_pos.y -= csv.GetBlockState().blo.posY;
+
+		// æœ€æ–°ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®ã§å½“ãŸã‚Šåˆ¤å®šã™ã‚‹
 		if (m_playerPos.x > m_pos.x - (csv.GetBlockState().blo.size.x / 2.0f) &&
 			m_playerPos.x < m_pos.x + (csv.GetBlockState().blo.size.x / 2.0f))
 		{
@@ -148,14 +154,16 @@ void Block::Update()
 	default:
 		break;
 	}
-
-	m_dxpos = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
+	
+	m_dxpos = 
+		DirectX::XMMatrixScaling(tran.item.size.x,tran.item.size.y,tran.item.size.z) * 
+		DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
 }
 
 void Block::Draw()
 {
-	DirectX::XMMATRIX T; // “V–Ê‚ªƒOƒŠƒbƒh‚æ‚è‚à‰º‚É—ˆ‚é‚æ‚¤‚ÉˆÚ“®
-	DirectX::XMMATRIX S; // ’n–Ê‚Æ‚È‚é‚æ‚¤‚ÉA‘OŒã¶‰E‚ÉL‚­Aã‰º‚É‹·‚­‚·‚é
+	DirectX::XMMATRIX T; // å¤©é¢ãŒã‚°ãƒªãƒƒãƒ‰ã‚ˆã‚Šã‚‚ä¸‹ã«æ¥ã‚‹ã‚ˆã†ã«ç§»å‹•
+	DirectX::XMMATRIX S; // åœ°é¢ã¨ãªã‚‹ã‚ˆã†ã«ã€å‰å¾Œå·¦å³ã«åºƒãã€ä¸Šä¸‹ã«ç‹­ãã™ã‚‹
 	DirectX::XMMATRIX mat;
 	DirectX::XMFLOAT4X4 fMat;
 
@@ -166,67 +174,96 @@ void Block::Draw()
 
 	DirectX::XMStoreFloat4x4(&fMat,mat);
 
-	Geometory::SetWorld(fMat); // ƒ{ƒbƒNƒX‚É•ÏŠ·s—ñ‚ğİ’è
+	Geometory::SetWorld(fMat); // ãƒœãƒƒã‚¯ã‚¹ã«å¤‰æ›è¡Œåˆ—ã‚’è¨­å®š
 	if(m_pModel == nullptr)
-		Geometory::DrawCylinder();// ‰e‚Ì‘å‚«‚³‚ğŒvZ
+		Geometory::DrawCylinder();// å½±ã®å¤§ãã•ã‚’è¨ˆç®—
 	if(m_pModel != nullptr)
 	{
-		//@ŒvZ—p‚Ìƒf[ƒ^‚©‚ç“Ç‚İæ‚è—p‚Ìƒf[ƒ^‚É•ÏŠ·
+		//ã€€è¨ˆç®—ç”¨ã®ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰èª­ã¿å–ã‚Šç”¨ã®ãƒ‡ãƒ¼ã‚¿ã«å¤‰æ›
 		DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
 
-		// ƒ‚ƒfƒ‹‚É•ÏŠ·s—ñ‚ğİ’è
+		// ãƒ¢ãƒ‡ãƒ«ã«å¤‰æ›è¡Œåˆ—ã‚’è¨­å®š
 		wvp[1] = m_pCamera->GetViewMatrix();
 		wvp[2] = m_pCamera->GetProjectionMatrix();
 
-		//@ƒVƒF[ƒ_[‚Ö•ÏŠ·s—ñ‚ğİ’è
-		ShaderList::SetWVP(wvp);	//@ˆø”‚É‚ÍXMFLOAT4X4Œ^‚ÌA—v‘f”‚R‚Ì”z—ñ‚ÌƒAƒhƒŒƒX‚ğ“n‚·‚±‚Æ
+		//ã€€ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã¸å¤‰æ›è¡Œåˆ—ã‚’è¨­å®š
+		ShaderList::SetWVP(wvp);	//ã€€å¼•æ•°ã«ã¯XMFLOAT4X4å‹ã®ã€è¦ç´ æ•°ï¼“ã®é…åˆ—ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’æ¸¡ã™ã“ã¨
 
 
 		Geometory::SetView(m_pCamera->GetViewMatrix(true));
 		Geometory::SetProjection(m_pCamera->GetProjectionMatrix(true));
-		// Sprite‚Ö‚Ìİ’è
+		// Spriteã¸ã®è¨­å®š
 		Sprite::SetView(m_pCamera->GetViewMatrix(true));
 		Sprite::SetProjection(m_pCamera->GetProjectionMatrix(true));
 
-		//@ƒ‚ƒfƒ‹‚Ég—p‚·‚é’¸“_ƒVƒF[ƒ_[AƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚ğİ’è
+		//ã€€ãƒ¢ãƒ‡ãƒ«ã«ä½¿ç”¨ã™ã‚‹é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã€ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®š
 		m_pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
 		m_pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
 
-		//@•¡”‚ÌƒƒbƒVƒ…‚Å\¬‚³‚ê‚Ä‚¢‚éê‡A‚ ‚é•”•ª‚Í‹à‘®“I‚È•\Œ»A‚ ‚é•”•ª‚Í”ñ‹à‘®“I‚È•\Œ»‚Æ
-		// •ª‚¯‚éê‡‚ª‚ ‚éB‘O‰ñ‚Ì•\¦‚Í“¯‚¶ƒ}ƒeƒŠƒAƒ‹‚ÅˆêŠ‡•\¦‚µ‚Ä‚¢‚½‚½‚ßAƒƒbƒVƒ…‚²‚Æ‚Éƒ}ƒeƒŠƒAƒ‹‚ğ
-		// Ø‚è‘Ö‚¦‚éB
+		//ã€€è¤‡æ•°ã®ãƒ¡ãƒƒã‚·ãƒ¥ã§æ§‹æˆã•ã‚Œã¦ã„ã‚‹å ´åˆã€ã‚ã‚‹éƒ¨åˆ†ã¯é‡‘å±çš„ãªè¡¨ç¾ã€ã‚ã‚‹éƒ¨åˆ†ã¯éé‡‘å±çš„ãªè¡¨ç¾ã¨
+		// åˆ†ã‘ã‚‹å ´åˆãŒã‚ã‚‹ã€‚å‰å›ã®è¡¨ç¤ºã¯åŒã˜ãƒãƒ†ãƒªã‚¢ãƒ«ã§ä¸€æ‹¬è¡¨ç¤ºã—ã¦ã„ãŸãŸã‚ã€ãƒ¡ãƒƒã‚·ãƒ¥ã”ã¨ã«ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’
+		// åˆ‡ã‚Šæ›¿ãˆã‚‹ã€‚
 		for (int i = 0; i < m_pModel->GetMeshNum(); ++i)
 		{
-			// ƒ‚ƒfƒ‹‚ÌƒƒbƒVƒ…‚ğæ“¾
+			// ãƒ¢ãƒ‡ãƒ«ã®ãƒ¡ãƒƒã‚·ãƒ¥ã‚’å–å¾—
 			Model::Mesh mesh = *m_pModel->GetMesh(i);
-			// ƒƒbƒVƒ…‚ÉŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚éƒ}ƒeƒŠƒAƒ‹‚ğæ“¾
+			// ãƒ¡ãƒƒã‚·ãƒ¥ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å–å¾—
 			Model::Material	material = *m_pModel->GetMaterial(mesh.materialID);
-			// ƒVƒF[ƒ_[‚Öƒ}ƒeƒŠƒAƒ‹‚ğİ’è
+			// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã¸ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’è¨­å®š
 			ShaderList::SetMaterial(material);
-			// ƒ‚ƒfƒ‹‚Ì•`‰æ
+			// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 			m_pModel->Draw(i);
+		}
+		//=====================å½±=============================
+
+		{
+				DirectX::XMMATRIX T_shadow;
+				DirectX::XMMATRIX S_shadow;
+
+				float shadowHeight = 0.05f; // avoid z-fighting
+				T_shadow = DirectX::XMMatrixTranslation(m_pos.x, 0.0f + shadowHeight, m_pos.z);
+
+				float shadowScaleX = csv.GetBlockState().blo.size.x * 1.2f;
+				float shadowScaleZ = csv.GetBlockState().blo.size.y * 1.2f;
+
+				S_shadow = DirectX::XMMatrixScaling(shadowScaleX, 0.01f, shadowScaleZ);
+
+				DirectX::XMMATRIX shadowMat = S_shadow * T_shadow;
+				shadowMat = DirectX::XMMatrixTranspose(shadowMat);
+
+				DirectX::XMFLOAT4X4 fShadow;
+				DirectX::XMStoreFloat4x4(&fShadow, shadowMat);
+
+				// shadow color
+				Model::Material shadowMaterial = {};
+				shadowMaterial.diffuse = DirectX::XMFLOAT4(0, 0, 0, 0.5f);
+
+				ShaderList::SetMaterial(shadowMaterial);
+				Geometory::SetWorld(fShadow);
+
+				Geometory::DrawCylinder();
 		}
 	}
 }
 
 void Block::OnCollision(Collision::Result collision)
 {
-	// ŒvZ‚É•K—v‚Èî•ñ‚ğ–‘O‚ÉŒvZ
+	// è¨ˆç®—ã«å¿…è¦ãªæƒ…å ±ã‚’äº‹å‰ã«è¨ˆç®—
 	DirectX::XMVECTOR vHitPos = DirectX::XMLoadFloat3(&collision.point);
 	DirectX::XMVECTOR vNormal = DirectX::XMLoadFloat3(&collision.normal);
 	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);
 	vNormal = DirectX::XMVector3Normalize(vNormal);
 
-	// ”½Ë‚ÌŒvZ
+	// åå°„ã®è¨ˆç®—
 	DirectX::XMVECTOR vDot = DirectX::XMVector3Dot(vNormal, vMove);
 	vDot = DirectX::XMVectorScale(vDot, 2.0f);
 	vDot = DirectX::XMVectorMultiply(vNormal, DirectX::XMVectorAbs(vDot));
 	vMove = DirectX::XMVectorAdd(vMove, vDot);
 	DirectX::XMStoreFloat3(&m_move, vMove);
 
-	// ”½ËŒã‚Ì•â³
+	// åå°„å¾Œã®è£œæ­£
 	if (collision.other.type == Collision::eBox) {
-		// ƒ{ƒbƒNƒX‚ÉÕ“Ë‚µ‚½ê‡AÕ“ËˆÊ’u‚Ì•â³
+		// ãƒœãƒƒã‚¯ã‚¹ã«è¡çªã—ãŸå ´åˆã€è¡çªä½ç½®ã®è£œæ­£
 		Collision::Box other = collision.other.box;
 		if (collision.normal.x != 0.0f)
 			m_pos.x =
@@ -237,17 +274,17 @@ void Block::OnCollision(Collision::Result collision)
 		else
 			m_pos.z =
 			other.center.z + collision.normal.z * (other.size.z + collision.other.box.size.z) * 0.5f;
-		// ”½ËŒã‚ÌˆÚ“®‘¬“x‚Ì•â³
+		// åå°„å¾Œã®ç§»å‹•é€Ÿåº¦ã®è£œæ­£
 		m_move.x *= 0.8f;
 		m_move.y *= 0.6f;
 		m_move.z *= 0.8f;
 	}
 	else {
-		// Î–Ê‚ÉÕ“Ë‚µ‚½ê‡‚ÌˆÊ’u‚Ì•â³
+		// æ–œé¢ã«è¡çªã—ãŸå ´åˆã®ä½ç½®ã®è£œæ­£
 		m_pos.x = collision.point.x + collision.normal.x * collision.other.box.size.x * 0.5f;
 		m_pos.y = collision.point.y + collision.normal.y * collision.other.box.size.y * 0.5f;
 		m_pos.z = collision.point.z + collision.normal.z * collision.other.box.size.z * 0.5f;
-		// ”½ËŒã‚ÌˆÚ“®‘¬“x‚Ì•â³
+		// åå°„å¾Œã®ç§»å‹•é€Ÿåº¦ã®è£œæ­£
 		m_move.x *= 0.2f;
 		m_move.y *= 0.5f;
 		m_move.z *= 0.2f;
@@ -310,56 +347,56 @@ Block::Block(Block_Color set)
 	int count = 0;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";	count++;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";			count++;
 	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";		count++;
 	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";			count++;
 	fileName[count] = "Assets/Model/Prototype/MD_Bacon.fbx";		count++;
-	// ‚Ü‚¾‚È‚¢‚Ì‚ÅPatty‚Å‚ào‚»‚¤‚©‚È
+	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";		count++;
+	// ã¾ã ãªã„ã®ã§Pattyã§ã‚‚å‡ºãã†ã‹ãª
 	//fileName[count] = "Assets/Model/Prototype/MD_Bacon.fbx";		count++;
 
 	m_pModel = new Model();
 	switch (m_bColor)
 	{
 	case Block::Buns_up:
-		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Top", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Buns_Button:
-		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Buttom", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Bacon:
-		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Bacon", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Cheese:
-		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Cheese", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Fried_egg:
-		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Egg", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Patty:
-		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Patty", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Lettuce:
-		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Lettuce", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Tomato:
-		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[7].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Tomato","Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::None:
@@ -406,59 +443,60 @@ Block::Block(Block_Color set, float setX, float setY)
 	, m_dxpos{}
 	, wvp{}
 {
-	m_pos.x = csv.GetBlockState().blo.pos.x;
+	m_pos.x = setX;
 	m_pos.y = csv.GetBlockState().height;
-	m_pos.z = csv.GetBlockState().blo.pos.y;
+	m_pos.z = setY;
 
 	int count = 0;
-	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";	count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";			count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";		count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";				count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";					count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";				count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";						count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Bacon.fbx";					count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";					count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";					count++;
 	m_pModel = new Model();
 	switch (m_bColor)
 	{
 	case Block::Buns_up:
-		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Buns_Button:
-		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Bacon:
-		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Cheese:
-		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Fried_egg:
-		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Patty:
-		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Lettuce:
-		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::Tomato:
-		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel->Load(fileName[7].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, "Branch_01", "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 		break;
 	case Block::None:
@@ -489,4 +527,13 @@ Block::Block(Block_Color set, float setX, float setY)
 	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
 	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
 	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
+
+	// é£ŸæãŒç”Ÿæˆã•ã‚ŒãŸã¨ãã®éŸ³ã‚’é³´ã‚‰ã™
+	SE_INS;
+	sound.PlaySE(5);
+}
+
+	Block::Block_Color Block::GetColor()
+	{
+			return m_bColor;
 }

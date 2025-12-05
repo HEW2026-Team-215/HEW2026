@@ -1,8 +1,8 @@
-#include "ShaderList.h"
+ï»¿#include "ShaderList.h"
 
 
-VertexShader* ShaderList::m_pVS[VS_KIND_MAX];
-PixelShader* ShaderList::m_pPS[PS_KIND_MAX];
+VertexShader *ShaderList::m_pVS[VS_KIND_MAX];
+PixelShader *ShaderList::m_pPS[PS_KIND_MAX];
 
 
 ShaderList::ShaderList()
@@ -16,8 +16,11 @@ void ShaderList::Init()
 {
 	MakeWorldVS();
 	MakeAnimeVS();
+	MakeUnlitPS();
 	MakeLambertPS();
 	MakeSpecularPS();
+	MakeCustomLambertPS();
+	MakeCustomSpecularPS();
 	MakeToonPS();
 	MakeFogPS();
 
@@ -61,27 +64,27 @@ void ShaderList::Uninit()
 	}
 }
 
-VertexShader* ShaderList::GetVS(VSKind vs)
+VertexShader *ShaderList::GetVS(VSKind vs)
 {
 	return m_pVS[vs];
 }
-PixelShader* ShaderList::GetPS(PSKind ps)
+PixelShader *ShaderList::GetPS(PSKind ps)
 {
 	return m_pPS[ps];
 }
 
-void ShaderList::SetWVP(DirectX::XMFLOAT4X4* wvp)
+void ShaderList::SetWVP(DirectX::XMFLOAT4X4 *wvp)
 {
 	for (int i = 0; i < VS_KIND_MAX; ++i)
 	{
 		m_pVS[i]->WriteBuffer(0, wvp);
 	}
 }
-void ShaderList::SetBones(DirectX::XMFLOAT4X4* bones200)
+void ShaderList::SetBones(DirectX::XMFLOAT4X4 *bones200)
 {
 	m_pVS[VS_ANIME]->WriteBuffer(1, bones200);
 }
-void ShaderList::SetMaterial(const Model::Material& material)
+void ShaderList::SetMaterial(const Model::Material &material)
 {
 	DirectX::XMFLOAT4 param[3] = {
 		material.diffuse,
@@ -114,7 +117,9 @@ void ShaderList::SetCameraPos(const DirectX::XMFLOAT3 pos)
 		{pos.x, pos.y, pos.z, 0.0f}
 	};
 	m_pPS[PS_SPECULAR]->WriteBuffer(2, param);
+	m_pPS[PS_CUSTOM_SPECULAR]->WriteBuffer(2, param);
 	m_pPS[PS_TOON]->WriteBuffer(2, param);
+	m_pPS[PS_FOG]->WriteBuffer(2, param);
 }
 void ShaderList::SetFog(DirectX::XMFLOAT4 color, float start, float range)
 {
@@ -127,7 +132,7 @@ void ShaderList::SetFog(DirectX::XMFLOAT4 color, float start, float range)
 
 void ShaderList::MakeWorldVS()
 {
-	const char* code = R"EOT(
+	const char *code = R"EOT(
 struct VS_IN {
 	float3 pos : POSITION;
 	float3 normal : NORMAL0;
@@ -163,7 +168,7 @@ VS_OUT main(VS_IN vin) {
 }
 void ShaderList::MakeAnimeVS()
 {
-	const char* code = R"EOT(
+	const char *code = R"EOT(
 struct VS_IN {
 	float3 pos : POSITION;
 	float3 normal : NORMAL0;
@@ -210,9 +215,39 @@ VS_OUT main(VS_IN vin) {
 	m_pVS[VS_ANIME] = new VertexShader();
 	m_pVS[VS_ANIME]->Compile(code);
 }
+void ShaderList::MakeUnlitPS()
+{
+	const char *code = R"EOT(
+struct PS_IN {
+	float4 pos : SV_POSITION;
+	float3 normal : NORMAL0;
+	float2 uv : TEXCOORD0;
+	float4 color : COLOR0;
+};
+cbuffer Material : register(b0)
+{
+	float4 objDiffuse;
+	float4 objAmbient;
+	float4 objSpecular;
+};
+Texture2D tex : register(t0);
+SamplerState samp : register(s0);
+float4 main(PS_IN pin) : SV_TARGET
+{
+	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	if(objAmbient.a >= 1.0f)
+		color = tex.Sample(samp, pin.uv);
+	color.a *= objDiffuse.w;
+	float3 diffuse = objDiffuse.rgb;
+	color.rgb *= diffuse;
+	return color;
+})EOT";
+	m_pPS[PS_UNLIT] = new PixelShader();
+	m_pPS[PS_UNLIT]->Compile(code);
+}
 void ShaderList::MakeLambertPS()
 {
-	const char* code = R"EOT(
+	const char *code = R"EOT(
 struct PS_IN {
 	float4 pos : SV_POSITION;
 	float3 normal : NORMAL0;
@@ -237,22 +272,15 @@ float4 main(PS_IN pin) : SV_TARGET
 	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	if(objAmbient.a >= 1.0f)
 		color = tex.Sample(samp, pin.uv);
+	color.a *= objDiffuse.w;
 	float3 N = normalize(pin.normal);
 	float3 L = normalize(-lightDir);
-	float dotNL = saturate((dot(N, L) + 0.5f) / 1.5f);
+	float dotNL = saturate(dot(N, L));
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	// –{—ˆ‚ÌLambertŠgŽU”½ŽËiŽv‚Á‚½•\Œ»‚ªo—ˆ‚È‚©‚Á‚½‚Ì‚ÅÌ—p‚¹‚¸
-	// color.rgb *= saturate(diffuse * dotNL + ambient);
-	// ŠÂ‹«Œõ‚ÅŠgŽU”½ŽË•”•ª‚ÌF‚ª•Ï‚í‚ç‚È‚¢‚æ‚¤‚Élerp(ŠÂ‹«Œõ,diffuse,dotNL)‚ÅŒvŽZ
-	// ŠÂ‹«Œõ‚ªŽã‚¯‚ê‚Î•(æŽZ)A‹­‚¯‚ê‚Î”’(‰ÁŽZ)‚Æ‚È‚é‚æ‚¤‚ÉAŠeŒvŽZ‚ðüŒ`‚Å•âŠÔ
 	diffuse *= color.rgb;
-	color.rgb = saturate(lerp(
-		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
-		diffuse, dotNL));
-	// –{—ˆ‚È‚ç•K—v‚È‚¢‹¾–Ê”½ŽËALambertŒü‚¯‚ÉŽáŠ±‚¾‚¯“K—p
-	color.rgb += specular * pow(saturate(dotNL), max(0.01f, objSpecular.a) * 0.5f) * 0.5f;
+	color.rgb *= saturate(diffuse * dotNL + ambient);
 	return color;
 })EOT";
 	m_pPS[PS_LAMBERT] = new PixelShader();
@@ -260,7 +288,7 @@ float4 main(PS_IN pin) : SV_TARGET
 }
 void ShaderList::MakeSpecularPS()
 {
-	const char* code = R"EOT(
+	const char *code = R"EOT(
 struct PS_IN {
 	float4 pos : SV_POSITION;
 	float3 normal : NORMAL0;
@@ -290,28 +318,27 @@ float4 main(PS_IN pin) : SV_TARGET
 	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	if(objAmbient.a >= 1.0f)
 		color = tex.Sample(samp, pin.uv);
+	color.a *= objDiffuse.w;
 	float3 N = normalize(pin.normal);
 	float3 L = normalize(-lightDir);
 	float3 V = normalize(cameraPos.xyz - pin.wPos.xyz);
 	float3 R = reflect(-V, N);
-	float dotNL = saturate((dot(N, L) + 0.5f) / 1.5f);
+	float dotNL = saturate(dot(N, L));
 	float dotRL = saturate(dot(R, L));
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	// Lambert‚ÌŒvŽZ‚ðŽQl
-	color.rgb *= saturate(lerp(
-		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
-		diffuse, dotNL));
+	diffuse *= color.rgb;
+	color.rgb *= saturate(diffuse * dotNL + ambient);
 	color.rgb += specular * saturate(pow(dotRL, max(0.01f, objSpecular.a)));
 	return color;
 })EOT";
 	m_pPS[PS_SPECULAR] = new PixelShader();
 	m_pPS[PS_SPECULAR]->Compile(code);
 }
-void ShaderList::MakeToonPS()
+void ShaderList::MakeCustomLambertPS()
 {
-	const char* code = R"EOT(
+	const char *code = R"EOT(
 struct PS_IN {
 	float4 pos : SV_POSITION;
 	float3 normal : NORMAL0;
@@ -336,14 +363,116 @@ float4 main(PS_IN pin) : SV_TARGET
 	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	if(objAmbient.a >= 1.0f)
 		color = tex.Sample(samp, pin.uv);
+	color.a *= objDiffuse.w;
 	float3 N = normalize(pin.normal);
 	float3 L = normalize(-lightDir);
-	float dotNL = dot(N, L); // ƒ}ƒCƒiƒXž‚ÅŒvŽZ
+	float dotNL = saturate((dot(N, L) + 0.5f) / 1.5f);
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	float toonNL = saturate((dot(N, L) + 0.5f) / 1.5f * 100.0f); // ‰A‚Ì‹«–Ú‚ð_‚ç‚©‚­
-	// Lambert‚ÌŒvŽZ‚ðŽQl
+	// æœ¬æ¥ã®Lambertæ‹¡æ•£åå°„ï¼ˆæ€ã£ãŸè¡¨ç¾ãŒå‡ºæ¥ãªã‹ã£ãŸã®ã§æŽ¡ç”¨ã›ãš
+	// color.rgb *= saturate(diffuse * dotNL + ambient);
+	// ç’°å¢ƒå…‰ã§æ‹¡æ•£åå°„éƒ¨åˆ†ã®è‰²ãŒå¤‰ã‚ã‚‰ãªã„ã‚ˆã†ã«lerp(ç’°å¢ƒå…‰,diffuse,dotNL)ã§è¨ˆç®—
+	// ç’°å¢ƒå…‰ãŒå¼±ã‘ã‚Œã°é»’(ä¹—ç®—)ã€å¼·ã‘ã‚Œã°ç™½(åŠ ç®—)ã¨ãªã‚‹ã‚ˆã†ã«ã€å„è¨ˆç®—ã‚’ç·šå½¢ã§è£œé–“
+	diffuse *= color.rgb;
+	color.rgb = saturate(lerp(
+		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
+		diffuse, dotNL));
+	// æœ¬æ¥ãªã‚‰å¿…è¦ãªã„é¡é¢åå°„ã€Lambertå‘ã‘ã«è‹¥å¹²ã ã‘é©ç”¨
+	color.rgb += specular * pow(saturate(dotNL), max(0.01f, objSpecular.a) * 0.5f) * 0.5f;
+	return color;
+})EOT";
+	m_pPS[PS_CUSTOM_LAMBERT] = new PixelShader();
+	m_pPS[PS_CUSTOM_LAMBERT]->Compile(code);
+}
+void ShaderList::MakeCustomSpecularPS()
+{
+	const char *code = R"EOT(
+struct PS_IN {
+	float4 pos : SV_POSITION;
+	float3 normal : NORMAL0;
+	float2 uv : TEXCOORD0;
+	float4 color : COLOR0;
+	float4 wPos : POSITION0;
+};
+cbuffer Material : register(b0)
+{
+	float4 objDiffuse;
+	float4 objAmbient;
+	float4 objSpecular;
+};
+cbuffer Light : register(b1)
+{
+	float4 lightDiffuse;
+	float4 lightDir;
+};
+cbuffer Camera : register(b2)
+{
+	float4 cameraPos;
+};
+Texture2D tex : register(t0);
+SamplerState samp : register(s0);
+float4 main(PS_IN pin) : SV_TARGET
+{
+	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	if(objAmbient.a >= 1.0f)
+		color = tex.Sample(samp, pin.uv);
+	color.a *= objDiffuse.w;
+	float3 N = normalize(pin.normal);
+	float3 L = normalize(-lightDir);
+	float3 V = normalize(cameraPos.xyz - pin.wPos.xyz);
+	float3 R = reflect(-V, N);
+	float dotNL = saturate((dot(N, L) + 0.5f) / 1.5f);
+	float dotRL = saturate(dot(R, L));
+	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
+	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
+	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
+	// Lambertã®è¨ˆç®—ã‚’å‚è€ƒ
+	color.rgb *= saturate(lerp(
+		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
+		diffuse, dotNL));
+	color.rgb += specular * saturate(pow(dotRL, max(0.01f, objSpecular.a)));
+	return color;
+})EOT";
+	m_pPS[PS_CUSTOM_SPECULAR] = new PixelShader();
+	m_pPS[PS_CUSTOM_SPECULAR]->Compile(code);
+}
+void ShaderList::MakeToonPS()
+{
+	const char *code = R"EOT(
+struct PS_IN {
+	float4 pos : SV_POSITION;
+	float3 normal : NORMAL0;
+	float2 uv : TEXCOORD0;
+	float4 color : COLOR0;
+};
+cbuffer Material : register(b0)
+{
+	float4 objDiffuse;
+	float4 objAmbient;
+	float4 objSpecular;
+};
+cbuffer Light : register(b1)
+{
+	float4 lightDiffuse;
+	float4 lightDir;
+};
+Texture2D tex : register(t0);
+SamplerState samp : register(s0);
+float4 main(PS_IN pin) : SV_TARGET
+{
+	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	if(objAmbient.a >= 1.0f)
+		color = tex.Sample(samp, pin.uv);
+	color.a *= objDiffuse.w;
+	float3 N = normalize(pin.normal);
+	float3 L = normalize(-lightDir);
+	float dotNL = dot(N, L); // ãƒžã‚¤ãƒŠã‚¹è¾¼ã§è¨ˆç®—
+	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
+	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
+	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
+	float toonNL = saturate((dot(N, L) + 0.5f) / 1.5f * 50.0f); // é™°ã®å¢ƒç›®ã‚’æŸ”ã‚‰ã‹ã
+	// Lambertã®è¨ˆç®—ã‚’å‚è€ƒ
 	color.rgb *= saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, toonNL));
@@ -356,7 +485,7 @@ float4 main(PS_IN pin) : SV_TARGET
 }
 void ShaderList::MakeFogPS()
 {
-	const char* code = R"EOT(
+	const char *code = R"EOT(
 struct PS_IN {
 	float4 pos : SV_POSITION;
 	float3 normal : NORMAL0;
@@ -393,6 +522,7 @@ float4 main(PS_IN pin) : SV_TARGET
 	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	if(objAmbient.a >= 1.0f)
 		color = tex.Sample(samp, pin.uv);
+	color.a *= objDiffuse.w;
 	float3 N = normalize(pin.normal);
 	float3 L = normalize(-lightDir);
 	float dotNL = saturate((dot(N, L) + 0.5f) / 1.5f);
