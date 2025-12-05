@@ -1,4 +1,4 @@
-#ifndef __SHADER_LIST_H__
+ï»¿#ifndef __SHADER_LIST_H__
 #define __SHADER_LIST_H__
 
 #include "Shader.h"
@@ -7,7 +7,7 @@
 
 class ShaderList
 {
-	// ’è‹`
+	// å®šç¾©
 public:
 	enum VSKind
 	{
@@ -35,18 +35,18 @@ public:
 	static void Init();
 	static void Uninit();
 
-	// ƒVƒF[ƒ_[İ’è
-	static VertexShader* GetVS(VSKind vs);
-	static PixelShader* GetPS(PSKind ps);
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼è¨­å®š
+	static VertexShader *GetVS(VSKind vs);
+	static PixelShader *GetPS(PSKind ps);
 
-	// ’è”ƒoƒbƒtƒ@‚Ö‚Ìİ’è
-	static void SetWVP(DirectX::XMFLOAT4X4* wvp);
-	static void SetBones(DirectX::XMFLOAT4X4* bones200);
-	static void SetMaterial(const Model::Material& material);
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ã¸ã®è¨­å®š
+	static void SetWVP(DirectX::XMFLOAT4X4 *wvp);
+	static void SetBones(DirectX::XMFLOAT4X4 *bones200);
+	static void SetMaterial(const Model::Material &material);
 	static void SetLight(DirectX::XMFLOAT4 color, DirectX::XMFLOAT3 dir);
 	static void SetCameraPos(const DirectX::XMFLOAT3 pos);
 	static void SetFog(DirectX::XMFLOAT4 color, float start, float range);
-	
+
 private:
 	static void MakeWorldVS();
 	static void MakeAnimeVS();
@@ -59,9 +59,9 @@ private:
 	static void MakeFogPS();
 
 private:
-	static VertexShader* m_pVS[VS_KIND_MAX];
-	static PixelShader* m_pPS[PS_KIND_MAX];
-	
+	static VertexShader *m_pVS[VS_KIND_MAX];
+	static PixelShader *m_pPS[PS_KIND_MAX];
+
 };
 
 #endif // __SHADER_LIST_H__

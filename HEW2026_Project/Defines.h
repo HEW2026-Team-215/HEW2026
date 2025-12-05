@@ -1,37 +1,96 @@
-#ifndef __DEFINES_H__
+ï»¿#ifndef __DEFINES_H__
 #define __DEFINES_H__
 
 #include <assert.h>
 #include <Windows.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include"CsvData.h"
+#include "Transfer.h"
 
 static const int FPS = 60;
 static const float fFPS = static_cast<float>(FPS);
 
-// ƒŠƒ\[ƒXƒpƒX
-#define ASSET(path) "Assets/" path
 
-// 3D‹óŠÔ’è‹`
+// ï¿½ï¿½ï¿½\ï¿½[ï¿½Xï¿½pï¿½X
+#define ASSET(path)	"Assets/"path
+
+// 3Dï¿½ï¿½Ô’ï¿½`
 #define CMETER(value) (value * 0.01f)
 #define METER(value) (value * 1.0f)
 #define MSEC(value) (value / fFPS)
 #define CMSEC(value) MSEC(CMETER(value))
+
+#define DEFAULT_CAMERA_ANGLE (3.7f)
+
+#define IIKANJINOTEISU (0.01f)
+#define IIKANJINOTEISU2 (1.0f)
+
+
+
+//CSVï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½Ç‚İï¿½ï¿½İŒï¿½
+#define CSV_ACCEPT
+
+#ifndef CSV_ACCEPT
+//----- csvï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½Ç‚İï¿½ï¿½Ü‚ï¿½Ä‚ï¿½ï¿½È‚ï¿½ï¿½ê‡ -----//
+#define PLAYER_MOVE_SPEED (.1f)
+#define FIELD_COLUMN (0xc)
+#define FIELD_ROW    (0x6)
+#define MAX_FIELD_WIDTH  (FIELD_COLUMN / PLAYER_WIDTH * PLAYER_WIDTH)
+#define MAX_FIELD_HEIGHT (FIELD_ROW / PLAYER_HEIGHT * PLAYER_HEIGHT)
+#endif
+
+#ifdef CSV_ACCEPT
+
+#ifdef _TRANSFER
+
+
+#define PLAYER_MOVE_SPEED	tran.player.velocity
+#define FIELD_COLUMN		tran.stage.column
+#define FIELD_ROW			tran.stage.row
+#define MAX_FIELD_WIDTH		(FIELD_COLUMN / PLAYER_WIDTH * PLAYER_WIDTH)
+#define MAX_FIELD_HEIGHT	(FIELD_ROW / PLAYER_HEIGHT * PLAYER_HEIGHT)
+
+#else
+//----- csvï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½Ç‚İï¿½ï¿½İï¿½ï¿½ï¿½ -----//
+#define PLAYER_MOVE_SPEED(set)	set.GetSpeed()
+#define FIELD_COLUMN(set)		set.GetWidth()
+#define FIELD_ROW(set)			set.GetHeight()
+#define MAX_FIELD_WIDTH(set)  (FIELD_COLUMN(set) / PLAYER_WIDTH * PLAYER_WIDTH)
+#define MAX_FIELD_HEIGHT(set) (FIELD_ROW(set) / PLAYER_HEIGHT * PLAYER_HEIGHT)
+#endif
+#endif
+#define MAX_BLOCK	(0x1e)
+
+#define PLAYER_WIDTH	(2.0f)
+#define PLAYER_HEIGHT	(2.0f)
+
+
+#define DEBUG_DISTANCE (11.0f)
+
+// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç¢ºä¿ã™ã‚‹ãƒã‚¯ãƒ­
+// c_pos ã¨ã„ã†åå‰ã§ã‚¢ã‚¯ã‚»ã‚¹
+#define CAMERA_INS Cam_Pos& c_pos = Cam_Pos::GetInstance();
+
+#define HALF(in) (in / 2.0f)
+#define FIELD_WIDTH (2.0f)
+#define FIELD_HEIGHT (2.0f)
+
+//#define FIELD_WIDTH (MAX_FIELD_WIDTH / FIELD_COLUMN)
+//#define FIELD_HEIGHT (MAX_FIELD_HEIGHT / FIELD_ROW)
+
 static const float GRAVITY = 0.98f;
 
-// ƒ^ƒCƒgƒ‹
-static const char *APP_TITLE = "DX22_Golf";
+// ï¿½^ï¿½Cï¿½gï¿½ï¿½
+static const char* APP_TITLE = "DX22_Prototype";
 
-// ‰æ–ÊƒTƒCƒY
-static const int SCREEN_WIDTH = 1280;
-static const int SCREEN_HEIGHT = 720;
+// ï¿½ï¿½ÊƒTï¿½Cï¿½Y
+static const int SCREEN_WIDTH	= 1280;
+static const int SCREEN_HEIGHT	= 720;
 
-// ƒOƒŠƒbƒhƒTƒCƒY(ƒfƒoƒbƒO—p
-static const int DEBUG_GRID_NUM = 20;               // ƒOƒŠƒbƒh’†S‚©‚ç’[‚Ü‚Å‚Ìü‚Ì–{”
-static const float DEBUG_GRID_MARGIN = METER(1.0f); // ƒOƒŠƒbƒh”z’u•
+// ï¿½Oï¿½ï¿½ï¿½bï¿½hï¿½Tï¿½Cï¿½Y(ï¿½fï¿½oï¿½bï¿½Oï¿½p
+static const int	DEBUG_GRID_NUM		= 20;			// ï¿½Oï¿½ï¿½ï¿½bï¿½hï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½[ï¿½Ü‚Å‚Ìï¿½ï¿½Ì–{ï¿½ï¿½
+static const float	DEBUG_GRID_MARGIN	= METER(1.0f);	// ï¿½Oï¿½ï¿½ï¿½bï¿½hï¿½zï¿½uï¿½ï¿½
 
-// ƒWƒIƒƒgƒŠ¶¬—p
-static const int GEOMETORY_CYLINDER_CIRCLE_VERTEX = 8;
-static const int GEOMETORY_CYLINDER_CIRCLE_INDEX = (GEOMETORY_CYLINDER_CIRCLE_VERTEX - 2) * 3;
 
 #endif // __DEFINES_H__

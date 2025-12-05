@@ -1,8 +1,9 @@
-#include "Geometory.h"
+﻿#include "Geometory.h"
 
 MeshBuffer* Geometory::m_pBox;
 MeshBuffer* Geometory::m_pCylinder;
 MeshBuffer* Geometory::m_pSphere;
+MeshBuffer* Geometory::m_pPlane;
 MeshBuffer* Geometory::m_pLines;
 Shader* Geometory::m_pVS;
 Shader* Geometory::m_pPS;
@@ -18,6 +19,7 @@ void Geometory::Init()
 	MakeBox();
 	MakeCylinder();
 	MakeSphere();
+	MakePlain();
 	MakeVS();
 	MakePS();
 	MakeLineShader();
@@ -33,6 +35,7 @@ void Geometory::Uninit()
 	SAFE_DELETE(m_pLines);
 	SAFE_DELETE(m_pSphere);
 	SAFE_DELETE(m_pCylinder);
+	SAFE_DELETE(m_pPlane);
 	SAFE_DELETE(m_pBox);
 }
 
@@ -95,6 +98,16 @@ void Geometory::DrawSphere()
 	m_pVS->Bind();
 	m_pPS->Bind();
 	m_pSphere->Draw();
+}
+
+void Geometory::DrawPlane()
+{
+	if (m_pPlane == nullptr)
+		return;
+	m_pVS->WriteBuffer(0,m_WVP);
+	m_pVS->Bind();
+	m_pPS->Bind();
+	m_pPlane->Draw();
 }
 
 void Geometory::MakeVS()
