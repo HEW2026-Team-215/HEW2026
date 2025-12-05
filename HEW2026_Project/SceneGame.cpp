@@ -5,9 +5,8 @@
 #include "CameraDebug.h"
 #include "Score.h"
 #include <ctime>
-
-#define ___UITEST //UIのテスト用
-
+#include "Sound.h"
+#include"Transfer.h"
 
 SceneGame::SceneGame()
 		: m_pBlock{nullptr}, m_menu{}, csv(CsvData::get_instance())
@@ -107,6 +106,25 @@ void SceneGame::Update()
 			block->GetCamera(m_pCamera);
 		}
 	}
+	static int snCount; snCount++;//フレーをカウントする変数
+	TRAN_INS;
+	// 指定フレーム数ごとにBlockを生成する
+	if (snCount % int(60 * tran.item.repopTime) == 0)
+	{
+		for (auto it = m_pBlock.begin(); it != m_pBlock.end(); ++it)
+		{
+			Block* block = *it;
+			if (block != nullptr) continue;
+			float randX = RandomFloat(-5.0f, 5.0f);
+			float randZ = RandomFloat(-5.0f, 5.0f);
+			Block* newBlock = new Block(m_pNextItem->Next(), randX, randZ);
+			newBlock->GetCamera(m_pCamera);
+			m_pBlock.push_back(newBlock);
+			snCount = 0;
+			break;
+		}
+	}
+
 	for (auto it = m_pBlock.begin(); it != m_pBlock.end(); ++it)
 	{
 		Block* block = *it;
@@ -123,19 +141,24 @@ void SceneGame::Update()
 			newBlock->GetCamera(m_pCamera);
 			newBlock->SetStep(block->GetStep() + 1);
 			m_pBlock.push_back(newBlock);
+			//snCount = 0;
 
 			block->SetState(Block::BlockState::Block_Catched);
+
+			// キャッチ音を再生
+			SE_INS_So.PlaySE(1);
 			break;
 		}
 
 		case Block::BlockState::Block_Idle:
 		{
-			// Replace idle block with a new one
-			float x = RandomFloat(-5.0f, 5.0f);
-			float z = RandomFloat(-5.0f, 5.0f);
-			Block* newBlock = new Block(m_pNextItem->Next(), x, z);
-			newBlock->GetCamera(m_pCamera);
-			*it = newBlock; // replace the idle block
+			//// Replace idle block with a new one
+			//float x = RandomFloat(-5.0f, 5.0f);
+			//float z = RandomFloat(-5.0f, 5.0f);
+			//Block* newBlock = new Block(m_pNextItem->Next(), x, z);
+			//newBlock->GetCamera(m_pCamera);
+			//*it = newBlock; // replace the idle block
+			*it = nullptr;
 			break;
 		}
 
@@ -197,11 +220,29 @@ void SceneGame::Update()
 		bunBlock->SetState(Block::BlockState::Block_Catched);
 		m_pBlock.push_front(bunBlock);
 
+		// 
 	}
 
 	if (IsKeyTrigger('O'))
 	{
+		// とりあえず音再生
+		SE_INS_So.PlaySE(2);
 
+		switch (rand() % 2)
+		{
+		case 0:
+			m_pOrderManager->Order({ Block::Lettuce, Block::Patty }, 30 + (rand() % 10), 20 + (rand() % 15));
+			break;
+		case 1:
+			m_pOrderManager->Order({ Block::Lettuce, Block::Patty	, Block::Fried_egg }, 50 + (rand() % 20), 25 + (rand() % 20));
+			break;
+		}
+	}
+
+	static int frameCount; frameCount++;
+	if (frameCount % int(tran.order.repopTime * 60) == 0)
+	{
+		SE_INS_So.PlaySE(2);
 		switch (rand() % 2)
 		{
 		case 0:
@@ -247,21 +288,21 @@ void SceneGame::Draw()
 	mat = S * R * T;
 	world = mat;
 	world = T;
-	view = DirectX::XMMatrixLookAtLH(
-			DirectX::XMVectorSet(5.0f, 5.0f, 0.0f, 0.0f),
-			DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
-			DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	proj = DirectX::XMMatrixPerspectiveFovLH(
-			(1.0f / 6.0f) * 3.1415f * 2.0f, // FovAngleY
-			16.0f / 9,											// AspectRatio
-			0.001f,													// NearZ
-			10.0f														// FarZ
-	);
+//	view = DirectX::XMMatrixLookAtLH(
+//			DirectX::XMVectorSet(5.0f, 5.0f, 0.0f, 0.0f),
+//			DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+//			DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+//	proj = DirectX::XMMatrixPerspectiveFovLH(
+//			(1.0f / 6.0f) * 3.1415f * 2.0f, // FovAngleY
+//			16.0f / 9,											// AspectRatio
+//			0.001f,													// NearZ
+//			10.0f														// FarZ
+//	);
 
 	// 　計算用のデータから読み取り用のデータに変換
 	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(world));
-	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
-	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
+//	DirectX::XMStoreFloat4x4(&wvp[1], DirectX::XMMatrixTranspose(view));
+//	DirectX::XMStoreFloat4x4(&wvp[2], DirectX::XMMatrixTranspose(proj));
 
 	// モデルに変換行列を設定
 	wvp[1] = m_pCamera->GetViewMatrix();
@@ -353,9 +394,10 @@ void SceneGame::Draw()
 
 	if (true)
 	{
+		TRAN_INS;
 		//--- １つ目の地面
 		T = DirectX::XMMatrixTranslation(0.0f, -.2f, 0.0f);						 // 天面がグリッドよりも下に来るように移動
-		S = DirectX::XMMatrixScaling(10.0f * 2.0f, 0.2f, 6.0f * 2.0f); // 地面となるように、前後左右に広く、上下に狭くする
+		S = DirectX::XMMatrixScaling(tran.stage.column * 2.0f, 0.2f, tran.stage.row * 2.0f); // 地面となるように、前後左右に広く、上下に狭くする
 		mat = S * T;
 		mat = DirectX::XMMatrixTranspose(mat);
 		DirectX::XMFLOAT4X4 fMat; // 行列の格納先
@@ -384,4 +426,4 @@ void SceneGame::Draw()
 float RandomFloat(float min, float max)
 {
 	return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (max - min);
-}
+}////

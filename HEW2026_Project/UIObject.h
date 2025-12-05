@@ -4,14 +4,12 @@
  *
  * \author AT12C-41 Kotetsu Wakabayashi
  * \date   2025-11-18
-*********************************************************************/
-
+ *********************************************************************/
 #pragma once
 #include <string>
-#include <DirectXMath.h>
 #include "Sprite.h"
-#include "Texture.h";
-
+#include "Texture.h"
+#include <DirectXMath.h>
 
 class UIObject
 {
@@ -28,6 +26,8 @@ public:
 	virtual void Update() {};
 	void Draw();
 
+	//===== Setter =====//
+
 	void SetPosition(float X, float Y);
 	void SetSize(float W, float H);
 	void SetRotation(float X, float Y, float Z);
@@ -35,13 +35,18 @@ public:
 	void SetUVPosition(float X, float Y);
 	void SetUVScale(float X, float Y);
 	void SetColor(float R, float G, float B, float A);
+	void GenerateGradient(float fromR, float fromG, float fromB, float fromA, float toR, float toG, float toB, float toA, int degree);
+
+	//===== Getter =====//
 
 	DirectX::XMFLOAT2 GetPosition(void);
 	DirectX::XMFLOAT2 GetSize(void);
 	DirectX::XMFLOAT3 GetRotation(void);
 	DirectX::XMFLOAT2 GetUVPosition(void);
 	DirectX::XMFLOAT2 GetUVScale(void);
-	DirectX::XMFLOAT4 GetColor(void);
+	DirectX::XMFLOAT4 GetColor(int index);
+
+	//===== Setter as XMFLOATx =====//
 
 	void SetPosition(DirectX::XMFLOAT2 pos);
 	void SetSize(DirectX::XMFLOAT2 size);
@@ -49,7 +54,7 @@ public:
 	void SetUVPosition(DirectX::XMFLOAT2 uvPos);
 	void SetUVScale(DirectX::XMFLOAT2 uvScale);
 	void SetColor(DirectX::XMFLOAT4 color);
-
+	void GenerateGradient(DirectX::XMFLOAT4 colorFrom, DirectX::XMFLOAT4 colorTo, int degree);
 private:
 	Texture* m_pTexture;
 	DirectX::XMFLOAT2 m_fPosition;
@@ -57,5 +62,5 @@ private:
 	DirectX::XMFLOAT3 m_fRotation;
 	DirectX::XMFLOAT2 m_fUVPositon;
 	DirectX::XMFLOAT2 m_fUVScale;
-	DirectX::XMFLOAT4 m_fColor;
+	DirectX::XMFLOAT4 m_fColor[4];
 };
