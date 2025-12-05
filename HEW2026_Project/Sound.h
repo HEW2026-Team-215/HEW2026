@@ -1,4 +1,4 @@
-// SoundManager.h / .cpp ‡‘ÌƒTƒ“ƒvƒ‹
+ï»¿// SoundManager.h / .cpp åˆä½“ã‚µãƒ³ãƒ—ãƒ«
 #include <xaudio2.h>
 #include <fstream>
 #include <vector>
@@ -8,12 +8,12 @@
 
 #pragma comment(lib, "xaudio2.lib")
 
-// ƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éƒ}ƒNƒ : sound ‚ÅƒAƒNƒZƒX
+// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¯ãƒ­ : sound ã§ã‚¢ã‚¯ã‚»ã‚¹
 #define SE_INS SoundManager& sound = SoundManager::GetInstance();
 #define SE_INS_So SoundManager& sound = SoundManager::GetInstance();sound
 
 // ================================
-// WAV “Ç‚İ‚İiPCMê—p‚Ì’´ŠÈˆÕ”Åj
+// WAV èª­ã¿è¾¼ã¿ï¼ˆPCMå°‚ç”¨ã®è¶…ç°¡æ˜“ç‰ˆï¼‰
 // ================================
 struct WavData {
     WAVEFORMATEX wfx{};
@@ -24,19 +24,19 @@ static WavData LoadWav(const char* filename)
 {
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
-        throw std::runtime_error(std::string("WAV ‚ªŠJ‚¯‚È‚¢: ") + filename);
+        throw std::runtime_error(std::string("WAV ãŒé–‹ã‘ãªã„: ") + filename);
     }
 
     auto read4 = [&](char out[4]) {
         file.read(out, 4);
-        if (!file) throw std::runtime_error("WAV “Ç‚İ‚İ¸”s");
+        if (!file) throw std::runtime_error("WAV èª­ã¿è¾¼ã¿å¤±æ•—");
         };
 
     char riff[4]; read4(riff);         // "RIFF"
     file.ignore(4);                    // file size
     char wave[4]; read4(wave);         // "WAVE"
 
-    // "fmt " ƒ`ƒƒƒ“ƒN‚Ü‚Åi‚Ş
+    // "fmt " ãƒãƒ£ãƒ³ã‚¯ã¾ã§é€²ã‚€
     char chunkId[4];
     uint32_t chunkSize = 0;
 
@@ -51,7 +51,7 @@ static WavData LoadWav(const char* filename)
         if (!file) break;
 
         if (std::strncmp(chunkId, "fmt ", 4) == 0) {
-            // ƒtƒH[ƒ}ƒbƒgî•ñ
+            // ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆæƒ…å ±
             if (chunkSize < sizeof(WAVEFORMATEX)) {
                 std::vector<char> tmp(chunkSize);
                 file.read(tmp.data(), chunkSize);
@@ -66,19 +66,19 @@ static WavData LoadWav(const char* filename)
             fmtFound = true;
         }
         else if (std::strncmp(chunkId, "data", 4) == 0) {
-            // ‰¹ºƒf[ƒ^–{‘Ì
+            // éŸ³å£°ãƒ‡ãƒ¼ã‚¿æœ¬ä½“
             data.resize(chunkSize);
             file.read(reinterpret_cast<char*>(data.data()), chunkSize);
             dataFound = true;
         }
         else {
-            // ‚»‚Ì‘¼ƒ`ƒƒƒ“ƒN‚ÍƒXƒLƒbƒv
+            // ãã®ä»–ãƒãƒ£ãƒ³ã‚¯ã¯ã‚¹ã‚­ãƒƒãƒ—
             file.ignore(chunkSize);
         }
     }
 
     if (!fmtFound || !dataFound) {
-        throw std::runtime_error("WAV ƒtƒH[ƒ}ƒbƒgˆÙí: " + std::string(filename));
+        throw std::runtime_error("WAV ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆç•°å¸¸: " + std::string(filename));
     }
 
     WavData result;
@@ -88,20 +88,20 @@ static WavData LoadWav(const char* filename)
 }
 
 // ================================
-// XAudio2 Voice —pƒR[ƒ‹ƒoƒbƒN
+// XAudio2 Voice ç”¨ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
 // ================================
 struct VoiceCallback : public IXAudio2VoiceCallback
 {
     std::atomic<bool> finished = false;
 
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     VoiceCallback() = default;
 
-    // ƒRƒs[‹Ö~
+    // ã‚³ãƒ”ãƒ¼ç¦æ­¢
     VoiceCallback(const VoiceCallback&) = delete;
     VoiceCallback& operator=(const VoiceCallback&) = delete;
 
-    // ƒ€[ƒu‹–‰Â
+    // ãƒ ãƒ¼ãƒ–è¨±å¯
     VoiceCallback(VoiceCallback&&) = default;
     VoiceCallback& operator=(VoiceCallback&&) = default;
 
@@ -119,7 +119,7 @@ struct VoiceCallback : public IXAudio2VoiceCallback
 
 
 // ================================
-// ƒTƒEƒ“ƒhƒ}ƒl[ƒWƒƒiƒVƒ“ƒOƒ‹ƒgƒ“j
+// ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒãƒ¼ã‚¸ãƒ£ï¼ˆã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ï¼‰
 // ================================
 class SoundManager
 {
@@ -134,16 +134,16 @@ public:
     void Uninit();
 
     /// <summary>
-    /// SE‚ğÄ¶‚·‚éŠÖ”
+    /// SEã‚’å†ç”Ÿã™ã‚‹é–¢æ•°
     /// </summary>
-    /// <param name="no">”Ô–Ú‚Ì‰¹‚ğÄ¶ </param>
-    /// 0:‹àŠz‘‰Á 
-    /// 1:ÏÚ‰¹
-    /// 2:’•¶•\¦
-    /// 3:’•¶•iŠ®¬
-    /// 4:•às‰¹
-    /// 5:—‰º‰¹
-    /// 6:ƒ^ƒCƒ€ƒŠƒ~ƒbƒg
+    /// <param name="no">ç•ªç›®ã®éŸ³ã‚’å†ç”Ÿ </param>
+    /// 0:é‡‘é¡å¢—åŠ  
+    /// 1:ç©è¼‰éŸ³
+    /// 2:æ³¨æ–‡è¡¨ç¤º
+    /// 3:æ³¨æ–‡å“å®Œæˆ
+    /// 4:æ­©è¡ŒéŸ³
+    /// 5:è½ä¸‹éŸ³
+    /// 6:ã‚¿ã‚¤ãƒ ãƒªãƒŸãƒƒãƒˆ
     void PlaySE(int no);
     void PlayBGM(int no, bool loopFlag);
     void StopBGM();
@@ -161,11 +161,11 @@ private:
 
         SEVoice() = default;
 
-        // ƒRƒs[‚Í‹Ö~i”O‚Ì‚½‚ß–¾¦j
+        // ã‚³ãƒ”ãƒ¼ã¯ç¦æ­¢ï¼ˆå¿µã®ãŸã‚æ˜ç¤ºï¼‰
         SEVoice(const SEVoice&) = delete;
         SEVoice& operator=(const SEVoice&) = delete;
 
-        // ƒ€[ƒu‚à“Á‚Ég‚í‚È‚¢‚Ì‚Å’è‹`•s—vi‚ ‚Á‚Ä‚à‚¢‚¢j
+        // ãƒ ãƒ¼ãƒ–ã‚‚ç‰¹ã«ä½¿ã‚ãªã„ã®ã§å®šç¾©ä¸è¦ï¼ˆã‚ã£ã¦ã‚‚ã„ã„ï¼‰
     };
 
 
@@ -176,7 +176,7 @@ private:
     std::vector<WavData> m_bgmData;
 
     static const int MAX_SE_VOICE = 16;
-    SEVoice m_seVoices[MAX_SE_VOICE];   // š vector ¨ ŒÅ’è”z—ñ‚É‚·‚é
+    SEVoice m_seVoices[MAX_SE_VOICE];   // â˜… vector â†’ å›ºå®šé…åˆ—ã«ã™ã‚‹
 
     IXAudio2SourceVoice* m_bgmVoice = nullptr;
     VoiceCallback m_bgmCallback;

@@ -1,25 +1,25 @@
-#include "Sound.h"
+ï»¿#include "Sound.h"
 // ================================
-// À‘•
+// å®Ÿè£…
 // ================================
 
 bool SoundManager::Init()
 {
     HRESULT hr = XAudio2Create(&m_xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
     if (FAILED(hr)) {
-        std::cerr << "XAudio2Create ¸”s\n";
+        std::cerr << "XAudio2Create å¤±æ•—\n";
         return false;
     }
 
     hr = m_xAudio2->CreateMasteringVoice(&m_masterVoice);
     if (FAILED(hr)) {
-        std::cerr << "CreateMasteringVoice ¸”s\n";
+        std::cerr << "CreateMasteringVoice å¤±æ•—\n";
         m_xAudio2->Release();
         m_xAudio2 = nullptr;
         return false;
     }
 
-    // ===== ‚±‚±‚ğ‚ ‚È‚½‚Ìw’èƒpƒX‚É•ÏXÏ‚İ =====
+    // ===== ã“ã“ã‚’ã‚ãªãŸã®æŒ‡å®šãƒ‘ã‚¹ã«å¤‰æ›´æ¸ˆã¿ =====
     const char* SE_FILES[] = {
         "Assets/Sound/money_up.wav",        // 0
         "Assets/Sound/ride.wav",            // 1
@@ -31,14 +31,14 @@ bool SoundManager::Init()
         //"Assets/Sound/TimeLimit.wav"
     };
 
-    // BGM ‚Í¡‚Í–³‚µB‚ ‚Æ‚Å’Ç‰Á‚·‚é‚È‚ç‚±‚±‚ÉƒpƒX‚ğ‘«‚·B
-    // —á:
+    // BGM ã¯ä»Šã¯ç„¡ã—ã€‚ã‚ã¨ã§è¿½åŠ ã™ã‚‹ãªã‚‰ã“ã“ã«ãƒ‘ã‚¹ã‚’è¶³ã™ã€‚
+    // ä¾‹:
     // const char* BGM_FILES[] = {
     //     "Assets/Sound/bgm_title.wav",
     //     "Assets/Sound/bgm_stage1.wav",
     // };
     const char* BGM_FILES[] = {
-        // ‹ó->‚¾‚ÆƒoƒO‚Á‚½‚Ì‚Å–‚‰¤°‚Ì‹È‚ğ“ü‚ê‚é‚¾‚¯“ü‚ê‚é
+        // ç©º->ã ã¨ãƒã‚°ã£ãŸã®ã§é­”ç‹é­‚ã®æ›²ã‚’å…¥ã‚Œã‚‹ã ã‘å…¥ã‚Œã‚‹
         "C:\\Users\\abyss\\Documents\\GitHub\\HEW2026\\HEW2026_Project\\Assets\\Sound\\maou_bgm_cyber13.wav"
     };
     const size_t SE_COUNT = sizeof(SE_FILES) / sizeof(SE_FILES[0]);
@@ -50,7 +50,7 @@ bool SoundManager::Init()
     // auto test = LoadWav("C:\\Users\\abyss\\Documents\\GitHub\\HEW2026\\HEW2026_Project\\Assets\\Sound\\TimeLimit.wav");
 
     try {
-        // SE “Ç‚İ‚İ
+        // SE èª­ã¿è¾¼ã¿
         m_seData.clear();
         m_seData.reserve(SE_COUNT);
         for (size_t i = 0; i < SE_COUNT; ++i) {
@@ -58,7 +58,7 @@ bool SoundManager::Init()
         }
         
 
-        // BGM “Ç‚İ‚İi¡‚Í 0 Œ‚È‚Ì‚Å‰½‚à‚µ‚È‚¢j
+        // BGM èª­ã¿è¾¼ã¿ï¼ˆä»Šã¯ 0 ä»¶ãªã®ã§ä½•ã‚‚ã—ãªã„ï¼‰
         //m_bgmData.clear();
         //m_bgmData.reserve(BGM_COUNT);
         //for (size_t i = 0; i < BGM_COUNT; ++i) {
@@ -66,12 +66,12 @@ bool SoundManager::Init()
         //}
     }
     catch (const std::exception& e) {
-        std::cerr << "WAV “Ç‚İ‚İ¸”s: " << e.what() << "\n";
+        std::cerr << "WAV èª­ã¿è¾¼ã¿å¤±æ•—: " << e.what() << "\n";
         Uninit();
         return false;
     }
 
-    // SE ƒ{ƒCƒX‚ğ–‘O‚É•¡”ì‚Á‚Ä‚¨‚­i‘S SE ‹¤’ÊƒtƒH[ƒ}ƒbƒg‘O’ñj
+    // SE ãƒœã‚¤ã‚¹ã‚’äº‹å‰ã«è¤‡æ•°ä½œã£ã¦ãŠãï¼ˆå…¨ SE å…±é€šãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆå‰æï¼‰
     for (int i = 0; i < MAX_SE_VOICE; ++i) {
         HRESULT r = m_xAudio2->CreateSourceVoice(
             &m_seVoices[i].voice,
@@ -81,13 +81,13 @@ bool SoundManager::Init()
             &m_seVoices[i].callback
         );
         if (FAILED(r)) {
-            std::cerr << "SE SourceVoice ì¬¸”s\n";
+            std::cerr << "SE SourceVoice ä½œæˆå¤±æ•—\n";
             Uninit();
             return false;
         }
     }
 
-    // BGM —pƒ{ƒCƒXiBGM ƒf[ƒ^‚ª‚ ‚é‚Æ‚«‚¾‚¯ì‚éj
+    // BGM ç”¨ãƒœã‚¤ã‚¹ï¼ˆBGM ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚‹ã¨ãã ã‘ä½œã‚‹ï¼‰
     if (!m_bgmData.empty() && false) {
         HRESULT r = m_xAudio2->CreateSourceVoice(
             &m_bgmVoice,
@@ -97,7 +97,7 @@ bool SoundManager::Init()
             &m_bgmCallback
         );
         if (FAILED(r)) {
-            std::cerr << "BGM SourceVoice ì¬¸”s\n";
+            std::cerr << "BGM SourceVoice ä½œæˆå¤±æ•—\n";
             Uninit();
             return false;
         }
@@ -111,7 +111,7 @@ void SoundManager::Uninit()
 {
     StopBGM();
 
-    // SE Voice ”jŠü
+    // SE Voice ç ´æ£„
     for (int i = 0; i < MAX_SE_VOICE; ++i) {
         auto& v = m_seVoices[i];
         if (v.voice) {
@@ -123,7 +123,7 @@ void SoundManager::Uninit()
     }
     //m_seVoices.clear();
 
-    // BGM Voice ”jŠü
+    // BGM Voice ç ´æ£„
     if (m_bgmVoice) {
         m_bgmVoice->DestroyVoice();
         m_bgmVoice = nullptr;
@@ -143,7 +143,7 @@ void SoundManager::Uninit()
     m_bgmData.clear();
 }
 
-// Ä¶I—¹‚µ‚½ SE ƒ{ƒCƒX‚ğÄ—˜—p‰Â”\ó‘Ô‚É–ß‚·
+// å†ç”Ÿçµ‚äº†ã—ãŸ SE ãƒœã‚¤ã‚¹ã‚’å†åˆ©ç”¨å¯èƒ½çŠ¶æ…‹ã«æˆ»ã™
 void SoundManager::CleanupSEVoices()
 {
     for (auto& v : m_seVoices) {
@@ -156,16 +156,16 @@ void SoundManager::CleanupSEVoices()
     }
 }
 
-// Œø‰Ê‰¹Ä¶
+// åŠ¹æœéŸ³å†ç”Ÿ
 void SoundManager::PlaySE(int no)
 {
     if (no < 0 || no >= static_cast<int>(m_seData.size())) return;
     if (!m_xAudio2) return;
 
-    // I—¹Ï‚İ‚Ìƒ{ƒCƒX‚ğ‰ğ•ú
+    // çµ‚äº†æ¸ˆã¿ã®ãƒœã‚¤ã‚¹ã‚’è§£æ”¾
     CleanupSEVoices();
 
-    // ‹ó‚«ƒ{ƒCƒX‚ğ’T‚·
+    // ç©ºããƒœã‚¤ã‚¹ã‚’æ¢ã™
     SEVoice* slot = nullptr;
     for (auto& v : m_seVoices) {
         if (!v.inUse) {
@@ -173,9 +173,9 @@ void SoundManager::PlaySE(int no)
             break;
         }
     }
-    // ‹ó‚«‚ª‚È‚¯‚ê‚Î’ú‚ß‚éi‚à‚µ‚­‚Íˆê”ÔŒÃ‚¢‚Ì‚ğ’×‚·‚È‚ÇŠg’£‰Âj
+    // ç©ºããŒãªã‘ã‚Œã°è«¦ã‚ã‚‹ï¼ˆã‚‚ã—ãã¯ä¸€ç•ªå¤ã„ã®ã‚’æ½°ã™ãªã©æ‹¡å¼µå¯ï¼‰
     if (!slot) {
-        // std::cerr << "SE ƒ{ƒCƒX•s‘«\n";
+        // std::cerr << "SE ãƒœã‚¤ã‚¹ä¸è¶³\n";
         return;
     }
 
@@ -185,7 +185,7 @@ void SoundManager::PlaySE(int no)
     buf.AudioBytes = static_cast<UINT32>(data.buffer.size());
     buf.pAudioData = data.buffer.data();
     buf.Flags = XAUDIO2_END_OF_STREAM;
-    buf.LoopCount = 0; // SE ‚ÍŠî–{ƒ‹[ƒv‚µ‚È‚¢
+    buf.LoopCount = 0; // SE ã¯åŸºæœ¬ãƒ«ãƒ¼ãƒ—ã—ãªã„
 
     slot->callback.finished = false;
     slot->voice->Stop();
@@ -195,11 +195,11 @@ void SoundManager::PlaySE(int no)
     slot->inUse = true;
 }
 
-// BGM Ä¶
+// BGM å†ç”Ÿ
 void SoundManager::PlayBGM(int no, bool loopFlag)
 {
     if (no < 0 || no >= static_cast<int>(m_bgmData.size())) return;
-    if (!m_bgmVoice) return; // ¡‚Í BGM –³‚µ‚È‚Ì‚Å‚±‚±‚Å•K‚¸ return ‚³‚ê‚é
+    if (!m_bgmVoice) return; // ä»Šã¯ BGM ç„¡ã—ãªã®ã§ã“ã“ã§å¿…ãš return ã•ã‚Œã‚‹
 
     StopBGM();
 
@@ -219,7 +219,7 @@ void SoundManager::PlayBGM(int no, bool loopFlag)
     m_bgmVoice->Start();
 }
 
-// BGM ’â~
+// BGM åœæ­¢
 void SoundManager::StopBGM()
 {
     if (!m_bgmVoice) return;
@@ -232,7 +232,7 @@ void SoundManager::StopBGM()
 }
 
 // ================================
-// g‚¢•ûƒCƒ[ƒW
+// ä½¿ã„æ–¹ã‚¤ãƒ¡ãƒ¼ã‚¸
 // ================================
 /*
 int main()
@@ -242,15 +242,15 @@ int main()
         return 1;
     }
 
-    // Œø‰Ê‰¹ƒeƒXƒg
-    snd.PlaySE(0); // ‹àŠz‘‰Á
-    snd.PlaySE(4); // •às‰¹ ‚È‚Ç
+    // åŠ¹æœéŸ³ãƒ†ã‚¹ãƒˆ
+    snd.PlaySE(0); // é‡‘é¡å¢—åŠ 
+    snd.PlaySE(4); // æ­©è¡ŒéŸ³ ãªã©
 
-    // BGM ‚Í‚Ü‚¾ƒtƒ@ƒCƒ‹w’è‚µ‚Ä‚È‚¢‚Ì‚Å‰½‚à‹N‚±‚ç‚È‚¢
+    // BGM ã¯ã¾ã ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®šã—ã¦ãªã„ã®ã§ä½•ã‚‚èµ·ã“ã‚‰ãªã„
     snd.PlayBGM(0, true);
 
     for (;;) {
-        // ƒQ[ƒ€ƒ‹[ƒv
+        // ã‚²ãƒ¼ãƒ ãƒ«ãƒ¼ãƒ—
         Sleep(16);
     }
 
