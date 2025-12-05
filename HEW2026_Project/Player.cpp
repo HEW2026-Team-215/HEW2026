@@ -392,6 +392,17 @@ void Player::UpdateMove()
 	m_move.y *= tran.player.speedDown;
 	m_move.z *= tran.player.speedDown;
 
+
+	// 停止判定
+	float speed;
+	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);//移動情報を計算用の型に変換
+	DirectX::XMVECTOR vLen = DirectX::XMVector3Length(vMove);//vMoveから移動量を計算
+	DirectX::XMStoreFloat(&speed, vLen);		// speedにvLenを格納
+	if (speed < CMSEC(30.0f))
+	{	// 1秒間に30cmぐらい進むスピードであれば停止
+		m_isStop = true;
+		m_shotStep = SHOT_WAIT;
+	}
 	//この作品の場合はこれより下の処理は不要なのでスキップ
 	return;
 	// 重力
@@ -414,16 +425,6 @@ void Player::UpdateMove()
 			// 地面にめり込んでいるので、バウンドした場合の位置に変更
 			m_pos.y = -m_pos.y;
 		}
-	}
-	// 停止判定
-	float speed;
-	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);//移動情報を計算用の型に変換
-	DirectX::XMVECTOR vLen = DirectX::XMVector3Length(vMove);//vMoveから移動量を計算
-	DirectX::XMStoreFloat(&speed, vLen);		// speedにvLenを格納
-	if (speed < CMSEC(30.0f)) 
-	{	// 1秒間に30cmぐらい進むスピードであれば停止
-		m_isStop = true;
-		m_shotStep = SHOT_WAIT;
 	}
 }
 

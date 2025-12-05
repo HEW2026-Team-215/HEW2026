@@ -141,7 +141,7 @@ void Block::Update()
 				}
 			}
 		}
-		else if (m_pos.y <= 0.0f)
+		if (m_pos.y <= 0.0f)
 			m_state = BlockState::Block_Idle;
 		break;
 	case Block::Block_Catch:

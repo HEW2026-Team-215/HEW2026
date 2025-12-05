@@ -171,6 +171,11 @@ void Draw()
 		if (ImGui::Button("Init"))
 			tran.Init();
 
+		if (ImGui::Button("Save"))
+			tran.SaveTransferToCsv("Assets/Csv/Information.csv");
+		if (ImGui::Button("Load"))
+			tran.LoadTransferFromCsv("Assets/Csv/Information.csv");
+
 		ImGui::Checkbox("Player Setting",&show_player_window);
 		ImGui::Checkbox("Camera Setting", &show_camera_window);
 		ImGui::Checkbox("Stage Setting", &show_stage_window);
