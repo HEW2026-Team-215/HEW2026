@@ -28,6 +28,8 @@ public:
 	virtual void Update() {};
 	void Draw();
 
+	//===== Setter =====//
+
 	void SetPosition(float X, float Y);
 	void SetSize(float W, float H);
 	void SetRotation(float X, float Y, float Z);
@@ -36,12 +38,16 @@ public:
 	void SetUVScale(float X, float Y);
 	void SetColor(float R, float G, float B, float A);
 
+	//===== Getter =====//
+
 	DirectX::XMFLOAT2 GetPosition(void);
 	DirectX::XMFLOAT2 GetSize(void);
 	DirectX::XMFLOAT3 GetRotation(void);
 	DirectX::XMFLOAT2 GetUVPosition(void);
 	DirectX::XMFLOAT2 GetUVScale(void);
 	DirectX::XMFLOAT4 GetColor(void);
+
+	//===== Setter as XMFLOATx =====//
 
 	void SetPosition(DirectX::XMFLOAT2 pos);
 	void SetSize(DirectX::XMFLOAT2 size);

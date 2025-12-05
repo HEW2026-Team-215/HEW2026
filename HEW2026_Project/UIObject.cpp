@@ -98,6 +98,8 @@ void UIObject::Draw()
 	SetDepthTest(true);
 }
 
+//=====| Setter |=====//
+
 void UIObject::SetPosition(float X, float Y)
 {
 	m_fPosition = { X, Y };
