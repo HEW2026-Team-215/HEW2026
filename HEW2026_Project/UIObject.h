@@ -50,6 +50,7 @@ public:
 
 	void SetPosition(DirectX::XMFLOAT2 pos);
 	void SetSize(DirectX::XMFLOAT2 size);
+	void SetColor(DirectX::XMFLOAT4 color);
 	void GenerateGradient(DirectX::XMFLOAT4 colorFrom, DirectX::XMFLOAT4 colorTo, int degree);
 private:
 	Texture* m_pTexture;

@@ -210,6 +210,13 @@ void UIObject::SetSize(DirectX::XMFLOAT2 size)
 	m_fSize = size;
 }
 
+void UIObject::SetColor(DirectX::XMFLOAT4 color)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		m_fColor[i] = color;
+	}
+}
 
 
 /**
