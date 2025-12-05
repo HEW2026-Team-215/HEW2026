@@ -143,6 +143,7 @@ public:
     /// 3:注文品完成
     /// 4:歩行音
     /// 5:落下音
+    /// 6:タイムリミット
     void PlaySE(int no);
     void PlayBGM(int no, bool loopFlag);
     void StopBGM();

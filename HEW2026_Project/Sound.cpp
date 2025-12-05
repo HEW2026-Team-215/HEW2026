@@ -26,7 +26,9 @@ bool SoundManager::Init()
         "Assets/Sound/order_show.wav",      // 2
         "Assets/Sound/order_success.wav",   // 3
         "Assets/Sound/walk.wav",            // 4
-        "Assets/Sound/drop.wav"             // 5
+        "Assets/Sound/drop.wav",             // 5
+        "Assets/Sound/TimeLimit.wav"        // 6
+        //"Assets/Sound/TimeLimit.wav"
     };
 
     // BGM は今は無し。あとで追加するならここにパスを足す。
@@ -45,6 +47,8 @@ bool SoundManager::Init()
 
     m_masterVoice->SetVolume(1.0f);
 
+    // auto test = LoadWav("C:\\Users\\abyss\\Documents\\GitHub\\HEW2026\\HEW2026_Project\\Assets\\Sound\\TimeLimit.wav");
+
     try {
         // SE 読み込み
         m_seData.clear();
@@ -52,6 +56,7 @@ bool SoundManager::Init()
         for (size_t i = 0; i < SE_COUNT; ++i) {
             m_seData.emplace_back(LoadWav(SE_FILES[i]));
         }
+        
 
         // BGM 読み込み（今は 0 件なので何もしない）
         //m_bgmData.clear();
