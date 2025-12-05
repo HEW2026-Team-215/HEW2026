@@ -28,9 +28,6 @@ SceneGame::SceneGame()
 	m_pPlayer = new Player();
 	m_pOrderManager = new OrderManager();
 
-	// New!
-	m_pField = new Field();
-
 	// Initialize first blocks
 	float x = RandomFloat(-5.0f, 5.0f);
 	float z = RandomFloat(-5.0f, 5.0f);
@@ -267,14 +264,7 @@ void SceneGame::Update()
 		m_pScore->Update();
 	}
 	if (m_pOrderManager)
-	{
-		m_pOrderManager->Update();
-	}
-	if (m_pField)
-	{
-		m_pField->SetCamera(m_pCamera);
-		m_pField->Update();
-	}
+			m_pOrderManager->Update();
 }
 
 void SceneGame::Draw()
@@ -353,7 +343,7 @@ void SceneGame::Draw()
 		// DirectX::XMVECTOR A = DirectX::XMVectorSet(0.0f, 10.0f, -10.0f, 0.0);
 		// DirectX::XMVECTOR P = DirectX::XMVectorSet(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y, m_pPlayer->GetPos().z, 0.0f);
 		// A = DirectX::XMVectorAdd(A, P);
-		//m_pCamera->SetPos({A.m128_f32[0], A.m128_f32[1], A.m128_f32[2]});
+		 //m_pCamera->SetPos({A.m128_f32[0], A.m128_f32[1], A.m128_f32[2]});
 		Collision::Info collisionA = m_pPlayer->GetCollision(); // プレイヤーの当たり判定
 
 		// 地面、または障害物の当たり判定
@@ -402,7 +392,7 @@ void SceneGame::Draw()
 		}
 	}
 
-	if (false)
+	if (true)
 	{
 		TRAN_INS;
 		//--- １つ目の地面
@@ -430,11 +420,6 @@ void SceneGame::Draw()
 	if (m_pNextItem)
 	{
 		m_pNextItem->Draw();
-	}
-	// New!
-	if (m_pField && true)
-	{
-		m_pField->Draw();
 	}
 }
 

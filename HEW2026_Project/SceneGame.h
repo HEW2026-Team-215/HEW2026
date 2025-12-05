@@ -11,7 +11,6 @@
 #include "Timer.h"
 #include "NextItem.h"
 #include "OrderManager.h"
-#include "Field.h"
 
 class SceneGame : public Scene
 {
@@ -42,8 +41,6 @@ private:
 	float max;
 	OrderManager* m_pOrderManager;
 
-	// New!
-	Field* m_pField;
 };
 
 #endif // __SCENE_GAME_H__
