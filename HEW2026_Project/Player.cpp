@@ -1,11 +1,12 @@
 ﻿#include "Player.h"
-#include"Defines.h"
-#include"Main.h"
-#include"Sprite.h"
-#include"ShaderList.h"
+#include "Defines.h"
+#include "Main.h"
+#include "Sprite.h"
+#include "ShaderList.h"
+#include "Controller.h"
 
-#include"CsvData.h"
-#include"Sound.h"
+#include "CsvData.h"
+#include "Sound.h"
 
 #define PRE(in) IsKeyPress(in)
 
@@ -201,6 +202,15 @@ void Player::Update()
 	{
 		m_move.y += csv.GetSpeed();
 	}
+	// プレイヤーの回転処理
+
+	Stick ls = GetLeftStick();
+
+	if (GAMEPAD_PLAYER_UGOKINIKUSA <= abs(ls.x) || GAMEPAD_PLAYER_UGOKINIKUSA <= abs(ls.y))
+	{
+		m_angle = atan2f(-ls.y * tran.player.velocity, ls.x * tran.player.velocity) - DirectX::XMConvertToRadians(90.0f);
+	}
+
 
 #endif
 	UpdateControl();
@@ -255,6 +265,7 @@ void Player::Draw()
 	Sprite_mat = DirectX::XMMatrixTranspose(mat);// 行列変換を行う
 	DirectX::XMFLOAT4X4 Sprite_fMat; // 描画専用変数を定義
 	DirectX::XMStoreFloat4x4(&Sprite_fMat, Sprite_mat);//mWorldを転置してmatに格納
+
 
 	// 場所を指定
 	DirectX::XMFLOAT3 offsetPos = m_animation.GetPos();
@@ -389,6 +400,10 @@ void Player::UpdateControl()
 		// atan2 gives angle in radians; convert to degrees
 		m_angle = DirectX::XMConvertToDegrees(atan2f(inputMove.x, inputMove.y)) + 180.0f;
 	}
+	Stick ls = GetLeftStick();
+
+	m_move.x += ls.x * tran.player.velocity;
+	m_move.z += ls.y * tran.player.velocity;
 
 
 	// Pressなので連続入力時に特定フレーム毎(20)にのみ反応する処理
@@ -422,6 +437,17 @@ void Player::UpdateMove()
 	m_move.y *= tran.player.speedDown;
 	m_move.z *= tran.player.speedDown;
 
+
+	// 停止判定
+	float speed;
+	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);//移動情報を計算用の型に変換
+	DirectX::XMVECTOR vLen = DirectX::XMVector3Length(vMove);//vMoveから移動量を計算
+	DirectX::XMStoreFloat(&speed, vLen);		// speedにvLenを格納
+	if (speed < CMSEC(30.0f))
+	{	// 1秒間に30cmぐらい進むスピードであれば停止
+		m_isStop = true;
+		m_shotStep = SHOT_WAIT;
+	}
 	//この作品の場合はこれより下の処理は不要なのでスキップ
 	return;
 	// 重力
@@ -444,16 +470,6 @@ void Player::UpdateMove()
 			// 地面にめり込んでいるので、バウンドした場合の位置に変更
 			m_pos.y = -m_pos.y;
 		}
-	}
-	// 停止判定
-	float speed;
-	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);//移動情報を計算用の型に変換
-	DirectX::XMVECTOR vLen = DirectX::XMVector3Length(vMove);//vMoveから移動量を計算
-	DirectX::XMStoreFloat(&speed, vLen);		// speedにvLenを格納
-	if (speed < CMSEC(30.0f))
-	{	// 1秒間に30cmぐらい進むスピードであれば停止
-		m_isStop = true;
-		m_shotStep = SHOT_WAIT;
 	}
 }
 void Player::UpdateWall()

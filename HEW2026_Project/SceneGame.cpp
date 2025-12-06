@@ -7,6 +7,7 @@
 #include <ctime>
 #include "Sound.h"
 #include"Transfer.h"
+#include "Controller.h"
 
 SceneGame::SceneGame()
 		: m_pBlock{nullptr}, m_menu{}, csv(CsvData::get_instance())
@@ -172,7 +173,7 @@ void SceneGame::Update()
 			break;
 		}
 	}
-	if (IsKeyTrigger('F'))
+	if (IsKeyTrigger('F')||IsButtonPressed(XINPUT_GAMEPAD_A))
 	{
 		std::list<Block*> submittedBurger;
 		
@@ -265,7 +266,9 @@ void SceneGame::Update()
 		m_pScore->Update();
 	}
 	if (m_pOrderManager)
-			m_pOrderManager->Update();
+	{
+		m_pOrderManager->Update();
+	}
 }
 
 void SceneGame::Draw()

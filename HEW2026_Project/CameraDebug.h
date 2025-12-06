@@ -1,6 +1,11 @@
 ﻿#ifndef _CAMERADEBUG_H
 #define _CAMERADEBUG_H
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <Xinput.h>
 
+// ★ これを必ずどこか1つの .cpp に書く
+#pragma comment(lib, "xinput.lib")
 #include "Camera.h"
 #include "Input.h"
 #include "Defines.h"

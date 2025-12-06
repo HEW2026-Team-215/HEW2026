@@ -15,6 +15,10 @@
 #define _TRANSFER
 
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <stdexcept>
 
 class Transfer
 {
@@ -35,13 +39,13 @@ public:
 	void Init()
 	{
 		// プレイヤー
-		player.pos = { 0.0f,0.0f };
-		player.maxSpeed = { 5.0f ,5.0f};
+		player.pos = { 0.0f, 0.0f };
+		player.maxSpeed = { 5.0f, 5.0f };
 		player.velocity = 0.01f;
-		player.speedDown = 0.99f;
+		player.speedDown = 0.95f * 0.95f;
 		// カメラ
-		camera.eyePos = { 0.0f,110.0f,-110.0f };
-		camera.lookPos = {0.0f,0.0f,0.0f};
+		camera.eyePos = { 0.0f, 110.0f, -110.0f };
+		camera.lookPos = { 0.0f, 0.0f, 0.0f };
 		// ステージ
 		stage.column = 12;
 		stage.row = 6;
@@ -59,6 +63,10 @@ public:
 		ui.size = { 1.0f,1.0f };
 		ui.color = { 1.0f,1.0f,1.0f,1.0f };
 	}
+	std::vector<std::string> SplitCsvLine(const std::string& line, char delim = ',');
+	std::string JoinCsvLine(const std::vector<std::string>& cells, char delim = ',');
+	bool LoadTransferFromCsv(const std::string& path);
+	bool SaveTransferToCsv(const std::string& path);
 public:
 	struct f2
 	{
@@ -128,4 +136,5 @@ public:// 各数値
 	OrderInfo order;	// オーダーの設定
 	UiInfo ui;			// え？
 };
+
 

@@ -1,16 +1,16 @@
 ﻿#ifndef _PLAYER_H
 #define _PLAYER_H
 
-#include"GameObject.h"
-#include"Camera.h"
-#include"CameraDebug.h"
-#include"Geometory.h"
-#include"Defines.h"
-#include<DirectXMath.h>
-#include"Sprite.h"
-#include"Model.h"
+#include "GameObject.h"
+#include "Camera.h"
+#include "CameraDebug.h"
+#include "Geometory.h"
+#include "Defines.h"
+#include <DirectXMath.h>
+#include "Sprite.h"
+#include "Model.h"
 #include "Transfer.h"
-#include"Animation.h"
+#include "Animation.h"
 
 class Player : public GameObject {
 public:
@@ -79,6 +79,7 @@ private:
     //DirectX::XMFLOAT3 m_startPos;  // Store initial position
 
 	Animation m_animation;//idle animation
+	float angleY;
 };
 
 #endif//_PLAYER_H

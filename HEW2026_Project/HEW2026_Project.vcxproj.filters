@@ -1,261 +1,270 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Sources">
+    <Filter Include="ソースファイル">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Headers">
+    <Filter Include="ヘッダーファイル">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resources">
+    <Filter Include="リソースファイル">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Sources\System">
+    <Filter Include="ソースファイル\System">
       <UniqueIdentifier>{cefddf4c-25f8-4c1d-8607-61de56336227}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Application">
+    <Filter Include="ソースファイル\Application">
       <UniqueIdentifier>{d673194b-5c9e-4080-b67b-7f46a1565ba8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\System">
+    <Filter Include="ヘッダーファイル\System">
       <UniqueIdentifier>{5858150b-de72-4b6e-8ecf-8f81d5d8b4f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Application">
+    <Filter Include="ヘッダーファイル\Application">
       <UniqueIdentifier>{5c1a610b-1606-4f4a-817c-d5b1c7d94851}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Work">
+    <Filter Include="ソースファイル\Work">
       <UniqueIdentifier>{d40b6216-14f8-474d-bd1d-053eaf07e0c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\System\DirectX">
+    <Filter Include="ヘッダーファイル\System\DirectX">
       <UniqueIdentifier>{f3668724-0776-4a81-bfe4-460b3b211f3f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\System\DirectX">
+    <Filter Include="ソースファイル\System\DirectX">
       <UniqueIdentifier>{36a071c1-5faa-4aab-876a-ec9bef09e703}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\System\ImGui">
+    <Filter Include="ソースファイル\System\ImGui">
       <UniqueIdentifier>{896e14f2-1c6f-4fdc-aef6-68337317409b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\System\ImGui">
+    <Filter Include="ヘッダーファイル\System\ImGui">
       <UniqueIdentifier>{65bfcd32-81eb-4a34-baa9-e9f98e5f9a66}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sprite.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="Geometory.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="SceneGame.cpp">
-      <Filter>Sources\Application</Filter>
+      <Filter>ソースファイル\Application</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>Sources\Application</Filter>
+      <Filter>ソースファイル\Application</Filter>
     </ClCompile>
     <ClCompile Include="_model.cpp">
-      <Filter>Sources\Work</Filter>
+      <Filter>ソースファイル\Work</Filter>
     </ClCompile>
     <ClCompile Include="_geometory.cpp">
-      <Filter>Sources\Work</Filter>
+      <Filter>ソースファイル\Work</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="DirectX.cpp">
-      <Filter>Sources\System\DirectX</Filter>
+      <Filter>ソースファイル\System\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="MeshBuffer.cpp">
-      <Filter>Sources\System\DirectX</Filter>
+      <Filter>ソースファイル\System\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Sources\System\DirectX</Filter>
+      <Filter>ソースファイル\System\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="ShaderList.cpp">
-      <Filter>Sources\System\DirectX</Filter>
+      <Filter>ソースファイル\System\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Sources\System\DirectX</Filter>
+      <Filter>ソースファイル\System\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="Block.cpp">
-      <Filter>Sources</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="CameraDebug.cpp">
-      <Filter>Sources</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Sources</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="Score.cpp">
-      <Filter>Sources</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>Sources</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="Order.cpp">
-      <Filter>Sources</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="NextItem.cpp">
-      <Filter>Sources</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="OrderManager.cpp">
-      <Filter>Sources</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="CsvData.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="Collision.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="UIObject.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
-      <Filter>Sources\System\ImGui</Filter>
+      <Filter>ソースファイル\System\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_draw.cpp">
-      <Filter>Sources\System\ImGui</Filter>
+      <Filter>ソースファイル\System\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_dx11.cpp">
-      <Filter>Sources\System\ImGui</Filter>
+      <Filter>ソースファイル\System\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_win32.cpp">
-      <Filter>Sources\System\ImGui</Filter>
+      <Filter>ソースファイル\System\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_tables.cpp">
-      <Filter>Sources\System\ImGui</Filter>
+      <Filter>ソースファイル\System\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_widgets.cpp">
-      <Filter>Sources\System\ImGui</Filter>
+      <Filter>ソースファイル\System\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Sound.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="Startup.cpp">
-      <Filter>Sources\Application</Filter>
+      <Filter>ソースファイル\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Transfer.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp">
+      <Filter>ソースファイル\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Defines.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="Geometory.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="Main.h">
-      <Filter>Headers\Application</Filter>
+      <Filter>ヘッダーファイル\Application</Filter>
     </ClInclude>
     <ClInclude Include="SceneGame.h">
-      <Filter>Headers\Application</Filter>
+      <Filter>ヘッダーファイル\Application</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="DirectX.h">
-      <Filter>Headers\System\DirectX</Filter>
+      <Filter>ヘッダーファイル\System\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="MeshBuffer.h">
-      <Filter>Headers\System\DirectX</Filter>
+      <Filter>ヘッダーファイル\System\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Headers\System\DirectX</Filter>
+      <Filter>ヘッダーファイル\System\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="ShaderList.h">
-      <Filter>Headers\System\DirectX</Filter>
+      <Filter>ヘッダーファイル\System\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Headers\System\DirectX</Filter>
+      <Filter>ヘッダーファイル\System\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="Block.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="CameraDebug.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="Score.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="Order.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="NextItem.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="OrderManager.h">
-      <Filter>Headers</Filter>
+      <Filter>ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="UIObject.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="CsvData.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_dx11.h">
-      <Filter>Headers\System\ImGui</Filter>
+      <Filter>ヘッダーファイル\System\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="imgui.h">
-      <Filter>Headers\System\ImGui</Filter>
+      <Filter>ヘッダーファイル\System\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_win32.h">
-      <Filter>Headers\System\ImGui</Filter>
+      <Filter>ヘッダーファイル\System\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="imconfig.h">
-      <Filter>Headers\System\ImGui</Filter>
+      <Filter>ヘッダーファイル\System\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_internal.h">
-      <Filter>Headers\System\ImGui</Filter>
+      <Filter>ヘッダーファイル\System\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Sound.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="InputCsv.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="Transfer.h">
-      <Filter>Headers\System</Filter>
+      <Filter>ヘッダーファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
