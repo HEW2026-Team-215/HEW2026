@@ -34,13 +34,13 @@ SceneGame::SceneGame()
 
 	// First Buns_Button block
 	Block* firstBlock = new Block(Block::Block_Color::Buns_Button);
-	firstBlock->GetCamera(m_pCamera);
+	firstBlock->SetCamera(m_pCamera);
 	firstBlock->SetState(Block::BlockState::Block_Catched);
 	m_pBlock.push_back(firstBlock);
 
 	// Second random block
 	Block* secondBlock = new Block(m_pNextItem->Next(), x, z);
-	secondBlock->GetCamera(m_pCamera);
+	secondBlock->SetCamera(m_pCamera);
 	m_pBlock.push_back(secondBlock);
 
 	m_pPlayer->SetCamera(m_pCamera);
@@ -76,9 +76,10 @@ SceneGame::~SceneGame()
 		delete m_pPlayer;
 		m_pPlayer = nullptr;
 	}
-	for (auto block : m_pBlock)
+	for (auto it = m_pBlock.begin(); it != m_pBlock.end();)
 	{
-		delete block;
+		it = m_pBlock.erase(it);
+		//it = nullptr;
 	}
 	m_pBlock.clear();
 
@@ -103,7 +104,7 @@ void SceneGame::Update()
 		if (block)
 		{
 			block->SetPlayerPos(playerPos);
-			block->GetCamera(m_pCamera);
+			block->SetCamera(m_pCamera);
 		}
 	}
 	static int snCount; snCount++;//フレーをカウントする変数
@@ -118,7 +119,7 @@ void SceneGame::Update()
 			float randX = RandomFloat(-5.0f, 5.0f);
 			float randZ = RandomFloat(-5.0f, 5.0f);
 			Block* newBlock = new Block(m_pNextItem->Next(), randX, randZ);
-			newBlock->GetCamera(m_pCamera);
+			newBlock->SetCamera(m_pCamera);
 			m_pBlock.push_back(newBlock);
 			snCount = 0;
 			break;
@@ -138,7 +139,7 @@ void SceneGame::Update()
 			float x = RandomFloat(-5.0f, 5.0f);
 			float z = RandomFloat(-5.0f, 5.0f);
 			Block* newBlock = new Block(m_pNextItem->Next(), x, z);
-			newBlock->GetCamera(m_pCamera);
+			newBlock->SetCamera(m_pCamera);
 			newBlock->SetStep(block->GetStep() + 1);
 			m_pBlock.push_back(newBlock);
 			//snCount = 0;
@@ -152,13 +153,12 @@ void SceneGame::Update()
 
 		case Block::BlockState::Block_Idle:
 		{
-			//// Replace idle block with a new one
-			//float x = RandomFloat(-5.0f, 5.0f);
-			//float z = RandomFloat(-5.0f, 5.0f);
-			//Block* newBlock = new Block(m_pNextItem->Next(), x, z);
-			//newBlock->GetCamera(m_pCamera);
-			//*it = newBlock; // replace the idle block
-			*it = nullptr;
+			// Replace idle block with a new one
+			float x = RandomFloat(-5.0f, 5.0f);
+			float z = RandomFloat(-5.0f, 5.0f);
+			Block* newBlock = new Block(m_pNextItem->Next(), x, z);
+			newBlock->SetCamera(m_pCamera);
+			*it = newBlock; // replace the idle block
 			break;
 		}
 
@@ -216,7 +216,7 @@ void SceneGame::Update()
 		}
 		// Add new Buns_Button block at front
 		Block* bunBlock = new Block(Block::Block_Color::Buns_Button);
-		bunBlock->GetCamera(m_pCamera);
+		bunBlock->SetCamera(m_pCamera);
 		bunBlock->SetState(Block::BlockState::Block_Catched);
 		m_pBlock.push_front(bunBlock);
 
@@ -269,6 +269,8 @@ void SceneGame::Update()
 
 void SceneGame::Draw()
 {
+
+	
 		if (m_pOrderManager)
 				m_pOrderManager->Draw();
 	//--- １つ目の地面
@@ -336,6 +338,25 @@ void SceneGame::Draw()
 			// モデルの描画
 			m_pModel->Draw(i);
 		}
+
+
+	for (auto block : m_pBlock)
+	{
+		if (block)
+		{
+			block->SetPlayerPos(m_pPlayer->GetPos());
+			block->DrawShadow();
+		}
+	}
+
+	for (auto block : m_pBlock)
+	{
+		if (block)
+		{
+			block->SetPlayerPos(m_pPlayer->GetPos());
+			block->Draw();
+		}
+	}
 
 	if (m_pPlayer)
 	{
@@ -406,7 +427,6 @@ void SceneGame::Draw()
 		Geometory::DrawBox();
 	}
 
-
 	if (m_pScore)
 	{
 		m_pScore->Draw();
@@ -426,4 +446,5 @@ void SceneGame::Draw()
 float RandomFloat(float min, float max)
 {
 	return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (max - min);
-}////
+}
+

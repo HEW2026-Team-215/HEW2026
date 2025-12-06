@@ -23,12 +23,13 @@ public:
 	{
 		return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (max - min);
 	}
+	
 
 private:
 	Model* m_pModel;
 	Camera* m_pCamera;
 	Player* m_pPlayer;
-
+	Texture* m_pShadowTex;
 	std::list<Block*> m_pBlock;         // dynamic block list
 	
 

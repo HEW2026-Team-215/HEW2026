@@ -10,6 +10,7 @@
 #include"Sprite.h"
 #include"Model.h"
 #include "Transfer.h"
+#include"Animation.h"
 
 class Player : public GameObject {
 public:
@@ -63,12 +64,21 @@ private:
 	Texture* m_pShadowTex;	// 影の見た目
 	DirectX::XMFLOAT3	m_shadowPos;	// 影の位置
 
+	// New!
 	CsvData& csv;
 	Model* m_pModel;
 	DirectX::XMMATRIX m_dxpos;
 	DirectX::XMFLOAT4X4 wvp[3];
 	// New!
 	Transfer& tran;
+
+private:
+	float m_idleTimer = 0.0f;     // Tracks time for idle motion
+    float m_idleAmplitude = 0.05f; // How much the player bobs up and down
+    float m_idleSpeed = 10.0f;      // Speed of bobbing
+    DirectX::XMFLOAT3 m_startPos;  // Store initial position
+
+	Animation m_animation;//idle animation
 };
 
 #endif//_PLAYER_H

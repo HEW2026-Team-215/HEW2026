@@ -22,6 +22,11 @@ Block::Block()
 	m_pos.x = csv.GetBlockState().blo.pos.x;
 	m_pos.y = csv.GetBlockState().height;
 	m_pos.z = csv.GetBlockState().blo.pos.y;
+	
+	m_pShadowTex = new Texture();
+	if (FAILED(m_pShadowTex->Create("Assets/Texture/Shadow.png"))) {
+		MessageBox(NULL, "Texture load failed", "Error", MB_OK);
+	}
 
 	int count=0;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";	count++;
@@ -112,6 +117,12 @@ Block::~Block()
 	{
 		//delete m_pCamera;
 		m_pCamera = nullptr;
+	}
+
+	if (m_pShadowTex)
+	{
+		delete m_pShadowTex;
+		m_pShadowTex = nullptr;
 	}
 }
 
@@ -214,35 +225,6 @@ void Block::Draw()
 			// モデルの描画
 			m_pModel->Draw(i);
 		}
-		//=====================影=============================
-
-		{
-				DirectX::XMMATRIX T_shadow;
-				DirectX::XMMATRIX S_shadow;
-
-				float shadowHeight = 0.05f; // avoid z-fighting
-				T_shadow = DirectX::XMMatrixTranslation(m_pos.x, 0.0f + shadowHeight, m_pos.z);
-
-				float shadowScaleX = csv.GetBlockState().blo.size.x * 1.2f;
-				float shadowScaleZ = csv.GetBlockState().blo.size.y * 1.2f;
-
-				S_shadow = DirectX::XMMatrixScaling(shadowScaleX, 0.01f, shadowScaleZ);
-
-				DirectX::XMMATRIX shadowMat = S_shadow * T_shadow;
-				shadowMat = DirectX::XMMatrixTranspose(shadowMat);
-
-				DirectX::XMFLOAT4X4 fShadow;
-				DirectX::XMStoreFloat4x4(&fShadow, shadowMat);
-
-				// shadow color
-				Model::Material shadowMaterial = {};
-				shadowMaterial.diffuse = DirectX::XMFLOAT4(0, 0, 0, 0.5f);
-
-				ShaderList::SetMaterial(shadowMaterial);
-				Geometory::SetWorld(fShadow);
-
-				Geometory::DrawCylinder();
-		}
 	}
 }
 
@@ -291,7 +273,7 @@ void Block::OnCollision(Collision::Result collision)
 	}
 }
 
-void Block::GetCamera(Camera *camera)
+void Block::SetCamera(Camera *camera)
 {
 	m_pCamera = camera;
 }
@@ -344,6 +326,10 @@ Block::Block(Block_Color set)
 	m_pos.y = csv.GetBlockState().height;
 	m_pos.z = csv.GetBlockState().blo.pos.y;
 
+	m_pShadowTex = new Texture();
+	if (FAILED(m_pShadowTex->Create("Assets/Texture/Shadow1.png"))) {
+		MessageBox(NULL, "Texture load failed", "Error", MB_OK);
+	}
 	int count = 0;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";	count++;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";		count++;
@@ -447,15 +433,28 @@ Block::Block(Block_Color set, float setX, float setY)
 	m_pos.y = csv.GetBlockState().height;
 	m_pos.z = setY;
 
+
 	int count = 0;
+	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
+	shadowFileName[count] = "Assets/Texture/meet.png";			count++;
+	shadowFileName[count] = "Assets/Texture/letas.png";			count++;
+	shadowFileName[count] = "Assets/Texture/egg.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Becon.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Cheez.png";			count++;
+	shadowFileName[count] = "Assets/Texture/tomato.png";			count++;
+	m_pShadowTex = new Texture();
+	
+
+	count = 0;
 	fileName[count] = "Assets/Model/Prototype/MD_Buns_Bottom.fbx";		count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";				count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";					count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";				count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";						count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Bacon.fbx";					count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";					count++;
-	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";					count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Buns_Top.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Patty.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Lettuce.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Egg.fbx";				count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Bacon.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Cheese.fbx";			count++;
+	fileName[count] = "Assets/Model/Prototype/MD_Tomato.fbx";			count++;
 	m_pModel = new Model();
 	switch (m_bColor)
 	{
@@ -463,40 +462,72 @@ Block::Block(Block_Color set, float setX, float setY)
 		if (!m_pModel->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
 			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
 		}
+		if (FAILED(m_pShadowTex->Create(shadowFileName[1].c_str()))) {
+			MessageBox(NULL, "Texture load failed", "Error", MB_OK);
+		}
+	
 		break;
 	case Block::Buns_Button:
 		if (!m_pModel->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
 			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+
+		if (FAILED(m_pShadowTex->Create(shadowFileName[0].c_str()))) {
+			MessageBox(NULL, "Texture load failed", "Error", MB_OK);
 		}
 		break;
 	case Block::Bacon:
 		if (!m_pModel->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
 			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
 		}
+
+		if (FAILED(m_pShadowTex->Create(shadowFileName[5].c_str()))) {
+			MessageBox(NULL, "Texture load failed", "Error", MB_OK);
+		}
 		break;
 	case Block::Cheese:
 		if (!m_pModel->Load(fileName[6].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
 			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+
+		if (FAILED(m_pShadowTex->Create(shadowFileName[6].c_str()))) {
+			MessageBox(NULL, "Texture load failed", "Error", MB_OK);
 		}
 		break;
 	case Block::Fried_egg:
 		if (!m_pModel->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
 			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
 		}
+
+		if (FAILED(m_pShadowTex->Create(shadowFileName[4].c_str()))) {
+			MessageBox(NULL, "Texture load failed", "Error", MB_OK);
+		}
 		break;
 	case Block::Patty:
 		if (!m_pModel->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
 			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+
+		if (FAILED(m_pShadowTex->Create(shadowFileName[2].c_str()))) {
+			MessageBox(NULL, "Texture load failed", "Error", MB_OK);
 		}
 		break;
 	case Block::Lettuce:
 		if (!m_pModel->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
 			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
 		}
+
+		if (FAILED(m_pShadowTex->Create(shadowFileName[3].c_str()))) {
+			MessageBox(NULL, "Texture load failed", "Error", MB_OK);
+		}
 		break;
 	case Block::Tomato:
 		if (!m_pModel->Load(fileName[7].c_str(), 0.5f, Model::ZFlip)) { // 倍率と反転は省略可
 			MessageBox(NULL, "Branch_01", "Error", MB_OK); // エラーメッセージの表示
+		}
+
+		if (FAILED(m_pShadowTex->Create(shadowFileName[7].c_str()))) {
+			MessageBox(NULL, "Texture load failed", "Error", MB_OK);
 		}
 		break;
 	case Block::None:
@@ -536,4 +567,37 @@ Block::Block(Block_Color set, float setX, float setY)
 	Block::Block_Color Block::GetColor()
 	{
 			return m_bColor;
-}
+	}
+
+	void Block::DrawShadow()
+	{
+		//=====================影=============================
+
+		if (m_pCamera && m_state == Block::Block_Drop)
+		{
+			RenderTarget* pRTV = GetDefaultRTV();
+			DepthStencil* pDSV = GetDefaultDSV();
+			SetRenderTargets(1, &pRTV, nullptr);
+			Sprite::SetView(m_pCamera->GetViewMatrix(true));
+			Sprite::SetProjection(m_pCamera->GetProjectionMatrix(true));
+
+			DirectX::XMMATRIX worldMat =
+				DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f) *
+				DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(90.0f)) *
+				DirectX::XMMatrixTranslation(m_pos.x, -0.5f, m_pos.z);
+
+			DirectX::XMFLOAT4X4 world;
+			DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixTranspose(worldMat));
+
+			Sprite::SetColor(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.8f));
+			Sprite::SetOffset({ 0.0f, 0.70f });
+			Sprite::SetSize({ csv.GetBlockState().blo.size.x, csv.GetBlockState().blo.size.y });
+			Sprite::SetWorld(world);
+			Sprite::SetTexture(m_pShadowTex);
+			Sprite::Draw();
+
+			SetRenderTargets(1, &pRTV, pDSV);
+			SetDepthTest(true);
+		}
+
+	}

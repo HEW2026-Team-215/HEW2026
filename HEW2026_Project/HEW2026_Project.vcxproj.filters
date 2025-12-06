@@ -140,6 +140,8 @@
     </ClCompile>
     <ClCompile Include="UIObject.cpp">
       <Filter>ソース ファイル\System</Filter>
+    <ClCompile Include="Animation.cpp">
+      <Filter>ソース ファイル\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +210,9 @@
     </ClInclude>
     <ClInclude Include="OrderManager.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="imconfig.h">
       <Filter>ヘッダー ファイル</Filter>
