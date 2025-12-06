@@ -1,4 +1,4 @@
-#include "Field.h"
+ï»¿#include "Field.h"
 #include "ShaderList.h"
 
 Field::Field()
@@ -10,7 +10,7 @@ Field::Field()
 	, m_field_model(Field_Model::get_instance())
 {
 	if(false)
-	// ƒtƒB[ƒ‹ƒhƒ‚ƒfƒ‹‚Ìæ“¾
+	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ãƒ¢ãƒ‡ãƒ«ã®å–å¾—
 	for (int i = 0; i < 6; i++)
 	{
 		auto set = static_cast<Field_Model::Field_Model_No>(i);
@@ -19,12 +19,12 @@ Field::Field()
 
 	std::string fileName[] =
 	{
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_Green.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_Green_Corner.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_Green_Side.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_White.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_White_Corner.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_White_Side.fbx"
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_Green.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_Green_Corner.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_Green_Side.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_White.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_White_Corner.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_White_Side.fbx"
 	};
 	std::string modelName[] = {
 		"Green_Top",
@@ -34,13 +34,13 @@ Field::Field()
 		"White_Corner",
 		"White_Side"
 	};
-	// ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
+	// ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
 	for(int i = 0;i < 6;i++)
 	{
 		m_pModel[i] = new Model();
-		if (!m_pModel[i]->Load(fileName[i].c_str(), 0.57f, Model::ZFlip))  // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
+		if (!m_pModel[i]->Load(fileName[i].c_str(), 0.57f, Model::ZFlip))  // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
 		{
-			MessageBox(NULL, modelName[i].c_str(), "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+			MessageBox(NULL, modelName[i].c_str(), "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 	}
 }
@@ -59,14 +59,14 @@ void Field::Draw()
 	int max = 10;
 	int maxZ = 6;
 	int set = 0;
-	float sabun = 0.25f; // ”÷’²®—p‚Ì•Ï”
+	float sabun = 0.25f; // å¾®èª¿æ•´ç”¨ã®å¤‰æ•°
 	for(int k = 0; k < maxZ;k++)
 	for(int j = 0;j < max;j++)
 	{
 		m_dxpos = DirectX::XMMatrixRotationY(
 			DirectX::XMConvertToRadians(0));
 
-		// •`‰æ‚·‚éƒ‚ƒfƒ‹‚ğİ’è
+		// æç”»ã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã‚’è¨­å®š
 		set = ((j + (k % 2)) % 2) * 3;
 
 		if (j == 0 && k == 0)
@@ -138,44 +138,44 @@ void Field::Draw()
 			m_dxpos *= DirectX::XMMatrixTranslation(
 				j * 2.0f - 9.0f, -0.20f, k * 2.0f - 05.0f);
 		}
-		//@ŒvZ—p‚Ìƒf[ƒ^‚©‚ç“Ç‚İæ‚è—p‚Ìƒf[ƒ^‚É•ÏŠ·
+		//ã€€è¨ˆç®—ç”¨ã®ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰èª­ã¿å–ã‚Šç”¨ã®ãƒ‡ãƒ¼ã‚¿ã«å¤‰æ›
 		DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
 
 
-		// ƒ‚ƒfƒ‹‚É•ÏŠ·s—ñ‚ğİ’è
+		// ãƒ¢ãƒ‡ãƒ«ã«å¤‰æ›è¡Œåˆ—ã‚’è¨­å®š
 		wvp[1] = m_pCamera->GetViewMatrix();
 		wvp[2] = m_pCamera->GetProjectionMatrix();
 
-		//@ƒVƒF[ƒ_[‚Ö•ÏŠ·s—ñ‚ğİ’è
-		ShaderList::SetWVP(wvp);	//@ˆø”‚É‚ÍXMFLOAT4X4Œ^‚ÌA—v‘f”‚R‚Ì”z—ñ‚ÌƒAƒhƒŒƒX‚ğ“n‚·‚±‚Æ
+		//ã€€ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã¸å¤‰æ›è¡Œåˆ—ã‚’è¨­å®š
+		ShaderList::SetWVP(wvp);	//ã€€å¼•æ•°ã«ã¯XMFLOAT4X4å‹ã®ã€è¦ç´ æ•°ï¼“ã®é…åˆ—ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’æ¸¡ã™ã“ã¨
 
 		Geometory::SetView(m_pCamera->GetViewMatrix(true));
 		Geometory::SetProjection(m_pCamera->GetProjectionMatrix(true));
-		// Sprite‚Ö‚Ìİ’è
+		// Spriteã¸ã®è¨­å®š
 		Sprite::SetView(m_pCamera->GetViewMatrix(true));
 		Sprite::SetProjection(m_pCamera->GetProjectionMatrix(true));
 
 
-		//@ƒ‚ƒfƒ‹‚Ég—p‚·‚é’¸“_ƒVƒF[ƒ_[AƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚ğİ’è
+		//ã€€ãƒ¢ãƒ‡ãƒ«ã«ä½¿ç”¨ã™ã‚‹é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã€ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®š
 		m_pModel[set]->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
 		m_pModel[set]->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
 
-		//@•¡”‚ÌƒƒbƒVƒ…‚Å\¬‚³‚ê‚Ä‚¢‚éê‡A‚ ‚é•”•ª‚Í‹à‘®“I‚È•\Œ»A‚ ‚é•”•ª‚Í”ñ‹à‘®“I‚È•\Œ»‚Æ
-		// •ª‚¯‚éê‡‚ª‚ ‚éB‘O‰ñ‚Ì•\¦‚Í“¯‚¶ƒ}ƒeƒŠƒAƒ‹‚ÅˆêŠ‡•\¦‚µ‚Ä‚¢‚½‚½‚ßAƒƒbƒVƒ…‚²‚Æ‚Éƒ}ƒeƒŠƒAƒ‹‚ğ
-		// Ø‚è‘Ö‚¦‚éB
+		//ã€€è¤‡æ•°ã®ãƒ¡ãƒƒã‚·ãƒ¥ã§æ§‹æˆã•ã‚Œã¦ã„ã‚‹å ´åˆã€ã‚ã‚‹éƒ¨åˆ†ã¯é‡‘å±çš„ãªè¡¨ç¾ã€ã‚ã‚‹éƒ¨åˆ†ã¯éé‡‘å±çš„ãªè¡¨ç¾ã¨
+		// åˆ†ã‘ã‚‹å ´åˆãŒã‚ã‚‹ã€‚å‰å›ã®è¡¨ç¤ºã¯åŒã˜ãƒãƒ†ãƒªã‚¢ãƒ«ã§ä¸€æ‹¬è¡¨ç¤ºã—ã¦ã„ãŸãŸã‚ã€ãƒ¡ãƒƒã‚·ãƒ¥ã”ã¨ã«ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’
+		// åˆ‡ã‚Šæ›¿ãˆã‚‹ã€‚
 		for (int i = 0; i < m_pModel[set]->GetMeshNum(); ++i)
 		{
-			// ƒ‚ƒfƒ‹‚ÌƒƒbƒVƒ…‚ğæ“¾
+			// ãƒ¢ãƒ‡ãƒ«ã®ãƒ¡ãƒƒã‚·ãƒ¥ã‚’å–å¾—
 			Model::Mesh mesh = *m_pModel[set]->GetMesh(i);
-			// ƒƒbƒVƒ…‚ÉŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚éƒ}ƒeƒŠƒAƒ‹‚ğæ“¾
+			// ãƒ¡ãƒƒã‚·ãƒ¥ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å–å¾—
 			Model::Material	material = *m_pModel[set]->GetMaterial(mesh.materialID);
-			// ƒ}ƒeƒŠƒAƒ‹‚ğ•ÒW‚·‚éê‡ASetMaterialŠÖ”‚Öİ’è‚·‚é‘O‚É•ÏX 
-			material.ambient.x = 1.0f; // x‚ÍÔ(r)‚ğ¦‚·
-			material.ambient.y = 1.0f; // y‚Í—Î(g)‚ğ¦‚·
-			material.ambient.z = 1.0f; // z‚ÍÂ(b)‚ğ¦‚·
-			// ƒVƒF[ƒ_[‚Öƒ}ƒeƒŠƒAƒ‹‚ğİ’è
+			// ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ç·¨é›†ã™ã‚‹å ´åˆã€SetMaterialé–¢æ•°ã¸è¨­å®šã™ã‚‹å‰ã«å¤‰æ›´ 
+			material.ambient.x = 1.0f; // xã¯èµ¤(r)ã‚’ç¤ºã™
+			material.ambient.y = 1.0f; // yã¯ç·‘(g)ã‚’ç¤ºã™
+			material.ambient.z = 1.0f; // zã¯é’(b)ã‚’ç¤ºã™
+			// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã¸ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’è¨­å®š
 			ShaderList::SetMaterial(material);
-			// ƒ‚ƒfƒ‹‚Ì•`‰æ
+			// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 			m_pModel[set]->Draw(i);
 		}
 	}
@@ -198,12 +198,12 @@ Field_Model::Field_Model()
 
 	std::string fileName[] =
 	{
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_Green.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_Green_Corner.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_Green_Side.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_White.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_White_Corner.fbx",
-		"Assets/Model/Map/MD/ƒ‚ƒfƒ‹/MD_Tray_White_Side.fbx"
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_Green.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_Green_Corner.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_Green_Side.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_White.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_White_Corner.fbx",
+		"Assets/Model/Map/MD/ãƒ¢ãƒ‡ãƒ«/MD_Tray_White_Side.fbx"
 	};
 	std::string modelName[] = {
 		"Green_Top",
@@ -216,33 +216,33 @@ Field_Model::Field_Model()
 	m_pModel = new Model[6];
 	for(int i = 0;i < 6;i++)
 	{
-		if (!m_pModel[i].Load(fileName[i].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-			MessageBox(NULL, modelName[i].c_str(), "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+		if (!m_pModel[i].Load(fileName[i].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+			MessageBox(NULL, modelName[i].c_str(), "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 		}
 	}
 	m_f_m_n.Green_Top = new Model();
-	if (!m_f_m_n.Green_Top->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-		MessageBox(NULL, modelName[0].c_str(), "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+	if (!m_f_m_n.Green_Top->Load(fileName[0].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+		MessageBox(NULL, modelName[0].c_str(), "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 	}
 	m_f_m_n.Green_Corner = new Model();
-	if (!m_f_m_n.Green_Corner->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-		MessageBox(NULL, modelName[1].c_str(), "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+	if (!m_f_m_n.Green_Corner->Load(fileName[1].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+		MessageBox(NULL, modelName[1].c_str(), "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 	}
 	m_f_m_n.Green_Side = new Model();
-	if (!m_f_m_n.Green_Side->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-		MessageBox(NULL, modelName[2].c_str(), "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+	if (!m_f_m_n.Green_Side->Load(fileName[2].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+		MessageBox(NULL, modelName[2].c_str(), "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 	}
 	m_f_m_n.White_Top = new Model();
-	if (!m_f_m_n.White_Top->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-		MessageBox(NULL, modelName[3].c_str(), "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+	if (!m_f_m_n.White_Top->Load(fileName[3].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+		MessageBox(NULL, modelName[3].c_str(), "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 	}
 	m_f_m_n.White_Corner = new Model();
-	if (!m_f_m_n.White_Corner->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-		MessageBox(NULL, modelName[4].c_str(), "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+	if (!m_f_m_n.White_Corner->Load(fileName[4].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+		MessageBox(NULL, modelName[4].c_str(), "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 	}
 	m_f_m_n.White_Side = new Model();
-	if (!m_f_m_n.White_Side->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // ”{—¦‚Æ”½“]‚ÍÈ—ª‰Â
-		MessageBox(NULL, modelName[5].c_str(), "Error", MB_OK); // ƒGƒ‰[ƒƒbƒZ[ƒW‚Ì•\¦
+	if (!m_f_m_n.White_Side->Load(fileName[5].c_str(), 0.5f, Model::ZFlip)) { // å€ç‡ã¨åè»¢ã¯çœç•¥å¯
+		MessageBox(NULL, modelName[5].c_str(), "Error", MB_OK); // ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 	}
 }
 

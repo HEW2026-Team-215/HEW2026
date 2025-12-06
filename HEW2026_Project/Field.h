@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include"Geometory.h"
 #include"Defines.h"
@@ -13,8 +13,8 @@
 #define MAX_FIELD_WIDTH		(20)
 #define MAX_FIELD_HEIGHT	(12)
 
-// ƒtƒB[ƒ‹ƒh‚Ìƒ‚ƒfƒ‹‚ğÃ“I‚É“Ç‚İ‚Ş‚½‚ßƒVƒ“ƒOƒ‹ƒgƒ“‚ÅŠÇ—‚µ
-// QÆ‚Å‚«‚é‚æ‚¤‚É‚·‚é
+// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ãƒ¢ãƒ‡ãƒ«ã‚’é™çš„ã«èª­ã¿è¾¼ã‚€ãŸã‚ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã§ç®¡ç†ã—
+// éšæ™‚å‚ç…§ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 class Field_Model
 {
 private:
@@ -28,29 +28,29 @@ private:
 	};
 	struct Field_wh
 	{
-		float width;	// ƒtƒB[ƒ‹ƒh‚Ì‰¡•
-		float height;	// ƒtƒB[ƒ‹ƒh‚Ì‰œs
+		float width;	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®æ¨ªå¹…
+		float height;	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®å¥¥è¡Œ
 	};
 	struct Field_Wall
 	{
-		f2 back;	// ƒtƒB[ƒ‹ƒh‚Ì‰œ‚Ì•Ç‚ÌˆÊ’u
-		f2 front;	// ƒtƒB[ƒ‹ƒh‚Ìè‘O‚Ì•Ç‚ÌˆÊ’u
-		f2 left;	// ƒtƒB[ƒ‹ƒh‚Ì¶‚Ì•Ç‚ÌˆÊ’u
-		f2 right;	// ƒtƒB[ƒ‹ƒh‚Ì‰E‚Ì•Ç‚ÌˆÊ’u
+		f2 back;	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®å¥¥ã®å£ã®ä½ç½®
+		f2 front;	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®æ‰‹å‰ã®å£ã®ä½ç½®
+		f2 left;	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®å·¦ã®å£ã®ä½ç½®
+		f2 right;	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®å³ã®å£ã®ä½ç½®
 	};
 	struct Field_State
 	{
-		Field_wh widhei;// ƒtƒB[ƒ‹ƒh‚Ì‰¡•‚Æ‰œs‚ğŠÇ—
-		Field_Wall wall;// ƒtƒB[ƒ‹ƒh‚Ìl•û‚Ì•Ç‚ÌˆÊ’u‚ğŠÇ—
+		Field_wh widhei;// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®æ¨ªå¹…ã¨å¥¥è¡Œã‚’ç®¡ç†
+		Field_Wall wall;// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®å››æ–¹ã®å£ã®ä½ç½®ã‚’ç®¡ç†
 	};
 	struct Field_Model_Type
 	{
-		Model* Green_Top;		// —Î ‰‚È‚µ
-		Model* Green_Corner;	// —Î ’[‰
-		Model* Green_Side;		// —Î ‰¡‰
-		Model* White_Top;		// ”’ ‰‚È‚µ
-		Model* White_Corner;	// ”’ ’[‰
-		Model* White_Side;		// ”’ ‰¡‰
+		Model* Green_Top;		// ç·‘ ç¸ãªã—
+		Model* Green_Corner;	// ç·‘ ç«¯ç¸
+		Model* Green_Side;		// ç·‘ æ¨ªç¸
+		Model* White_Top;		// ç™½ ç¸ãªã—
+		Model* White_Corner;	// ç™½ ç«¯ç¸
+		Model* White_Side;		// ç™½ æ¨ªç¸
 	};
 public:
 	enum Field_Model_No
@@ -60,7 +60,7 @@ public:
 	};
 private :
 	Field_State m_field_s;
-	Model* m_pModel; // ‚ ‚Á‚Ä‚È‚¢‚æ‚¤‚È‚à‚Ì
+	Model* m_pModel; // ã‚ã£ã¦ãªã„ã‚ˆã†ãªã‚‚ã®
 	Field_Model_Type m_f_m_n;
 public:
 	static Field_Model& get_instance();
