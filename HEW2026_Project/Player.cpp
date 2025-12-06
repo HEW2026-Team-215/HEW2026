@@ -385,6 +385,10 @@ void Player::UpdateControl()
 		inputMove.y -= tran.player.velocity;
 	}
 
+	Stick ls = GetLeftStick();
+	inputMove.x += ls.x * tran.player.velocity;
+	inputMove.y += ls.y * tran.player.velocity;
+	
 	m_move.x += inputMove.x;
 	m_move.z += inputMove.y;
 
@@ -400,10 +404,7 @@ void Player::UpdateControl()
 		// atan2 gives angle in radians; convert to degrees
 		m_angle = DirectX::XMConvertToDegrees(atan2f(inputMove.x, inputMove.y)) + 180.0f;
 	}
-	Stick ls = GetLeftStick();
 
-	m_move.x += ls.x * tran.player.velocity;
-	m_move.z += ls.y * tran.player.velocity;
 
 
 	// Pressなので連続入力時に特定フレーム毎(20)にのみ反応する処理
