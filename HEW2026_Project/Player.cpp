@@ -356,7 +356,7 @@ void Player::UpdateShot()
 void Player::UpdateControl()
 {
 	
-	DirectX::XMFLOAT3 inputMove = { 0.0f, 0.0f, 0.0f };
+	DirectX::XMFLOAT2 inputMove = { 0.0f, 0.0f };
 	if (IsKeyPress('A'))
 	{
 		inputMove.x -= tran.player.velocity;
@@ -367,29 +367,27 @@ void Player::UpdateControl()
 	}
 	if (IsKeyPress('W'))
 	{
-		inputMove.z += tran.player.velocity;
+		inputMove.y += tran.player.velocity;
 	}
 	if (IsKeyPress('S'))
 	{
-		inputMove.z -= tran.player.velocity;
+		inputMove.y -= tran.player.velocity;
 	}
 
-
 	m_move.x += inputMove.x;
-	m_move.z += inputMove.z;
+	m_move.z += inputMove.y;
 
 	// Update animation
-	if (inputMove.x != 0.0f || inputMove.z != 0.0f)
+	if (inputMove.x != 0.0f || inputMove.y != 0.0f)
 		m_animation.SetState(Animation::AnimState::Move);
 	else
 		m_animation.SetState(Animation::AnimState::Idle);
 
 	// Update rotation according to movement
-	if (inputMove.x != 0.0f || inputMove.z != 0.0f)
+	if (inputMove.x != 0.0f || inputMove.y != 0.0f)
 	{
 		// atan2 gives angle in radians; convert to degrees
-		m_angle = DirectX::XMConvertToDegrees(atan2f(inputMove.x, inputMove.z)) + 180.0f;
-		m_move.z -= tran.player.velocity;
+		m_angle = DirectX::XMConvertToDegrees(atan2f(inputMove.x, inputMove.y)) + 180.0f;
 	}
 
 

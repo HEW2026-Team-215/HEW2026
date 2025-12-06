@@ -153,12 +153,13 @@ void SceneGame::Update()
 
 		case Block::BlockState::Block_Idle:
 		{
-			// Replace idle block with a new one
-			float x = RandomFloat(-5.0f, 5.0f);
-			float z = RandomFloat(-5.0f, 5.0f);
-			Block* newBlock = new Block(m_pNextItem->Next(), x, z);
-			newBlock->SetCamera(m_pCamera);
-			*it = newBlock; // replace the idle block
+			//// Replace idle block with a new one
+			//float x = RandomFloat(-5.0f, 5.0f);
+			//float z = RandomFloat(-5.0f, 5.0f);
+			//Block* newBlock = new Block(m_pNextItem->Next(), x, z);
+			//newBlock->SetCamera(m_pCamera);
+			//*it = newBlock; // replace the idle block
+			(*it) = nullptr;
 			break;
 		}
 
@@ -339,6 +340,20 @@ void SceneGame::Draw()
 			m_pModel->Draw(i);
 		}
 
+	if (true)
+	{
+		TRAN_INS;
+		//--- １つ目の地面
+		T = DirectX::XMMatrixTranslation(0.0f, -.2f, 0.0f);						 // 天面がグリッドよりも下に来るように移動
+		S = DirectX::XMMatrixScaling(tran.stage.column * 2.0f, 0.2f, tran.stage.row * 2.0f); // 地面となるように、前後左右に広く、上下に狭くする
+		mat = S * T;
+		mat = DirectX::XMMatrixTranspose(mat);
+		DirectX::XMFLOAT4X4 fMat; // 行列の格納先
+		DirectX::XMStoreFloat4x4(&fMat, mat);
+		Geometory::SetWorld(fMat); // ボックスに変換行列を設定
+		Geometory::DrawBox();
+	}
+
 
 	for (auto block : m_pBlock)
 	{
@@ -411,20 +426,6 @@ void SceneGame::Draw()
 			block->SetPlayerPos(m_pPlayer->GetPos());
 			block->Draw();
 		}
-	}
-
-	if (true)
-	{
-		TRAN_INS;
-		//--- １つ目の地面
-		T = DirectX::XMMatrixTranslation(0.0f, -.2f, 0.0f);						 // 天面がグリッドよりも下に来るように移動
-		S = DirectX::XMMatrixScaling(tran.stage.column * 2.0f, 0.2f, tran.stage.row * 2.0f); // 地面となるように、前後左右に広く、上下に狭くする
-		mat = S * T;
-		mat = DirectX::XMMatrixTranspose(mat);
-		DirectX::XMFLOAT4X4 fMat; // 行列の格納先
-		DirectX::XMStoreFloat4x4(&fMat, mat);
-		Geometory::SetWorld(fMat); // ボックスに変換行列を設定
-		Geometory::DrawBox();
 	}
 
 	if (m_pScore)
