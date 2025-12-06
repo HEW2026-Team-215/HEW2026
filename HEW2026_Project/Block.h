@@ -54,7 +54,7 @@ public:
 
 	void OnCollision(Collision::Result collision)override;
 
-	void GetCamera(Camera *set);
+	void SetCamera(Camera *set);
 
 	void SetCollision(f2col size);
 
