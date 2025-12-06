@@ -430,12 +430,12 @@ Block::Block(Block_Color set, float setX, float setY)
 	int count = 0;
 	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
 	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
-	shadowFileName[count] = "Assets/Texture/meet.png";			count++;
-	shadowFileName[count] = "Assets/Texture/letas.png";			count++;
-	shadowFileName[count] = "Assets/Texture/egg.png";			count++;
-	shadowFileName[count] = "Assets/Texture/Becon.png";			count++;
-	shadowFileName[count] = "Assets/Texture/Cheez.png";			count++;
-	shadowFileName[count] = "Assets/Texture/tomato.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
+	shadowFileName[count] = "Assets/Texture/Shadow1.png";			count++;
 	m_pShadowTex = new Texture();
 	
 
