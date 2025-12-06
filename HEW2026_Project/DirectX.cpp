@@ -248,8 +248,19 @@ void BeginDrawDirectX()
 }
 void EndDrawDirectX()
 {
-	// ImGui 描画
+	// ImGui の描画
 	RenderImGuiDrawData();
+
+	// ★ Viewports（外部ウィンドウ）用の描画処理
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+
+	// Present
+	g_pSwapChain->Present(1, 0);
+
 
 	g_pSwapChain->Present(0, 0);
 }
@@ -357,7 +368,16 @@ void InitImGui(HWND hWnd)
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGuiIO& io = ImGui::GetIO(); (void)io; 
+
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // OS外にウィンドウを出せる
+
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowRounding = 0.0f;     // 外部ウィンドウの角丸をなくす
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f; // 背景透明防止
+	}
 
 	ImGui::StyleColorsDark();
 
