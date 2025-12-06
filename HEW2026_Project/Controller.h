@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include<Windows.h>
 #include <Xinput.h>
@@ -9,7 +9,7 @@ struct Stick
 {
     float x = 0.0f;   // -1.0?1.0
     float y = 0.0f;   // -1.0?1.0
-    float len = 0.0f; // ƒxƒNƒgƒ‹’· 0.0?1.0
+    float len = 0.0f; // ãƒ™ã‚¯ãƒˆãƒ«é•· 0.0?1.0
 };
 
 void UpdateGamepad();

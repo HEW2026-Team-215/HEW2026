@@ -1,16 +1,16 @@
-//_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+ï»¿//_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 // \file   Transfer.h
-// \brief  ImGui‚É’l‚ğ”ò‚Î‚·‚½‚ß‚ÌƒNƒ‰ƒX
-//		   ƒVƒ“ƒOƒ‹ƒgƒ“‚Å\¬
-//		   •\¦‚³‚¹‚½‚¢î•ñ‚ğƒƒ“ƒo•Ï”‚É’Ç‰Á
-//		   ’Ç‰Á‚·‚é•Ï”‚Í‚·‚×‚Äpublic‚É(ƒQƒbƒ^[ƒZƒbƒ^[‚Ìİ’è‚ª‚ß‚ñ‚Ç‚¢‚¾‚¯)
+// \brief  ImGuiã«å€¤ã‚’é£›ã°ã™ãŸã‚ã®ã‚¯ãƒ©ã‚¹
+//		   ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã§æ§‹æˆ
+//		   è¡¨ç¤ºã•ã›ãŸã„æƒ…å ±ã‚’ãƒ¡ãƒ³ãƒå¤‰æ•°ã«è¿½åŠ 
+//		   è¿½åŠ ã™ã‚‹å¤‰æ•°ã¯ã™ã¹ã¦publicã«(ã‚²ãƒƒã‚¿ãƒ¼ã‚»ãƒƒã‚¿ãƒ¼ã®è¨­å®šãŒã‚ã‚“ã©ã„ã ã‘)
 // 
-// \author R–{ˆè–ç
+// \author å±±æœ¬éƒä¹Ÿ
 // \date   December 2025
 //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 #pragma once
 
-// ƒCƒ“ƒXƒ^ƒ“ƒXæ“¾ƒ}ƒNƒ:tran‚ÅƒAƒNƒZƒX
+// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å–å¾—ãƒã‚¯ãƒ­:tranã§ã‚¢ã‚¯ã‚»ã‚¹
 #define TRAN_INS Transfer& tran = Transfer::GetInstance();
 #define _TRANSFER
 
@@ -35,29 +35,29 @@ public:
 		static Transfer ins;
 		return ins;
 	}
-	// ‰Šú‰»ˆ—:‘å‘Ì0.0f‰Šú‰»->Še’lİ’è‚ğs‚Á‚Ä‚­‚¾‚³‚¢
+	// åˆæœŸåŒ–å‡¦ç†:å¤§ä½“0.0fåˆæœŸåŒ–->å„å€¤è¨­å®šã‚’è¡Œã£ã¦ãã ã•ã„
 	void Init()
 	{
-		// ƒvƒŒƒCƒ„[
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 		player.pos = { 0.0f,0.0f };
 		player.maxSpeed = { 5.0f ,5.0f };
 		player.velocity = 0.01f;
 		player.speedDown = 0.95f * 0.95f;
-		// ƒJƒƒ‰
+		// ã‚«ãƒ¡ãƒ©
 		camera.eyePos = { 0.0f,110.0f,-110.0f };
 		camera.lookPos = { 0.0f,0.0f,0.0f };
-		// ƒXƒe[ƒW
+		// ã‚¹ãƒ†ãƒ¼ã‚¸
 		stage.column = 12;
 		stage.row = 6;
-		// HŞ
+		// é£Ÿæ
 		item.downSpeed = 0.1f;
 		item.size = { 1.0f,1.0f,1.0f };
 		item.repopTime = 2.0f;
-		// ƒI[ƒ_[
+		// ã‚ªãƒ¼ãƒ€ãƒ¼
 		order.size = { 1.0f,1.0f };
-		order.TimeLimit = 180.0f;	//O•ª
+		order.TimeLimit = 180.0f;	//ä¸‰åˆ†
 		order.repopTime = 10.0f;
-		order.‹àŠz.push_back(100.0f);
+		order.é‡‘é¡.push_back(100.0f);
 		// UI
 		ui.pos = { 0.0f,0.0f };
 		ui.size = { 1.0f,1.0f };
@@ -94,33 +94,33 @@ public:
 private:
 	struct PlayerInfo
 	{
-		f2 pos;				// ˆÊ’u
-		f2 maxSpeed;		// Å‘å‘¬“x
-		float velocity;		// ‰Á‘¬“x
-		float speedDown;	// Œ¸‘¬
+		f2 pos;				// ä½ç½®
+		f2 maxSpeed;		// æœ€å¤§é€Ÿåº¦
+		float velocity;		// åŠ é€Ÿåº¦
+		float speedDown;	// æ¸›é€Ÿ
 	};
 	struct CameraInfo
 	{
-		f3 eyePos;	// ƒJƒƒ‰ˆÊ’u
-		f3 lookPos;	// ’‹“_
+		f3 eyePos;	// ã‚«ãƒ¡ãƒ©ä½ç½®
+		f3 lookPos;	// æ³¨è¦–ç‚¹
 	};
 	struct StageInfo
 	{
-		int column;	//ƒXƒe[ƒW‚Ì‰¡‚Ì•
-		int row;	//ƒXƒe[ƒW‚Ìc‚Ì•
+		int column;	//ã‚¹ãƒ†ãƒ¼ã‚¸ã®æ¨ªã®å¹…
+		int row;	//ã‚¹ãƒ†ãƒ¼ã‚¸ã®ç¸¦ã®å¹…
 	};
 	struct ItemInfo
 	{
-		float downSpeed;	// HŞ‚Ì—‰º‘¬“x
-		f3 size;			// HŞ‚ÌƒTƒCƒY
-		float repopTime;	// HŞ‚Ì¶¬•p“x(¶¬‚Ü‚Å‚ÌƒtƒŒ[ƒ€” default:60)
+		float downSpeed;	// é£Ÿæã®è½ä¸‹é€Ÿåº¦
+		f3 size;			// é£Ÿæã®ã‚µã‚¤ã‚º
+		float repopTime;	// é£Ÿæã®ç”Ÿæˆé »åº¦(ç”Ÿæˆã¾ã§ã®ãƒ•ãƒ¬ãƒ¼ãƒ æ•° default:60)
 	};
 	struct OrderInfo
 	{
-		f2 size;			// ƒI[ƒ_[ƒTƒCƒY
-		float TimeLimit;	// ƒI[ƒ_[§ŒÀŠÔ
-		float repopTime;	// ƒI[ƒ_[•p“x
-		std::vector<float> ‹àŠz;			// ŠeƒI[ƒ_[‚Ì’l’i
+		f2 size;			// ã‚ªãƒ¼ãƒ€ãƒ¼ã‚µã‚¤ã‚º
+		float TimeLimit;	// ã‚ªãƒ¼ãƒ€ãƒ¼åˆ¶é™æ™‚é–“
+		float repopTime;	// ã‚ªãƒ¼ãƒ€ãƒ¼é »åº¦
+		std::vector<float> é‡‘é¡;			// å„ã‚ªãƒ¼ãƒ€ãƒ¼ã®å€¤æ®µ
 	};
 	struct UiInfo
 	{
@@ -128,13 +128,13 @@ private:
 		f2 size;
 		RGBa color;
 	};
-public:// Še”’l
-	PlayerInfo player;	// ƒvƒŒƒCƒ„[‚ÌˆÊ’uî•ñ
-	CameraInfo camera;	// ƒJƒƒ‰‚ÌˆÊ’uî•ñ
-	StageInfo stage;	// ƒXƒe[ƒW‚ÌŠeî•ñ
-	ItemInfo item;		// HŞ‚ÌŠeî•ñ
-	OrderInfo order;	// ƒI[ƒ_[‚Ìİ’è
-	UiInfo ui;			// ‚¦H
+public:// å„æ•°å€¤
+	PlayerInfo player;	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®æƒ…å ±
+	CameraInfo camera;	// ã‚«ãƒ¡ãƒ©ã®ä½ç½®æƒ…å ±
+	StageInfo stage;	// ã‚¹ãƒ†ãƒ¼ã‚¸ã®å„æƒ…å ±
+	ItemInfo item;		// é£Ÿæã®å„æƒ…å ±
+	OrderInfo order;	// ã‚ªãƒ¼ãƒ€ãƒ¼ã®è¨­å®š
+	UiInfo ui;			// ãˆï¼Ÿ
 };
 
 

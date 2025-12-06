@@ -1,4 +1,4 @@
-#include "Transfer.h"
+ï»¿#include "Transfer.h"
 
 
 std::vector<std::string> Transfer::SplitCsvLine(const std::string& line, char delim)
@@ -39,22 +39,22 @@ bool Transfer::LoadTransferFromCsv(const std::string& path)
 	while (std::getline(in, line)) {
 		++row;
 
-		// 1s–Ú‚Íƒwƒbƒ_
+		// 1è¡Œç›®ã¯ãƒ˜ãƒƒãƒ€
 		if (row == 1) {
 			continue;
 		}
 
 		auto cells = SplitCsvLine(line, ',');
 		if (cells.size() < 4) {
-			continue; // ”’l—ñ‚ª–³‚¯‚ê‚ÎƒXƒLƒbƒv
+			continue; // æ•°å€¤åˆ—ãŒç„¡ã‘ã‚Œã°ã‚¹ã‚­ãƒƒãƒ—
 		}
 
 		float v;
 		try {
-			v = std::stof(cells[3]); // 4—ñ–Úu”’lv
+			v = std::stof(cells[3]); // 4åˆ—ç›®ã€Œæ•°å€¤ã€
 		}
 		catch (...) {
-			// ”’l‚É‚È‚ç‚È‚¯‚ê‚ÎƒXƒLƒbƒv
+			// æ•°å€¤ã«ãªã‚‰ãªã‘ã‚Œã°ã‚¹ã‚­ãƒƒãƒ—
 			continue;
 		}
 
@@ -62,7 +62,7 @@ bool Transfer::LoadTransferFromCsv(const std::string& path)
 		{
 		case 2:  tran.player.pos.x = v;                       break;
 		case 3:  tran.player.pos.y = v;                       break;
-		case 4:  /* ‚±‚±‚Í¡‚Í–¢g—pBpos‚ğf3‚É‚µ‚½‚çZ‚Ég‚¤ */  break;
+		case 4:  /* ã“ã“ã¯ä»Šã¯æœªä½¿ç”¨ã€‚posã‚’f3ã«ã—ãŸã‚‰Zã«ä½¿ã† */  break;
 		case 5:  tran.player.maxSpeed.x = v;
 			tran.player.maxSpeed.y = v;                       break;
 		case 6:  tran.player.velocity = v;                       break;
@@ -88,12 +88,12 @@ bool Transfer::LoadTransferFromCsv(const std::string& path)
 		case 21: tran.order.TimeLimit = v;                       break;
 		case 22: tran.order.repopTime = v;                       break;
 		case 23:
-			if (tran.order.‹àŠz.empty())  tran.order.‹àŠz.push_back(v);
-			else                          tran.order.‹àŠz[0] = v;
+			if (tran.order.é‡‘é¡.empty())  tran.order.é‡‘é¡.push_back(v);
+			else                          tran.order.é‡‘é¡[0] = v;
 			break;
 
 		default:
-			// ‚»‚êˆÈŠO‚Ìs‚Í–³‹
+			// ãã‚Œä»¥å¤–ã®è¡Œã¯ç„¡è¦–
 			break;
 		}
 	}
@@ -125,7 +125,7 @@ bool Transfer::SaveTransferToCsv(const std::string& path)
 
 		auto cells = SplitCsvLine(line, ',');
 
-		if (cells.size() >= 4 && row >= 2) { // 2s–ÚˆÈ~‚Å”’l—ñ‚ª‚ ‚és‚¾‚¯ã‘‚«Œó•â
+		if (cells.size() >= 4 && row >= 2) { // 2è¡Œç›®ä»¥é™ã§æ•°å€¤åˆ—ãŒã‚ã‚‹è¡Œã ã‘ä¸Šæ›¸ãå€™è£œ
 			float v;
 			bool hasValue = true;
 
@@ -133,8 +133,8 @@ bool Transfer::SaveTransferToCsv(const std::string& path)
 			{
 			case 2:  v = tran.player.pos.x;        break;
 			case 3:  v = tran.player.pos.y;        break;
-			case 4:  /* –¢g—p‚È‚ç‚»‚Ì‚Ü‚Ü */     hasValue = false;   break;
-			case 5:  v = tran.player.maxSpeed.x;   break; // xŠî€By‚à“¯‚¶‚É‚µ‚Ä‚¢‚é‘O’ñ
+			case 4:  /* æœªä½¿ç”¨ãªã‚‰ãã®ã¾ã¾ */     hasValue = false;   break;
+			case 5:  v = tran.player.maxSpeed.x;   break; // xåŸºæº–ã€‚yã‚‚åŒã˜ã«ã—ã¦ã„ã‚‹å‰æ
 			case 6:  v = tran.player.velocity;     break;
 
 			case 7:  v = static_cast<float>(tran.stage.column); break;
@@ -158,7 +158,7 @@ bool Transfer::SaveTransferToCsv(const std::string& path)
 			case 21: v = tran.order.TimeLimit;     break;
 			case 22: v = tran.order.repopTime;     break;
 			case 23:
-				if (!tran.order.‹àŠz.empty()) v = tran.order.‹àŠz[0];
+				if (!tran.order.é‡‘é¡.empty()) v = tran.order.é‡‘é¡[0];
 				else                          hasValue = false;
 				break;
 
@@ -169,8 +169,8 @@ bool Transfer::SaveTransferToCsv(const std::string& path)
 
 			if (hasValue) {
 				std::ostringstream oss;
-				oss << v;              // •K—v‚È‚ç fixed << setprecision(3) ‚Æ‚©‚ÅƒtƒH[ƒ}ƒbƒg
-				cells[3] = oss.str();  // š 4—ñ–Ú‚¾‚¯ã‘‚«
+				oss << v;              // å¿…è¦ãªã‚‰ fixed << setprecision(3) ã¨ã‹ã§ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
+				cells[3] = oss.str();  // â˜… 4åˆ—ç›®ã ã‘ä¸Šæ›¸ã
 			}
 		}
 
@@ -180,7 +180,7 @@ bool Transfer::SaveTransferToCsv(const std::string& path)
 	in.close();
 	out.close();
 
-	// Œ³ƒtƒ@ƒCƒ‹‚Æ·‚µ‘Ö‚¦
+	// å…ƒãƒ•ã‚¡ã‚¤ãƒ«ã¨å·®ã—æ›¿ãˆ
 	std::remove(path.c_str());
 	if (std::rename(tempPath.c_str(), path.c_str()) != 0) {
 		return false;
