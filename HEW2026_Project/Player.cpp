@@ -3,6 +3,7 @@
 #include"Main.h"
 #include"Sprite.h"
 #include "ShaderList.h"
+#include "Controller.h"
 
 #include"CsvData.h"
 #include"Sound.h"
@@ -201,6 +202,15 @@ void Player::Update()
 	{
 		m_move.y += csv.GetSpeed();
 	}
+	// プレイヤーの回転処理
+
+	Stick ls = GetLeftStick();
+
+	if (GAMEPAD_PLAYER_UGOKINIKUSA <= abs(ls.x) || GAMEPAD_PLAYER_UGOKINIKUSA <= abs(ls.y))
+	{
+		m_angle = atan2f(-ls.y * tran.player.velocity, ls.x * tran.player.velocity) - DirectX::XMConvertToRadians(90.0f);
+	}
+
 
 #endif
 	UpdateControl();
@@ -253,11 +263,9 @@ void Player::Draw()
 	DirectX::XMFLOAT4X4 Sprite_fMat; // 描画専用変数を定義
 	DirectX::XMStoreFloat4x4(&Sprite_fMat, Sprite_mat);//mWorldを転置してmatに格納
 
+
 	// 場所を指定
-	m_dxpos = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(
-			(IsKeyPress('D') * -90.0f) + (IsKeyPress('A') * 90.0f) + 
-			(IsKeyPress('W') * 180.0f) + (IsKeyPress('S') * 0.0f)
-		))
+	m_dxpos = DirectX::XMMatrixRotationY(m_angle)
 		* DirectX::XMMatrixTranslation(m_pos.x, 0.5f, m_pos.z);
 
 	//　計算用のデータから読み取り用のデータに変換
@@ -361,8 +369,11 @@ void Player::UpdateControl()
 	{
 		m_move.z -= tran.player.velocity;
 	}
+	Stick ls = GetLeftStick();
 
-	// Pressなので連続入力時に特定フレーム毎(20)にのみ反応する処理
+	m_move.x += ls.x * tran.player.velocity;
+	m_move.z += ls.y * tran.player.velocity;
+
 	static int pressCount;
 	if ((PRE('W') || PRE('A') || PRE('S') || PRE('D')) && pressCount <= 0)
 	{

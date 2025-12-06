@@ -26,7 +26,7 @@ static const float fFPS = static_cast<float>(FPS);
 #define IIKANJINOTEISU (0.01f)
 #define IIKANJINOTEISU2 (1.0f)
 
-
+#define GAMEPAD_PLAYER_UGOKINIKUSA (0.5f)
 
 //CSV�t�@�C���ǂݍ��݌�
 #define CSV_ACCEPT
@@ -43,7 +43,6 @@ static const float fFPS = static_cast<float>(FPS);
 #ifdef CSV_ACCEPT
 
 #ifdef _TRANSFER
-
 
 #define PLAYER_MOVE_SPEED	tran.player.velocity
 #define FIELD_COLUMN		tran.stage.column

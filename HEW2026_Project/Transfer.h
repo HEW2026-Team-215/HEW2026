@@ -42,7 +42,7 @@ public:
 		player.pos = { 0.0f,0.0f };
 		player.maxSpeed = { 5.0f ,5.0f };
 		player.velocity = 0.01f;
-		player.speedDown = 0.99f;
+		player.speedDown = 0.95f * 0.95f;
 		// ÉJÉÅÉâ
 		camera.eyePos = { 0.0f,110.0f,-110.0f };
 		camera.lookPos = { 0.0f,0.0f,0.0f };

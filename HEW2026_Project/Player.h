@@ -69,6 +69,7 @@ private:
 	DirectX::XMFLOAT4X4 wvp[3];
 	// New!
 	Transfer& tran;
+	float angleY;
 };
 
 #endif//_PLAYER_H

@@ -10,6 +10,7 @@
 #include "CsvData.h"
 #include "CameraDebug.h"
 #include "Sound.h"
+#include "Controller.h"
 
 //ImGuiの必要ファイルをインクルード
 #include "imgui.h"
@@ -136,6 +137,7 @@ void Uninit()
 void Update()
 {
 	UpdateInput();
+	UpdateGamepad();
 	g_pScene->RootUpdate();
 }
 
@@ -155,6 +157,7 @@ void Draw()
 	static bool show_item_window	= false;
 	static bool show_order_window	= false;
 	static bool show_ui_window		= false;
+	static bool show_gamepad_window = false;
 
 	CAMERA_INS
 		TRAN_INS
@@ -307,6 +310,19 @@ void Draw()
 		ImGui::End();
 	}
 
+	// -----------GamePad-----------
+	if (show_gamepad_window)
+	{
+		ImGui::Begin("GamePad Input Debug", &show_gamepad_window);
+
+		ImGui::Text("LeftStick x: %.2f", GetLeftStick().x);
+
+		ImGui::Text("LeftStick y: %.2f", GetLeftStick().y);
+
+		ImGui::End();
+	}
+
+	// -----------main window-----------
 	if (show_main_window)
 	{
 		ImGui::Begin("Setting", &show_main_window);
@@ -326,6 +342,7 @@ void Draw()
 		ImGui::Checkbox("Item Setting", &show_item_window);
 		ImGui::Checkbox("Order Setting", &show_order_window);
 		ImGui::Checkbox("UI Setting", &show_ui_window);
+		ImGui::Checkbox("GamePad Input", &show_gamepad_window);
 
 		// -----------Sound Debug-----------//
 		if (ImGui::Button("UpMoney"))

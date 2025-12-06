@@ -137,13 +137,10 @@ public:
     /// SEを再生する関数
     /// </summary>
     /// <param name="no">番目の音を再生 </param>
-    /// 0:金額増加 
-    /// 1:積載音
-    /// 2:注文表示
+    /// 0:金額増加      4:歩行音
+    /// 1:積載音         5:落下音
+    /// 2:注文表示      6:タイムリミット
     /// 3:注文品完成
-    /// 4:歩行音
-    /// 5:落下音
-    /// 6:タイムリミット
     void PlaySE(int no);
     void PlayBGM(int no, bool loopFlag);
     void StopBGM();
