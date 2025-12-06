@@ -2,7 +2,7 @@
 #include"Defines.h"
 #include"Main.h"
 #include"Sprite.h"
-#include "ShaderList.h"
+#include"ShaderList.h"
 
 #include"CsvData.h"
 
@@ -28,14 +28,14 @@ Player::Player()
 	, m_shadowPos{ 0.0f,0.0f,0.0f }
 	, csv(CsvData::get_instance())
 	, m_pModel(nullptr)
-	,m_startPos(m_pos.x,m_pos.y,m_pos.z)
+	, m_startPos(m_pos.x, m_pos.y, m_pos.z)
 {
 	m_collision.type = Collision::eBox;
 	m_collision.box = {
 		m_pos, DirectX::XMFLOAT3(m_collision.box.size)
 	};
 	m_pShadowTex = new Texture();
-	if (FAILED(m_pShadowTex->Create("Assets/Texture/Shadow.png"))) 
+	if (FAILED(m_pShadowTex->Create("Assets/Texture/Shadow.png")))
 	{
 		MessageBox(NULL, "Texture load failed.\nPlayer.cpp", "Error", MB_OK);
 	}
@@ -200,7 +200,8 @@ void Player::Update()
 	UpdateMove();	// 摩擦の処理
 	UpdateWall();
 
-	
+
+	m_animation.Update();
 }
 
 void Player::Draw()
@@ -221,18 +222,18 @@ void Player::Draw()
 	T = DirectX::XMMatrixTranslation(m_pos.x, .25f, m_pos.z); // 天面がグリッドよりも下に来るように移動
 	DirectX::XMMATRIX Ry = DirectX::XMMatrixRotationY(m_angle);
 	S = DirectX::XMMatrixScaling(FIELD_WIDTH, 0.5f, FIELD_WIDTH); // 地面となるように、前後左右に広く、上下に狭くする
-	mat = S * Ry * T;
-	mat = DirectX::XMMatrixTranspose(mat);
-	DirectX::XMFLOAT4X4 fMat; // 行列の格納先
-	DirectX::XMStoreFloat4x4(&fMat, mat);
 
-	
+
+
 	// 場所を指定
-	m_dxpos = DirectX::XMMatrixScaling(1.0f,m_pos.y+1.0f,1.0f)*DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(
-			(IsKeyPress('D') * -90.0f) + (IsKeyPress('A') * 90.0f) + 
-			(IsKeyPress('W') * 180.0f) + (IsKeyPress('S') * 0.0f)
-		))
-		* DirectX::XMMatrixTranslation(m_pos.x, (m_pos.y/2)+0.5f, m_pos.z);
+	DirectX::XMFLOAT3 offsetPos = m_animation.GetPos();
+	DirectX::XMFLOAT3 offsetScale = m_animation.GetScale();
+	DirectX::XMFLOAT3 offsetRot = m_animation.GetRotation();
+	m_dxpos = DirectX::XMMatrixScaling(offsetScale.x , offsetPos.y , offsetScale.z )
+		* DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(m_angle))
+		* DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(offsetRot.x))
+		* DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(offsetRot.z))
+		* DirectX::XMMatrixTranslation(m_pos.x, (offsetScale.y / 2) + 0.5f, m_pos.z);
 
 	//　計算用のデータから読み取り用のデータに変換
 	DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(m_dxpos));
@@ -258,7 +259,7 @@ void Player::Draw()
 	//　複数のメッシュで構成されている場合、ある部分は金属的な表現、ある部分は非金属的な表現と
 	// 分ける場合がある。前回の表示は同じマテリアルで一括表示していたため、メッシュごとにマテリアルを
 	// 切り替える。
-	for (int i = 0; i < m_pModel->GetMeshNum(); ++i) 
+	for (int i = 0; i < m_pModel->GetMeshNum(); ++i)
 	{
 		// モデルのメッシュを取得
 		Model::Mesh mesh = *m_pModel->GetMesh(i);
@@ -276,7 +277,7 @@ void Player::Draw()
 }
 
 
-void Player::SetCamera(Camera *camera)
+void Player::SetCamera(Camera* camera)
 {
 	m_pCamera = camera;
 }
@@ -312,7 +313,7 @@ void Player::UpdateShot()
 		vec = DirectX::XMVector3Normalize(vec);		//ベクトルの正規化
 		vec = DirectX::XMVectorScale(vec, m_power);		//正規化したベクトルを、溜めた力に応じて伸ばす
 		DirectX::XMStoreFloat3(&m_move, vec);//移動のデータm_moveに計算したvecを設定する（計算用の型から保存用の型に変換;
-		
+
 		// 打ち出し後の情報を設定
 		m_isStop = false;			// 移動している！
 		m_shotStep = SHOT_WAIT;		// また再び打つ
@@ -323,28 +324,59 @@ void Player::UpdateShot()
 
 void Player::UpdateControl()
 {
-	if (IsKeyPress('A'))
+	
+	DirectX::XMFLOAT3 inputMove = { 0.0f, 0.0f, 0.0f };
+	/*if (IsKeyPress('A'))
 	{
 		m_move.x -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
-		m_animation.SetState(Animation::AnimState::Move);
+		m_angle = 90.0f;
+		isMoving = true;
 	}
 	if (IsKeyPress('D'))
 	{
 		m_move.x += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_angle = -90.0f;
+		isMoving = true;
 	}
 	if (IsKeyPress('W'))
 	{
 		m_move.z += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_angle = 180.0f;
+		isMoving = true;
 	}
 	if (IsKeyPress('S'))
 	{
 		m_move.z -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+		m_angle = 0.0f;
+		isMoving = true;
+	}*/
+
+
+	if (IsKeyPress('A')) inputMove.x -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+	if (IsKeyPress('D')) inputMove.x += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+	if (IsKeyPress('W')) inputMove.z += csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+	if (IsKeyPress('S')) inputMove.z -= csv.GetSpeed() + (IsKeyPress(VK_SHIFT) * csv.GetSpeed());
+
+	m_move.x += inputMove.x;
+	m_move.z += inputMove.z;
+
+	// Update animation
+	if (inputMove.x != 0.0f || inputMove.z != 0.0f)
+		m_animation.SetState(Animation::AnimState::Move);
+	else
+		m_animation.SetState(Animation::AnimState::Idle);
+
+	// Update rotation according to movement
+	if (inputMove.x != 0.0f || inputMove.z != 0.0f)
+	{
+		// atan2 gives angle in radians; convert to degrees
+		m_angle = DirectX::XMConvertToDegrees(atan2f(inputMove.x, inputMove.z)) + 180.0f;
 	}
 }
 
 void Player::UpdateMove()
 {
-	// 移動処理
+	// 移動処理d
 	m_pos.x += m_move.x;
 	m_pos.y += m_move.y;
 	m_pos.z += m_move.z;
@@ -380,7 +412,7 @@ void Player::UpdateMove()
 	DirectX::XMVECTOR vMove = DirectX::XMLoadFloat3(&m_move);//移動情報を計算用の型に変換
 	DirectX::XMVECTOR vLen = DirectX::XMVector3Length(vMove);//vMoveから移動量を計算
 	DirectX::XMStoreFloat(&speed, vLen);		// speedにvLenを格納
-	if (speed < CMSEC(30.0f)) 
+	if (speed < CMSEC(30.0f))
 	{	// 1秒間に30cmぐらい進むスピードであれば停止
 		m_isStop = true;
 		m_shotStep = SHOT_WAIT;
@@ -394,17 +426,17 @@ void Player::UpdateWall()
 		m_pos.x = MAX_FIELD_WIDTH(csv) - HALF(PLAYER_WIDTH);
 		m_move.x = 0.0f;
 	}
-	if (m_pos.x < -MAX_FIELD_WIDTH(csv) + HALF(PLAYER_WIDTH))		
+	if (m_pos.x < -MAX_FIELD_WIDTH(csv) + HALF(PLAYER_WIDTH))
 	{
 		m_pos.x = -MAX_FIELD_WIDTH(csv) + HALF(PLAYER_WIDTH);
 		m_move.x = 0.0f;
 	}
-	if (m_pos.z > MAX_FIELD_HEIGHT(csv) - HALF(PLAYER_WIDTH))		
+	if (m_pos.z > MAX_FIELD_HEIGHT(csv) - HALF(PLAYER_WIDTH))
 	{
 		m_pos.z = MAX_FIELD_HEIGHT(csv) - HALF(PLAYER_WIDTH);
 		m_move.z = 0.0f;
 	}
-	if (m_pos.z < -MAX_FIELD_HEIGHT(csv) + HALF(PLAYER_WIDTH))	
+	if (m_pos.z < -MAX_FIELD_HEIGHT(csv) + HALF(PLAYER_WIDTH))
 	{
 		m_pos.z = -MAX_FIELD_HEIGHT(csv) + HALF(PLAYER_WIDTH);
 		m_move.z = 0.0f;
@@ -477,3 +509,5 @@ void Player::SetShadow(DirectX::XMFLOAT3 pos)
 {
 	m_shadowPos = pos;
 }
+
+		
